@@ -22,105 +22,31 @@
  
  **********************************************************************************/
 
-#ifndef CIUI_MOVING_GRAPH
-#define CIUI_MOVING_GRAPH
+#pragma once
 
-#include "cinder/Shape2d.h"
 #include "ciUIWidget.h"
+#include "ciUIDefines.h"
 
 class ciUIMovingGraph : public ciUIWidget
 {
 public:    
-    ciUIMovingGraph(float x, float y, float w, float h, vector<float> _buffer, int _bufferSize, float _min, float _max, string _name)
-    {
-        rect = new ciUIRectangle(x,y,w,h); 
-        init(w, h, _buffer, _bufferSize, _min, _max, _name);
-    }
-    
-    ciUIMovingGraph(float w, float h, vector<float> _buffer, int _bufferSize, float _min, float _max, string _name)
-    {
-        rect = new ciUIRectangle(0,0,w,h); 
-        init(w, h, _buffer, _bufferSize, _min, _max, _name);
-    }    
-    
-    void init(float w, float h, vector<float> _buffer, int _bufferSize, float _min, float _max, string _name)
-    {
-		name = _name; 				
-		kind = CI_UI_WIDGET_MOVINGGRAPH; 
-		
-		paddedRect = new ciUIRectangle(-padding, -padding, w+padding*2.0, h+padding*2.0);
-		paddedRect->setParent(rect); 
-		
-        draw_fill = true; 
-        
-        buffer = _buffer;					//the widget's value
-        
-		bufferSize = _bufferSize; 
-		max = _max; 
-		min = _min; 		
-		scale = rect->getHeight()*.5; 
-        inc = rect->getWidth()/((float)bufferSize-1.0);         
-    }
-    
-    virtual void drawFill()
-    {
-        if(draw_fill)
-        {			
-			if(draw_fill_highlight)
-			{
-                ci::gl::color(color_fill_highlight); 
-			}        
-			else 
-			{
-				ci::gl::color(color_fill); 		 	
-			}
-            
-                ci::gl::pushMatrices();
-                ci::gl::translate(rect->getX(),rect->getY()+scale);         
-                shape.clear();
-                
-                shape.moveTo(0.0f, ci::lmap<float>(buffer[0], min, max, scale, -scale));
-                for (int i = 1; i < bufferSize; i++)
-                {			
-                    shape.lineTo(inc*(float)i, ci::lmap<float>(buffer[i], min, max, scale, -scale)); 
-                }                
-                ci::gl::draw(shape);
-                ci::gl::popMatrices();                
-        }
-    }
-		        
-	void setParent(ciUIWidget *_parent)
-	{
-		parent = _parent; 
-	}
-	
-    void addPoint(float _point)
-    {
-        buffer.push_back(_point); 
-                
-        if( buffer.size() >= bufferSize )
-        {
-            buffer.erase(buffer.begin(), buffer.begin()+1);
-        }	        
-    }
-    
-    vector<float> &getBuffer()
-    {
-        return buffer; 
-    }
-    
-    void setBuffer(vector<float> _buffer)
-    {
-        buffer = _buffer; 
-    }
-    
+    ciUIMovingGraph(float x, float y, float w, float h, vector<float> _buffer, int _bufferSize, float _min, float _max, string _name);
+    ciUIMovingGraph(float w, float h, vector<float> _buffer, int _bufferSize, float _min, float _max, string _name);
+    void init(float x, float y, float w, float h, vector<float> _buffer, int _bufferSize, float _min, float _max, string _name);
+    virtual void drawFill();
+	void setParent(ciUIWidget *_parent);
+    void addPoint(float _point);
+    vector<float> &getBuffer();
+    void setBuffer(vector<float> _buffer);
+    void setMax(float _max);
+    float getMax();
+    void setMin(float _min);
+    float getMin();
+    ofVec2f getMaxAndMind();
+    void setMaxAndMin(float _max, float _min);
+
 protected:    //inherited: ciUIRectangle *rect; ciUIWidget *parent; 
     vector<float> buffer;
-	float max, min, scale, inc; 
-	int bufferSize; 
-    Shape2d shape; 
+    float max, min, scale, inc;
+    unsigned int bufferSize; 
 }; 
-
-
-
-#endif

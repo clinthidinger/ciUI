@@ -22,160 +22,20 @@
  
  **********************************************************************************/
 
-#ifndef CIUI_LABEL_TOGGLE
-#define CIUI_LABEL_TOGGLE
+#pragma once
 
-#include "ciUIWidget.h"
+#include "ciUIToggle.h"
 
 class ciUILabelToggle : public ciUIToggle
 {
 public:
-    ciUILabelToggle(float x, float y, float w, bool _value, string _name, int _size)
-    {
-        useReference = false; 
-        rect = new ciUIRectangle(x,y,w,0);                                                      //the widget's value        
-        autoSize = false;         
-        init(&_value, _name, _size); 
-    }
-
-    ciUILabelToggle(float x, float y, float w, float h, bool _value, string _name, int _size)
-    {
-        useReference = false; 
-        rect = new ciUIRectangle(x,y,w,h);                                                      //the widget's value        
-        autoSize = false;         
-        init(&_value, _name, _size); 
-    }
+    ciUILabelToggle(string _name, bool _value, float w = 0, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, bool _justifyLeft = false);
+    ciUILabelToggle(string _name, bool *_value, float w = 0, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, bool _justifyLeft = false);
+    virtual void init(string _name, bool *_value, float w = 0, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, bool _justifyLeft = false);
+    void setLabelText(string labeltext);
+	void setParent(ciUIWidget *_parent);
     
-    ciUILabelToggle(float w, bool _value, string _name, int _size, float h = 0)
-    {
-        useReference = false;         
-        rect = new ciUIRectangle(0,0,w,h);                                                      //the widget's value        
-        autoSize = false;         
-        init(&_value, _name, _size); 
-    }
-    
-    ciUILabelToggle(float x, float y, bool _value, string _name, int _size)
-    {				
-        useReference = false;         
-        rect = new ciUIRectangle(x,y,0,0);                 
-        autoSize = true;         
-        init(&_value, _name, _size); 
-    }
-
-    ciUILabelToggle(bool _value, string _name, int _size)
-    {				
-        useReference = false;         
-        rect = new ciUIRectangle(0,0,0,0);                 
-        autoSize = true;         
-        init(&_value, _name, _size); 
-    }
-    
-    ciUILabelToggle(float x, float y, float w, bool *_value, string _name, int _size)
-    {
-        useReference = true;         
-        rect = new ciUIRectangle(x,y,w,0);                                                      //the widget's value        
-        autoSize = false;         
-        init(_value, _name, _size); 
-    }
-    
-    ciUILabelToggle(float x, float y, float w, float h, bool *_value, string _name, int _size)
-    {
-        useReference = true;         
-        rect = new ciUIRectangle(x,y,w,h);                                                      //the widget's value        
-        autoSize = false;         
-        init(_value, _name, _size); 
-    }
-    
-    ciUILabelToggle(float w, bool *_value, string _name, int _size, float h = 0)
-    {
-        useReference = true;                 
-        rect = new ciUIRectangle(0,0,w,h);                                                      //the widget's value        
-        autoSize = false;         
-        init(_value, _name, _size); 
-    }
-    
-    ciUILabelToggle(float x, float y, bool *_value, string _name, int _size)
-    {				
-        useReference = true;          
-        rect = new ciUIRectangle(x,y,0,0);                 
-        autoSize = true;         
-        init(_value, _name, _size); 
-    }
-    
-    ciUILabelToggle(bool *_value, string _name, int _size)
-    {	
-        useReference = true;                 
-        rect = new ciUIRectangle(0,0,0,0);                 
-        autoSize = true;         
-        init(_value, _name, _size); 
-    }
-    
-    
-    void init(bool *_value, string _name, int _size)
-    {        
-		name = _name; 		        
-        kind = CI_UI_WIDGET_LABELTOGGLE; 		
-        paddedRect = new ciUIRectangle(-padding, -padding, padding*2.0, padding*2.0);
-		paddedRect->setParent(rect); 
-        
-        label = new ciUILabel((name+" LABEL"), name, _size); 
-		label->setParent(label); 
-		label->setRectParent(rect); 
-        label->setEmbedded(true);      
-        
-        if(useReference)
-        {
-            value = _value; 
-        }
-        else
-        {
-            value = new bool(); 
-            *value = *_value; 
-        }
-        
-        setValue(*_value);
-    }	
-	
-	void setParent(ciUIWidget *_parent)
-	{
-		parent = _parent; 
-        if(rect->getHeight() == 0)
-        {
-            rect->setHeight(label->getPaddingRect()->getHeight()+padding*2.0); 
-        }
-		ciUIRectangle *labelrect = label->getRect(); 
-        
-        if(autoSize)
-        {
-            rect->setWidth(label->getPaddingRect()->getWidth()+padding*2.0);             
-        }
-        else
-        {
-            while(labelrect->getWidth()+padding*4.0 > rect->getWidth())
-            {
-                string labelstring = label->getLabel();
-                string::iterator it;
-                it=labelstring.end();
-                it--; 
-                labelstring.erase (it); 
-                label->setLabel(labelstring);
-            }                        
-        }
-
-		float h = labelrect->getHeight(); 
-		float ph = rect->getHeight(); 	
-        
-        float w = labelrect->getWidth(); 
-        float pw = rect->getWidth(); 
-        
-		labelrect->setY((int)(ph*.5 - h*.5));
-        labelrect->setX((int)(pw*.5 - w*.5-padding*.5)); 
-		paddedRect->setHeight(rect->getHeight()+padding*2.0);  
-        paddedRect->setWidth(rect->getWidth()+padding*2.0);  
-	}	
-    
-protected:    //inherited: ciUIRectangle *rect; ciUIWidget *parent; 
+protected:    
     bool autoSize; 
-}; 
-
-#endif
+    bool justifyLeft; 
+};

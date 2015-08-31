@@ -22,40 +22,18 @@
  
  **********************************************************************************/
 
-#ifndef CIUI_FPS_SLIDER
-#define CIUI_FPS_SLIDER
+#pragma once
 
-#include "cinder/app/App.h"
 #include "ciUISlider.h"
 
 class ciUIFPSSlider : public ciUISlider
 {
 public:        
-    ciUIFPSSlider(float x, float y, float w, float h, float _min, float _max, float _value, string _name) : ciUISlider(x, y, w, h, _min, _max, _value, _name)
-    {
-        
-    }
-    
-    ciUIFPSSlider(float w, float h, float _min, float _max, float _value, string _name) : ciUISlider(w, h, _min, _max, _value, _name)
-    {
-
-    }    
-
-    ciUIFPSSlider(float x, float y, float w, float h, float _min, float _max, float *_value, string _name) : ciUISlider(x, y, w, h, _min, _max, _value, _name)
-    {
-    
-    }
-    
-    ciUIFPSSlider(float w, float h, float _min, float _max, float *_value, string _name) : ciUISlider(w, h, _min, _max, _value, _name)
-    {
-        
-    }   
-    
-    void update()
-	{
-        setValue(ci::app::App::get()->getAverageFps());
-	}
-	
+    ciUIFPSSlider(string _name, float w, float h, float _max = 400.0, float x = 0, float y = 0);
+    ciUIFPSSlider(float x, float y, float w, float h, float _min, float _max, float _value, string _name);
+    ciUIFPSSlider(float w, float h, float _min, float _max, float _value, string _name);
+    ciUIFPSSlider(float x, float y, float w, float h, float _min, float _max, float *_value, string _name);
+    ciUIFPSSlider(float w, float h, float _min, float _max, float *_value, string _name);
+	void update();
+    bool hasState() { return false; };
 }; 
-
-#endif

@@ -22,46 +22,20 @@
  
  **********************************************************************************/
 
-#ifndef CIUI_FPS
-#define CIUI_FPS
+#pragma once
 
-#include "cinder/app/App.h"
-#include "ciUILabel.h"
+#include "ciUIWidgetWithLabel.h"
 
-class ciUIFPS : public ciUILabel
+class ciUIFPS : public ciUIWidgetWithLabel
 {
 public:    
-    ciUIFPS(float x, float y, int _size)
-    {
-        rect = new ciUIRectangle(x,y,0,0); 
-        init("FPS", "FPS: 60.000", _size); 
-		kind = CI_UI_WIDGET_FPS; 		
-        labelPrecision = 3;
-        autoSize = true; 
-    }
+    ciUIFPS(float x, float y, int _size);
+    ciUIFPS(int _size);
+    void setLabelPrecision(int _precision);
+    void setParent(ciUIWidget *_parent);
     
-    ciUIFPS(int _size)
-    {
-        rect = new ciUIRectangle(0,0,0,0); 
-        init("FPS", "FPS: 60.000", _size); 
-		kind = CI_UI_WIDGET_FPS; 		
-        labelPrecision = 3;
-        autoSize = true; 
-    }    
-    
-	void update()
-	{            
-		setLabel("FPS: " + numToString(ci::app::App::get()->getAverageFps(), labelPrecision));
-	}
-	
-    void setLabelPrecision(int _precision) 
-    {
-        labelPrecision = _precision;
-    }
-
-    
-protected:    //inherited: ciUIRectangle *rect; ciUIWidget *parent; 
-    int labelPrecision;    
+protected:
+	void update();
+    void init(float x, float y, string _name, string _label, int _size);
+    int labelPrecision;
 }; 
-
-#endif

@@ -22,107 +22,28 @@
  
  **********************************************************************************/
 
-#ifndef CIUI_IMAGE_TOGGLE
-#define CIUI_IMAGE_TOGGLE
+#pragma once
 
-#include "ciUIImageButton.h"
+#include "ciUIToggle.h"
+#include "ciUIDefines.h"
 
-class ciUIImageToggle : public ciUIImageButton
+class ciUIImageToggle : public ciUIToggle
 {
 public:
-    ciUIImageToggle(float x, float y, float w, float h, bool _value, DataSourceRef _pathURL, string _name)
-    {
-        useReference = false; 
-        rect = new ciUIRectangle(x,y,w,h); 
-        init(w, h, &_value, _pathURL, _name);         
-		kind = CI_UI_WIDGET_IMAGETOGGLE; 		
-    }
-
-    ciUIImageToggle(float w, float h, bool _value, DataSourceRef _pathURL, string _name)
-    {
-        useReference = false;         
-        rect = new ciUIRectangle(0,0,w,h); 
-        init(w, h, &_value, _pathURL, _name);         
-		kind = CI_UI_WIDGET_IMAGETOGGLE; 		
-    }
-
-    ciUIImageToggle(float x, float y, float w, float h, bool *_value, DataSourceRef _pathURL, string _name)
-    {
-        useReference = true;         
-        rect = new ciUIRectangle(x,y,w,h); 
-        init(w, h, _value, _pathURL, _name);         
-		kind = CI_UI_WIDGET_IMAGETOGGLE; 		
-    }
-    
-    ciUIImageToggle(float w, float h, bool *_value, DataSourceRef _pathURL, string _name)
-    {
-        useReference = true;         
-        rect = new ciUIRectangle(0,0,w,h); 
-        init(w, h, _value, _pathURL, _name);         
-		kind = CI_UI_WIDGET_IMAGETOGGLE; 		
-    }
-    
-    void mouseMove(int x, int y ) 
-    {
-        if(rect->inside(x, y))
-        {
-            state = CI_UI_STATE_OVER;         
-        }    
-        else
-        {
-            state = CI_UI_STATE_NORMAL;        
-        }
-        stateChange();         
-    }
-    
-    void mouseDrag(int x, int y, int button) 
-    {
-        if(hit)
-        {
-            state = CI_UI_STATE_DOWN;         
-        }    
-        else
-        {
-            state = CI_UI_STATE_NORMAL;        
-        }
-        stateChange();     
-    }
-    
-    void mouseDown(int x, int y, int button) 
-    {
-        if(rect->inside(x, y))
-        {
-            hit = true; 
-            state = CI_UI_STATE_DOWN;         
-        }    
-        else
-        {
-            state = CI_UI_STATE_NORMAL;        
-        }
-        stateChange();         
-    }
-    
-    void mouseUp(int x, int y, int button) 
-    {
-        if(rect->inside(x, y) && hit)
-        {
-            setValue(!(*value)); 
-#if defined( CINDER_COCOA_TOUCH )
-            state = CI_UI_STATE_NORMAL;        
-#else            
-            state = CI_UI_STATE_OVER; 
-#endif 
-			triggerEvent(this); 
-        }    
-        else
-        {
-            state = CI_UI_STATE_NORMAL;         
-        }
-        stateChange();     
-        hit = false; 
-    }        
-    
-protected:    //inherited: ciUIRectangle *rect; ciUIWidget *parent; 
+    ciUIImageToggle(float x, float y, float w, float h, bool _value, string _pathURL, string _name, int _size = CI_UI_FONT_MEDIUM);
+    ciUIImageToggle(float w, float h, bool _value, string _pathURL, string _name, int _size = CI_UI_FONT_MEDIUM);
+    ciUIImageToggle(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size = CI_UI_FONT_MEDIUM);
+    ciUIImageToggle(float w, float h, bool *_value, string _pathURL, string _name, int _size = CI_UI_FONT_MEDIUM);
+    void init(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
+    virtual ~ciUIImageToggle();
+    virtual void drawBack();
+    virtual void drawFill();
+    virtual void drawFillHighlight();
+    virtual void drawOutlineHighlight();
+    virtual ofImage *getImage();
+    virtual void setImage(ofImage *_img);
+                     
+protected:
+    ofImage *img;
+    bool bChangedImage;
 }; 
-
-#endif

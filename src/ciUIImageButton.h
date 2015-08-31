@@ -22,170 +22,28 @@
  
  **********************************************************************************/
 
-#ifndef CIUI_IMAGE_BUTTON
-#define CIUI_IMAGE_BUTTON
+#pragma once
 
-#include "cinder/gl/Texture.h"
-#include "cinder/ImageIo.h"
-#include "ciUIWidget.h"
+#include "ciUIButton.h"
 
 class ciUIImageButton : public ciUIButton
 {
 public:
-    ciUIImageButton() {}
+    ciUIImageButton();
+    ciUIImageButton(float x, float y, float w, float h, bool _value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
+    ciUIImageButton(float w, float h, bool _value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
+    ciUIImageButton(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
+    ciUIImageButton(float w, float h, bool *_value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
+    void init(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
+    virtual ~ciUIImageButton();
+    virtual void drawBack();
+    virtual void drawFill();
+    virtual void drawFillHighlight();
+    virtual void drawOutlineHighlight();
+    virtual ofImage *getImage();
+    virtual void setImage(ofImage *_img);
     
-    ciUIImageButton(float x, float y, float w, float h, bool _value, DataSourceRef _pathURL, string _name)
-    {
-        rect = new ciUIRectangle(x,y,w,h);
-        init(w, h, &_value, _pathURL, _name);         
-    }
-
-    ciUIImageButton(float w, float h, bool _value, DataSourceRef _pathURL, string _name)
-    {
-        rect = new ciUIRectangle(0,0,w,h);
-        init(w, h, &_value, _pathURL, _name);         
-    }
-
-    ciUIImageButton(float x, float y, float w, float h, bool *_value, DataSourceRef _pathURL, string _name)
-    {
-        rect = new ciUIRectangle(x,y,w,h);
-        init(w, h, _value, _pathURL, _name);         
-    }
-    
-    ciUIImageButton(float w, float h, bool *_value, DataSourceRef _pathURL, string _name)
-    {
-        rect = new ciUIRectangle(0,0,w,h);
-        init(w, h, _value, _pathURL, _name);         
-    }
-
-    void init(float w, float h, bool *_value, DataSourceRef _pathURL, string _name)
-    {
-        name = _name; 		
-		kind = CI_UI_WIDGET_IMAGEBUTTON; 		
-        
-		paddedRect = new ciUIRectangle(-padding, -padding, w+padding*2.0, h+padding*2.0);
-		paddedRect->setParent(rect); 
-
-        if(useReference)
-        {
-            value = _value; 
-        }
-        else
-        {
-            value = new bool(); 
-            *value = *_value; 
-        }
-        
-        setValue(*_value); 
-
-        image = ci::loadImage( _pathURL );
-    }
-	
-    virtual void setDrawPadding(bool _draw_padded_rect)
-	{
-		draw_padded_rect = _draw_padded_rect; 
-	}
-    
-    virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline)
-	{
-		draw_padded_rect_outline = _draw_padded_rect_outline; 
-	}  
-    
-    virtual ~ciUIImageButton()
-    {
-        
-    }
-	
-
-    virtual void drawBack()
-    {
-                    
-        if(draw_back)
-        {
-            ci::gl::color(color_back); 
-            gl::draw(image, Rectf(rect->getX(), rect->getY(), rect->getX()+rect->getWidth(), rect->getY()+rect->getHeight()));            
-        }
-    }
-    
-    virtual void drawFill()
-    {
-        if(draw_fill)
-        {
-            ci::gl::color(color_fill); 
-            gl::draw(image, Rectf(rect->getX(), rect->getY(), rect->getX()+rect->getWidth(), rect->getY()+rect->getHeight()));            
-        }
-    }
-    
-    virtual void drawFillHighlight()
-    {
-        if(draw_fill_highlight)
-        {
-            ci::gl::color(color_fill_highlight); 
-            gl::draw(image, Rectf(rect->getX(), rect->getY(), rect->getX()+rect->getWidth(), rect->getY()+rect->getHeight()));            
-        }
-    }   
-    
-    virtual void drawOutlineHighlight()
-    {
-        if(draw_outline_highlight)
-        {
-            ci::gl::color(color_outline_highlight); 
-            gl::draw(image, Rectf(rect->getX(), rect->getY(), rect->getX()+rect->getWidth(), rect->getY()+rect->getHeight()));            
-        }
-    }   
-    
-    void stateChange()
-    {        
-        switch (state) {
-            case CI_UI_STATE_NORMAL:
-            {            
-                draw_fill_highlight = false;             
-                draw_outline_highlight = false;  
-            }
-                break;
-            case CI_UI_STATE_OVER:
-            {
-                draw_fill_highlight = false;            
-                draw_outline_highlight = true;  
-            }
-                break;
-            case CI_UI_STATE_DOWN:
-            {
-                draw_fill_highlight = true;            
-                draw_outline_highlight = false;             
-            }
-                break;
-            case CI_UI_STATE_SUSTAINED:
-            {
-                draw_fill_highlight = false;            
-                draw_outline_highlight = false;                         
-            }
-                break;            
-                
-            default:
-                break;
-        }        
-    }
-	
-	void setParent(ciUIWidget *_parent)
-	{
-		parent = _parent; 
-	}	
-
-    virtual void setValue(bool _value)
-	{
-		*value = _value;         
-        draw_fill = *value; 
-	}	
-    
-    virtual void setVisible(bool _visible)
-    {
-        visible = _visible; 
-    }
-
-    
-protected:    //inherited: ciUIRectangle *rect; ciUIWidget *parent; 
-    gl::Texture image; 
+protected:   
+    ofImage *img;
+    bool bChangedImage;    
 }; 
-
-#endif

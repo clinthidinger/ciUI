@@ -22,281 +22,39 @@
  
  **********************************************************************************/
 
-#ifndef CIUI_BUTTON
-#define CIUI_BUTTON
+#pragma once
 
 #include "ciUIWidgetWithLabel.h"
+#include "ciUIDefines.h"
 
 class ciUIButton : public ciUIWidgetWithLabel
 {
-public:    
-    ciUIButton() {}
-    
-    ciUIButton(float x, float y, float w, float h, bool _value, string _name, int _size = CI_UI_FONT_SMALL)
-    {
-        useReference = false; 
-        rect = new ciUIRectangle(x,y,w,h); 
-        init(w, h, &_value, _name, _size);
-    }
-    
-    ciUIButton(float w, float h, bool _value, string _name, int _size = CI_UI_FONT_SMALL)
-    {
-        useReference = false;         
-        rect = new ciUIRectangle(0,0,w,h); 
-        init(w, h, &_value, _name, _size);        
-    }    
+public:
+    ciUIButton();    
+    ciUIButton(string _name, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIButton(string _name, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ~ciUIButton();
+    virtual void init(string _name, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    virtual void drawFill();
+    virtual void mouseMoved(int x, int y);
+    virtual void mouseDragged(int x, int y, int button);
+    virtual void mousePressed(int x, int y, int button);
+    virtual void mouseReleased(int x, int y, int button);
+    virtual void stateChange();
+	virtual void setParent(ciUIWidget *_parent);
+	bool getValue();
+    virtual void setValue(bool _value);
+    virtual void setValuePtr(bool *_value);
+	void toggleValue();
+    virtual bool isHit(float x, float y);
+    void setLabelPosition(ciUIWidgetPosition pos);
+    virtual bool hasState(){ return false; };
 
-    ciUIButton(float x, float y, float w, float h, bool *_value, string _name, int _size = CI_UI_FONT_SMALL)
-    {
-        useReference = true;         
-        rect = new ciUIRectangle(x,y,w,h); 
-        init(w, h, _value, _name, _size);
-    }
+    virtual void keyPressed(int key);
+    virtual void keyReleased(int key);
     
-    ciUIButton(float w, float h, bool *_value, string _name, int _size = CI_UI_FONT_SMALL)
-    {
-        useReference = true;         
-        rect = new ciUIRectangle(0,0,w,h); 
-        init(w, h, _value, _name, _size);        
-    }    
-
-    ~ciUIButton()
-    {
-        if(!useReference)
-        {
-            delete value; 
-        }
-    }
-    
-    virtual void init(float w, float h, bool *_value, string _name, int _size)
-    {
-		name = _name; 		
-		kind = CI_UI_WIDGET_BUTTON; 		
-        
-		paddedRect = new ciUIRectangle(-padding, -padding, w+padding*2.0, h+padding*2.0);
-		paddedRect->setParent(rect); 
-        
-		label = new ciUILabel(w+padding*2.0,0, (name+" LABEL"), name, _size); 
-		label->setParent(label); 
-		label->setRectParent(rect); 
-        label->setEmbedded(true);		
-
-        if(useReference)
-        {
-            value = _value; 
-        }
-        else
-        {
-            value = new bool(); 
-            *value = *_value; 
-        }
-        
-        setValue(*_value); 
-        drawLabel = true;
-        label->setVisible(drawLabel);      
-    }
-    
-    virtual void update()
-    {        
-        draw_fill = *value;         
-    }
-        
-    virtual void draw() 
-    {        
-        drawPadded();
-        drawPaddedOutline();        
-        
-        drawBack();
-        
-        drawOutline();
-        drawOutlineHighlight();
-        
-        drawFill();
-        drawFillHighlight();        
-    }
-    
-    virtual void setDrawPadding(bool _draw_padded_rect)
-	{
-		draw_padded_rect = _draw_padded_rect; 
-        label->setDrawPadding(false);
-	}
-    
-    virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline)
-	{
-		draw_padded_rect_outline = _draw_padded_rect_outline; 
-        label->setDrawPaddingOutline(false);
-	}  
-
-    virtual void mouseMove(int x, int y) 
-    {
-        if(rect->inside(x, y))
-        {
-            state = CI_UI_STATE_OVER;         
-        }    
-        else
-        {
-            state = CI_UI_STATE_NORMAL;        
-        }
-        stateChange();         
-    }
-    
-    virtual void mouseDrag(int x, int y, int button) 
-    {
-        if(hit)
-        {
-            if(rect->inside(x, y))
-            {                
-                state = CI_UI_STATE_DOWN;         
-            }    
-            else                
-            {
-                hit = false;
-                state = CI_UI_STATE_NORMAL;        
-                setValue(false); 
-                triggerEvent(this);
-            }
-            stateChange();     
-        }
-    }
-    
-    virtual void mouseDown(int x, int y, int button) 
-    {
-        if(rect->inside(x, y))
-        {
-            hit = true;
-            state = CI_UI_STATE_DOWN;         
-            setValue(true); 
-			triggerEvent(this); 			
-        }    
-        else
-        {
-            state = CI_UI_STATE_NORMAL;        
-        }
-        stateChange();         
-    }
-    
-    virtual void mouseUp(int x, int y, int button) 
-    {
-        if(hit)
-        {
-#if defined( CINDER_COCOA_TOUCH )
-            state = CI_UI_STATE_NORMAL;        
-#else            
-            if(rect->inside(x, y))
-            {
-                state = CI_UI_STATE_OVER; 
-            }
-            else
-            {
-                state = CI_UI_STATE_NORMAL;                         
-            }
-#endif 
-            setValue(false); 
-			triggerEvent(this); 
-        }    
-        else
-        {
-            state = CI_UI_STATE_NORMAL;         
-        }
-        stateChange();         
-        hit = false; 
-    }
-    
-    virtual void stateChange()
-    {                
-        switch (state) {
-            case CI_UI_STATE_NORMAL:
-            {            
-                draw_fill_highlight = false;             
-                draw_outline_highlight = false;  
-				label->unfocus(); 								
-            }
-                break;
-            case CI_UI_STATE_OVER:
-            {
-                draw_fill_highlight = false;            
-                draw_outline_highlight = true;  
-				label->focus(); 								
-            }
-                break;
-            case CI_UI_STATE_DOWN:
-            {
-                draw_fill_highlight = true;            
-                draw_outline_highlight = false;             
-				label->focus(); 					
-            }
-                break;
-            case CI_UI_STATE_SUSTAINED:
-            {
-                draw_fill_highlight = false;            
-                draw_outline_highlight = false;                         
-				label->unfocus(); 								
-            }
-                break;            
-                
-            default:
-                break;
-        }        
-    }
-	
-    virtual void setVisible(bool _visible)
-    {
-        visible = _visible; 
-        label->setVisible(visible); 
-    }
-    
-	ciUILabel *getLabel()
-	{
-		return label; 
-	}
-	
-	virtual void setParent(ciUIWidget *_parent)
-	{
-		parent = _parent; 
-
-        rect->setParent(parent->getRect());
-		ciUIRectangle *labelrect = label->getRect(); 
-		float h = labelrect->getHeight(); 
-		float ph = rect->getHeight(); 
-		
-		labelrect->setY(ph/2.0 - h/2.0);
-        
-        if(!drawLabel)
-        {
-            paddedRect->setWidth(rect->getWidth()+padding*2.0);
-        }
-        else
-        {            
-            paddedRect->setWidth(paddedRect->getWidth() + label->getPaddingRect()->getWidth()+padding);
-        }
-	}	
-	
-	bool getValue()
-	{
-		return *value; 
-	}
-    
-    void setLabelVisible(bool _visible)
-    {
-        drawLabel = _visible; 
-        label->setVisible(drawLabel); 
-    }
-	
-    virtual void setValue(bool _value)
-	{
-		*value = _value;         
-        draw_fill = *value; 
-        label->setDrawBack(*value);         
-	}
-	
-	void toggleValue() {
-	  setValue(!(*value));
-	}
-    
-protected:    //inherited: ciUIRectangle *rect; ciUIWidget *parent; 
+protected:
     bool *value; 
     bool useReference; 
-    bool drawLabel; 
+    ciUIWidgetPosition labelPosition;
 }; 
-
-#endif

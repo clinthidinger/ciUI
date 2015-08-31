@@ -22,2202 +22,351 @@
  
  **********************************************************************************/
 
-#ifndef CIUI_CANVAS
-#define CIUI_CANVAS
+#pragma once
 
-#include "cinder/app/App.h"
-
-#if defined( CINDER_COCOA_TOUCH )
-#include "cinder/app/AppCocoaTouch.h"
-#endif
-#include "cinder/app/AppBasic.h"
-
-#include "cinder/Xml.h"
-#include "cinder/Utilities.h"
-#include "cinder/Font.h"
-#include "cinder/gl/TextureFont.h"
-#include "cinder/gl/gl.h"
 #include "ciUIWidget.h"
-
+#include "ciUIDefines.h"
+#include "ciUIEventArgs.h"
+#include "ciUIWidgets.h"
+#include "ciUISlider.h"
 #include <vector>
 #include <map>
 
-class ciUICanvas : public ciUIWidget
-{    
-public:	
-    ~ciUICanvas() 
-    {
-		delete GUIevent; 
-		for(int i = 0; i < widgets.size(); i++)
-		{
-			ciUIWidget *w = widgets[i]; 
-			delete w; 
-		}
-		widgets.clear();             
-    }
+class ciUICanvas : public ciUIWidget, public ciUIAppCBGlue
+{
+public:
+    ~ciUICanvas();
+    //Default Constructor:
+    ciUICanvas(float defaultWidthSize = CI_UI_GLOBAL_CANVAS_WIDTH, float defaultHeightSize = CI_UI_GLOBAL_CANVAS_WIDTH);
+    ciUICanvas(const ciUICanvas &other);              // Mitchell Nordine 2/2/14
+    ciUICanvas& operator=(const ciUICanvas &other);   // Mitchell Nordine 2/2/14
     
-    ciUICanvas(float x, float y, float w, float h) 
-    {
-        rect = new ciUIRectangle(x,y,w,h);        
-        init(w, h);
-    }
-
-    ciUICanvas(float x, float y, float w, float h, ciUICanvas *sharedResources) 
-    {
-        rect = new ciUIRectangle(x,y,w,h);        
-        init(w, h, sharedResources);
-    }
+    ciUICanvas(ciUIRectangle r);
+    ciUICanvas(float x, float y, float w, float h);
+    ciUICanvas(float x, float y, float w, float h, ciUICanvas *sharedResources);
+    ciUICanvas(ciUICanvas *sharedResources, float defaultWidthSize = CI_UI_GLOBAL_CANVAS_WIDTH, float defaultHeightSize = CI_UI_GLOBAL_CANVAS_WIDTH);
+    ciUICanvas(string title);
     
-    ciUICanvas() 
-    {
-        float w = ci::app::getWindowWidth();
-        float h = ci::app::getWindowHeight();
-        rect = new ciUIRectangle(0,0,w,h); 
-        init(w, h);
-        setDrawBack(false); 
-    }
-
-    ciUICanvas(ciUICanvas *sharedResources) 
-    {
-        float w = ci::app::getWindowWidth();
-        float h = ci::app::getWindowHeight();
-        rect = new ciUIRectangle(0,0,w,h); 
-        init(w, h, sharedResources);
-        setDrawBack(false); 
-    }
-    
-    void init(int w, int h, ciUICanvas *sharedResources = NULL)
-    {
-        name = "CI_UI_WIDGET_CANVAS"; 
-		kind = CI_UI_WIDGET_CANVAS; 
-
-#if defined( CINDER_COCOA_TOUCH )
-        mApp = (app::AppCocoaTouch *) app::App::get();                 
-#else
-        mApp = app::App::get();                 
-#endif 
-
-		enabled = false; 		
-		enable(); 
-		
-		enable_highlight_outline = false; 
-		enable_highlight_fill = false; 
-        
-		GUIevent = new ciUIEvent(this); 
-        
-		paddedRect = new ciUIRectangle(-padding, -padding, w+padding*2.0, h+padding*2.0);
-		paddedRect->setParent(rect);
-
-        if(sharedResources != NULL)
-        {
-            hasSharedResources = true; 
-            
-            font_large = sharedResources->getFontLarge();
-            font_medium = sharedResources->getFontMedium();
-            font_small = sharedResources->getFontSmall();
-            
-            fontName = sharedResources->getFontName();
-        }
-        else
-        {
-            hasSharedResources = false;             
-            fontName = CI_UI_FONT_NAME;
-            setFont(fontName);         
-        }
-                
-		font = font_medium; 
-		lastAdded = NULL; 
-        uniqueIDs = 0;         
-        widgetSpacing = CI_UI_GLOBAL_WIDGET_SPACING; 
-        hasKeyBoard = false; 
-    }    
-    
-    void saveSettings(string fileName)
-    {
-        try
-        {
-            XmlTree settings( "Settings", "" );
-            for(int i = 0; i < widgetsWithState.size(); i++)
-            {                
-                XmlTree widget( "Widget", "" );
-                widget.push_back( XmlTree( "Kind", numToString(widgetsWithState[i]->getKind(),0) ) );
-                widget.push_back( XmlTree( "Name", widgetsWithState[i]->getName() ) );
-                writeSpecificWidgetData(widgetsWithState[i], widget); 
-                settings.push_back( widget );
-            }
-            settings.write( writeFile( "settings/"+fileName , true) );        
-        }
-        catch (Exception e)
-        {
-            cout << "CIUI: Could not save file: " << fileName << endl; 
-        }
-    }
-    
-    void writeSpecificWidgetData(ciUIWidget *widget, XmlTree &XML)
-    {
-        int kind = widget->getKind();        
-        switch (kind) {
-            case CI_UI_WIDGET_IMAGETOGGLE:    
-            case CI_UI_WIDGET_MULTIIMAGETOGGLE: 
-            case CI_UI_WIDGET_LABELTOGGLE:                
-            case CI_UI_WIDGET_TOGGLE:
-            {
-                ciUIToggle *toggle = (ciUIToggle *) widget; 
-                XML.push_back( XmlTree( "Value", numToString( toggle->getValue() ? 1 : 0) ) );                
-            }
-                break;
-                
-            case CI_UI_WIDGET_MULTIIMAGESLIDER_H:
-            case CI_UI_WIDGET_MULTIIMAGESLIDER_V:                                 
-            case CI_UI_WIDGET_IMAGESLIDER_H:
-            case CI_UI_WIDGET_IMAGESLIDER_V:
-            case CI_UI_WIDGET_BILABELSLIDER:
-            case CI_UI_WIDGET_CIRCLESLIDER:
-            case CI_UI_WIDGET_MINIMALSLIDER:                
-            case CI_UI_WIDGET_SLIDER_H:
-            case CI_UI_WIDGET_SLIDER_V:
-            {
-                ciUISlider *slider = (ciUISlider *) widget; 
-                XML.push_back( XmlTree( "Value", numToString( slider->getScaledValue() ) )  );
-            }
-                break;
-
-            case CI_UI_WIDGET_RSLIDER_H:
-            case CI_UI_WIDGET_RSLIDER_V:
-            {
-                ciUIRangeSlider *rslider = (ciUIRangeSlider *) widget; 
-                XML.push_back( XmlTree( "HighValue", numToString( rslider->getScaledValueHigh() ) ) ); 
-                XML.push_back( XmlTree( "LowValue", numToString( rslider->getScaledValueLow() ) ) );              
-            }
-                break;
-
-            case CI_UI_WIDGET_NUMBERDIALER:
-            {
-                ciUINumberDialer *numdialer = (ciUINumberDialer *) widget; 
-                XML.push_back( XmlTree( "Value", numToString( numdialer->getValue() ) ) );
-            }
-                break;
-
-            case CI_UI_WIDGET_2DPAD:
-            {
-                ciUI2DPad *pad = (ciUI2DPad *) widget; 
-                XML.push_back( XmlTree( "XValue", numToString( pad->getScaledValue().x ) ) ); 
-                XML.push_back( XmlTree( "YValue", numToString( pad->getScaledValue().y ) ) );            
-            }
-                break;
-
-            case CI_UI_WIDGET_TEXTINPUT:
-            {
-                ciUITextInput *textInput = (ciUITextInput *) widget; 
-                XML.push_back( XmlTree( "Value", textInput->getTextString() ) );                 
-            }
-                break;
-                                
-            case CI_UI_WIDGET_ROTARYSLIDER:
-            {
-                ciUIRotarySlider *rotslider = (ciUIRotarySlider *) widget;
-                XML.push_back( XmlTree( "Value", numToString( rotslider->getScaledValue() ) ) ); 
-            }
-                break;
-                
-            case CI_UI_WIDGET_IMAGESAMPLER:
-            {
-                ciUIImageSampler *imageSampler = (ciUIImageSampler *) widget;                 
-                XML.push_back( XmlTree( "XValue", numToString( imageSampler->getValue().x ) ) ); 
-                XML.push_back( XmlTree( "YValue", numToString( imageSampler->getValue().y ) ) );                
-                XML.push_back( XmlTree( "RColor", numToString( imageSampler->getColor().r ) ) );                               
-                XML.push_back( XmlTree( "GColor", numToString( imageSampler->getColor().g ) ) );                               
-                XML.push_back( XmlTree( "BColor", numToString( imageSampler->getColor().b ) ) );                                               
-                XML.push_back( XmlTree( "AColor", numToString( imageSampler->getColor().a ) ) );                               
-            }
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    void loadSettings(string fileName)
-    {
-        try
-        {
-            XmlTree XML( loadFile( "settings/"+fileName ) );         
-
-            XmlTree settings = XML.getChild( "Settings" );        
-            for( XmlTree::Iter item = settings.begin(); item != settings.end(); ++item )
-            {        
-                string wName = item->getChild("Name").getValue(); 
-                ciUIWidget *widget = getWidget(wName); 
-                if(widget != NULL)
-                {
-                    loadSpecificWidgetData(widget, *item); 
-                    triggerEvent(widget); 
-                }                     
-            }
-        }
-        catch (Exception e)
-        {
-            cout << "CIUI: Could not load file: " << fileName << endl; 
-        }
-        hasKeyBoard = false;                
-    }
-
-
-    void loadSpecificWidgetData(ciUIWidget *widget, XmlTree &XML)
-    {
-        int kind = XML.getChild("Kind").getValue<int>();       
-        switch (kind) 
-        {
-            case CI_UI_WIDGET_IMAGETOGGLE:    
-            case CI_UI_WIDGET_MULTIIMAGETOGGLE: 
-            case CI_UI_WIDGET_LABELTOGGLE:                
-            case CI_UI_WIDGET_TOGGLE:
-            {
-                ciUIToggle *toggle = (ciUIToggle *) widget; 
-                int value = XML.getChild("Value").getValue<int>();
-                toggle->setValue((value ? 1 : 0)); 
-            }
-                break;
-
-            case CI_UI_WIDGET_MULTIIMAGESLIDER_H:
-            case CI_UI_WIDGET_MULTIIMAGESLIDER_V:                 
-            case CI_UI_WIDGET_IMAGESLIDER_H:
-            case CI_UI_WIDGET_IMAGESLIDER_V:                
-            case CI_UI_WIDGET_BILABELSLIDER:    
-            case CI_UI_WIDGET_CIRCLESLIDER:               
-            case CI_UI_WIDGET_MINIMALSLIDER:
-            case CI_UI_WIDGET_SLIDER_H:
-            case CI_UI_WIDGET_SLIDER_V:
-            {
-                ciUISlider *slider = (ciUISlider *) widget; 
-                float value = XML.getChild("Value").getValue<float>();
-                slider->setValue(value); 
-            }
-                break;
-                
-            case CI_UI_WIDGET_RSLIDER_H:
-            case CI_UI_WIDGET_RSLIDER_V:
-            {
-                ciUIRangeSlider *rslider = (ciUIRangeSlider *) widget; 
-                float valueHigh = XML.getChild("HighValue").getValue<float>();
-                float valueLow = XML.getChild("LowValue").getValue<float>();
-                rslider->setValueHigh(valueHigh);
-                rslider->setValueLow(valueLow);
-            }
-                break;
-                
-            case CI_UI_WIDGET_NUMBERDIALER:
-            {
-                ciUINumberDialer *numdialer = (ciUINumberDialer *) widget; 
-                float value = XML.getChild("Value").getValue<float>();
-                numdialer->setValue(value);                 
-            }
-                break;
-                
-            case CI_UI_WIDGET_2DPAD:
-            {
-                ciUI2DPad *pad = (ciUI2DPad *) widget; 
-                float valueX = XML.getChild("XValue").getValue<float>();
-                float valueY = XML.getChild("YValue").getValue<float>();
-                pad->setValue(Vec2f(valueX, valueY)); 
-            }
-                break;
-                
-            case CI_UI_WIDGET_TEXTINPUT:
-            {
-                ciUITextInput *textInput = (ciUITextInput *) widget; 
-                string value = XML.getChild("Value").getValue();
-                textInput->setTextString(value); 
-            }
-                break;                
-                
-            case CI_UI_WIDGET_ROTARYSLIDER:
-            {
-                ciUIRotarySlider *rotslider = (ciUIRotarySlider *) widget;
-                float value = XML.getChild("Value").getValue<float>();
-                rotslider->setValue(value); 
-            }
-                break;
-                
-            case CI_UI_WIDGET_IMAGESAMPLER:
-            {
-                ciUIImageSampler *imageSampler = (ciUIImageSampler *) widget; 
-                float valueX = XML.getChild("XValue").getValue<float>();
-                float valueY = XML.getChild("YValue").getValue<float>();
-                
-                float r = XML.getChild("RColor").getValue<float>();
-                float g = XML.getChild("GColor").getValue<float>();
-                float b = XML.getChild("BColor").getValue<float>();
-                float a = XML.getChild("AColor").getValue<float>();
-                
-                imageSampler->setValue(Vec2f(valueX, valueY));
-                imageSampler->setColor(ColorA(r,g,b,a));
-            }
-                break;
-                
-            default:
-                break;
-        }        
-    }
-
-    
-    gl::TextureFontRef getFontLarge()
-    {
-        return font_large;
-    }    
-    
-    gl::TextureFontRef getFontMedium()
-    {
-        return font_medium;
-    }
-
-    gl::TextureFontRef getFontSmall()
-    {
-        return font_small;
-    }
-
-    bool setFont(string filename)
-    {
-        bool large = updateFont(CI_UI_FONT_LARGE, filename, CI_UI_FONT_LARGE_SIZE);
-        bool medium = updateFont(CI_UI_FONT_MEDIUM, filename, CI_UI_FONT_MEDIUM_SIZE);
-        bool small = updateFont(CI_UI_FONT_SMALL, filename, CI_UI_FONT_SMALL_SIZE);
-        bool successful = large && medium && small;
-        if( successful ) fontName = filename;
-        return successful;
-    }
-    
-    string getFontName()
-    {
-        return fontName; 
-    }
-    
-    void setFontSize(ciUIWidgetFontType _kind, int _size, int _resolution = CI_UI_FONT_RESOLUTION)
-    {
-        switch(_kind)
-        {
-            case CI_UI_FONT_LARGE:                                              
-                fontLarge = Font( loadResource(fontName), _size);                
-                font_large = gl::TextureFont::create(fontLarge);                
-                break; 
-
-            case CI_UI_FONT_MEDIUM:
-                fontMedium = Font( loadResource(fontName), _size);                
-                font_medium = gl::TextureFont::create(fontMedium);                
-                
-                break; 
-
-            case CI_UI_FONT_SMALL:
-                fontSmall = Font( loadResource(fontName), _size);                
-                font_small = gl::TextureFont::create(fontSmall);                
-                
-                break; 
-        }
-    }
-    
-    void setWidgetSpacing(float _widgetSpacing)
-    {
-        widgetSpacing = _widgetSpacing; 
-    }
-    
-    float getWidgetSpacing()
-    {
-        return widgetSpacing;
-    }
-   
-    bool isEnabled()
-	{
-		return enabled; 
-	}
-	
-    void setVisible(bool _visible)
-    {
-        visible = _visible; 
-        if(visible)
-        {
-            enable();
-        }
-        else
-        {
-            disable();
-        }
-    }
-    
-    
-	void toggleVisible()
-	{
-		if(isEnabled())
-		{
-			disable(); 
-		}
-		else {
-			enable(); 
-		}
-	}
-
-    bool hasKeyboardFocus()
-    {
-        return hasKeyBoard; 
-    }
-	
-	void enable()
-	{
-        if(!isEnabled())
-        {            
-            enabled = true; 
-#if defined( CINDER_COCOA_TOUCH )
-            enableTouchEventCallbacks();
-#else
-            enableMouseEventCallbacks();
-            enableKeyEventCallbacks();            
-#endif         
-        }
-	}
-	
-	void disable()
-	{
-        if(isEnabled())
-        {                    
-            enabled = false;       
-#if defined( CINDER_COCOA_TOUCH )
-            disableTouchEventCallbacks();
-#else
-            disableMouseEventCallbacks();    
-            disableKeyEventCallbacks();
+    void init(int x, int y, int w, int h, ciUICanvas *sharedResources = NULL);
+    void copyCanvasStyle(ciUICanvas *styler);
+    void copyCanvasProperties(ciUICanvas *styler);
+#ifndef CI_UI_NO_XML
+    virtual void saveSettings(string fileName);
+    virtual void loadSettings(string fileName);
+    void setTriggerWidgetsUponLoad(bool _bTriggerWidgetsUponLoad);
+    bool getTriggerWidgetsUponLoad();
 #endif
-        }
-    }
-		
-#if defined( CINDER_COCOA_TOUCH )
-	
-	//Touch Callbacks
-    void enableTouchEventCallbacks()
-    {
-        mCbTouchesBegan = mApp->registerTouchesBegan(this, &ciUICanvas::canvasTouchesBegan); 
-        mCbTouchesMoved = mApp->registerTouchesMoved(this, &ciUICanvas::canvasTouchesMoved); 
-        mCbTouchesEnded = mApp->registerTouchesEnded(this, &ciUICanvas::canvasTouchesEnded); 
-    }	
-
-	void disableTouchEventCallbacks()
-    {
-        mApp->unregisterTouchesBegan( mCbTouchesBegan );
-        mApp->unregisterTouchesMoved( mCbTouchesMoved );
-        mApp->unregisterTouchesEnded( mCbTouchesEnded );
-    }	
-	
+    ciUIFont *getFontLarge();
+    ciUIFont *getFontMedium();
+    ciUIFont *getFontSmall();
+    bool setFont(string filename, bool _bAntiAliased=true, bool _bFullCharacterSet=true, bool makeContours=false, float simplifyAmt=0.0, int dpi=CI_UI_FONT_RESOLUTION);
+    void setFontSize(ciUIWidgetFontType _kind, int _size, int _resolution = CI_UI_FONT_RESOLUTION);
+    void setWidgetSpacing(float _widgetSpacing);
+    float getWidgetSpacing();
+    bool isEnabled();
+    void setVisible(bool _visible);
+	void toggleVisible();
+    bool hasKeyboardFocus();
+	void enable();
+	void disable();
+    virtual void update();
+    virtual void draw();
+    void exit();
+    
+#ifdef CI_UI_TARGET_TOUCH
+    virtual void canvasTouchDown(float x, float y, int id);
+    virtual void canvasTouchMoved(float x, float y, int id);
+    virtual void canvasTouchUp(float x, float y, int id);
+    virtual void canvasTouchDoubleTap(float x, float y, int id);
+    virtual void canvasTouchCancelled(float x, float y, int id);
+    virtual void touchDown(float x, float y, int id);
+	virtual void touchMoved(float x, float y, int id);
+	virtual void touchUp(float x, float y, int id);
+	virtual void touchDoubleTap(float x, float y, int id);
+	virtual void touchCancelled(float x, float y, int id);
 #else
-	
-	//Mouse Callbacks
-    void enableMouseEventCallbacks()
-    {
-        mCbMouseDown = mApp->registerMouseDown( this, &ciUICanvas::canvasMouseDown );
-        mCbMouseUp = mApp->registerMouseUp( this, &ciUICanvas::canvasMouseUp );	
-        mCbMouseMove = mApp->registerMouseMove( this, &ciUICanvas::canvasMouseMove );
-        mCbMouseDrag = mApp->registerMouseDrag( this, &ciUICanvas::canvasMouseDrag );	
-    }
-
-	//Mouse Callbacks
-    void disableMouseEventCallbacks()
-    {
-        mApp->unregisterMouseDown( mCbMouseDown );
-        mApp->unregisterMouseUp( mCbMouseUp );	
-        mApp->unregisterMouseMove( mCbMouseMove );
-        mApp->unregisterMouseDrag( mCbMouseDrag );	
-    }	
-
-    //KeyBoard Callbacks
-	void enableKeyEventCallbacks()
-	{
-        mCbKeyDown = mApp->registerKeyDown( this, &ciUICanvas::canvasKeyDown );
-        mCbKeyUp = mApp->registerKeyUp( this, &ciUICanvas::canvasKeyUp );
-	}
-
-	//KeyBoard Callbacks
-	void disableKeyEventCallbacks()
-	{
-        mApp->unregisterKeyDown( mCbKeyDown ); 
-        mApp->unregisterKeyUp( mCbKeyUp );         
-	}
-    
-#endif	    
-    virtual void update()
-    {		
-        if(enabled)
-        {           
-            for(int i = 0; i < widgets.size(); i++)
-            {
-                widgets[i]->update(); 	
-            }		
-        }
-    }
-     
-    void draw()
-    {
-        if(enabled)
-        {                   
-            glDisable(GL_DEPTH_TEST);       
-            glDisable(GL_LIGHTING);
-            gl::enableAlphaBlending(); 
-            
-            glLineWidth(1.5f);
-            
-            drawPadded();
-            
-            drawPaddedOutline(); 
-            
-            drawBack(); 
-            
-            drawFill(); 
-            
-            drawFillHighlight(); 
-            
-            drawOutline(); 
-            
-            drawOutlineHighlight();
-
-            for(int i = widgets.size()-1; i >= 0; i--)
-            {
-                if(widgets[i]->isVisible())
-                {
-                    widgets[i]->draw(); 	
-                }
-            }
-            
-            glDisable(GL_DEPTH_TEST); 
-        }
-    }
-    
-    void exit()
-    {
-
-    }	
-        
-#if defined( CINDER_COCOA_TOUCH )
-
-	virtual bool canvasTouchesBegan(TouchEvent event) 
-	{		
-        for( vector<TouchEvent::Touch>::const_iterator touchIt = event.getTouches().begin(); touchIt != event.getTouches().end(); ++touchIt ) 
-        {                
-            if(rect->inside(touchIt->getX(), touchIt->getY()))
-            {
-                for(int i = 0; i < widgets.size(); i++)
-                {
-                    if(widgets[i]->isVisible())	widgets[i]->touchesBegan(event); 
-                }
-            }
-        }
-        return false;         
-	}
-    
-	virtual bool canvasTouchesMoved(TouchEvent event) 
-	{        
-        for(int i = 0; i < widgets.size(); i++)
-        {
-            if(widgets[i]->isVisible())	widgets[i]->touchesMoved(event);
-        }
-        return false;         
-    }
-    
-	virtual bool canvasTouchesEnded(TouchEvent event) 
-	{
-        for(int i = 0; i < widgets.size(); i++)
-        {
-            if(widgets[i]->isVisible())	widgets[i]->touchesEnded(event); 
-        }
-        return false;         
-	}
-    	
-#else	
-    
-	virtual bool canvasMouseMove( MouseEvent event ) 
-    {
-        if(rect->inside(event.getX(), event.getY()))
-        {
-			for(int i = 0; i < widgets.size(); i++)
-			{                
-				if(widgets[i]->isVisible()) widgets[i]->mouseMove(event.getX(), event.getY()); 
-			}
-		}	
-        return false; 
-    }
-    
-    virtual bool canvasMouseDrag( MouseEvent event ) 
-    {		
-        for(int i = 0; i < widgets.size(); i++)
-        {
-            if(widgets[i]->isVisible())	widgets[i]->mouseDrag(event.getX(), event.getY(), event.isRightDown()); 
-        }     
-        return false;         
-    }
-    
-    virtual bool canvasMouseDown( MouseEvent event ) 
-    {
-        if(rect->inside(event.getX(), event.getY()))
-        {
-			for(int i = 0; i < widgets.size(); i++)
-			{
-				if(widgets[i]->isVisible()) widgets[i]->mouseDown(event.getX(), event.getY(), event.isRightDown()); 
-			}
-		}		
-        return false;         
-    }
-    
-    virtual bool canvasMouseUp( MouseEvent event ) 
-    {		        
-        for(int i = 0; i < widgets.size(); i++)
-        {
-            if(widgets[i]->isVisible()) widgets[i]->mouseUp(event.getX(), event.getY(), event.isRightDown()); 
-        }    
-       return false;  
-    }
-	    
+	virtual void mouseMoved(int x, int y );
+    virtual void mouseDragged(int x, int y, int button);
+    virtual void mousePressed(int x, int y, int button);
+    virtual void mouseReleased(int x, int y, int button);
+    virtual void windowResized(int w, int h);
 #endif	
 
-    virtual bool canvasKeyDown( KeyEvent event )
-    {
-        for(int i = 0; i < widgets.size(); i++)
-		{
-			widgets[i]->keyDown(event);
-		}
-        return false; 
-    }
-
-    virtual bool canvasKeyUp( KeyEvent event )
-    {
-		for(int i = 0; i < widgets.size(); i++)
-		{
-			widgets[i]->keyUp(event);
-		}
-        return false; 
-    }
+    virtual void keyPressed(int key);
+    virtual void keyReleased(int key);
+    virtual bool isHit(int x, int y);
+    ciUIWidget *getWidgetHit(float x, float y);
+    
+    void stateChange();
+    virtual void autoSizeToFitWidgets();
+    virtual void alignWidgetsVertically(ciUIWidget *widgetToBeAligned, ciUIWidget *widgetToBeingAlignedTo);
+    virtual void centerWidgetsOnCanvas(bool centerHorizontally=true, bool centerVertically=true);
+    virtual void centerWidgetsHorizontallyOnCanvas();
+    virtual void centerWidgetsVerticallyOnCanvas();
+    virtual void centerWidgets();
+    virtual void addModalWidget(ciUIWidget *widget);
+    virtual void removeModalWidget(ciUIWidget *widget);
+    virtual void removeWidgets();
+    virtual void clearWidgets();  // Mitchell Nordine 2/2/14
+    void removeWidget(ciUIWidget *widget);
+    void addWidget(ciUIWidget *widget);
 	
-    bool isHit(int x, int y)
-    {
-        if(isEnabled())
-        {
-            return rect->inside(x, y);
-        }
-        else
-        {
-            return false; 
-        }
-    }
+    ciUIWidget* addWidgetPosition(ciUIWidget *widget, 
+                                   ciUIWidgetPosition position = CI_UI_WIDGET_POSITION_DOWN,
+                                   ciUIWidgetAlignment align = CI_UI_ALIGN_LEFT,
+                                   bool reAdd = false);
     
-    ciUIWidget *getWidgetHit(float x, float y)
-    {
-        if(isEnabled() && rect->inside(x, y))
-        {
-            for(int i = 0; i < widgets.size(); i++)
-            {
-                if(widgets[i]->isHit(x, y))
-                {
-                    return widgets[i]; 
-                }
-            }
-            return NULL;
-        }
-        else
-        {
-            return NULL; 
-        }        
-    }
+	ciUIWidget* addWidgetDown(ciUIWidget *widget, ciUIWidgetAlignment align = CI_UI_ALIGN_LEFT, bool reAdd = false);
+	ciUIWidget* addWidgetUp(ciUIWidget *widget, ciUIWidgetAlignment align = CI_UI_ALIGN_LEFT, bool reAdd = false);
+	ciUIWidget* addWidgetRight(ciUIWidget *widget, ciUIWidgetAlignment align = CI_UI_ALIGN_FREE, bool reAdd = false);
+    ciUIWidget* addWidgetLeft(ciUIWidget *widget, ciUIWidgetAlignment align = CI_UI_ALIGN_FREE, bool reAdd = false);
+    ciUIWidget* addWidgetSouthOf(ciUIWidget *widget, string referenceName, bool reAdd = false);
+    ciUIWidget* addWidgetNorthOf(ciUIWidget *widget, string referenceName, bool reAdd = false);
+    ciUIWidget* addWidgetWestOf(ciUIWidget *widget, string referenceName, bool reAdd = false);
+    ciUIWidget* addWidgetEastOf(ciUIWidget *widget, string referenceName, bool reAdd = false);
+
+    ciUISpacer* addSpacer(float h = CI_UI_GLOBAL_SPACING_HEIGHT);
+    ciUISpacer* addSpacer(string name, float h = CI_UI_GLOBAL_SPACING_HEIGHT);
+    ciUISpacer* addSpacer(float w, float h);
+    ciUISpacer* addSpacer(float w, float h, string name);
     
-
-    void stateChange()
-    {        
-        switch (state) 
-		{
-            case CI_UI_STATE_NORMAL:
-            {            
-                draw_fill_highlight = false;             
-                draw_outline_highlight = false;             
-            }
-                break;
-            case CI_UI_STATE_OVER:
-            {
-                draw_fill_highlight = false;        
-				if(enable_highlight_outline)
-				{
-					draw_outline_highlight = true;                         
-				}
-            }
-                break;
-            case CI_UI_STATE_DOWN:
-            {
-				if(enable_highlight_fill)
-				{
-					draw_fill_highlight = true;     				
-				}
-                draw_outline_highlight = false;             
-            }
-                break;
-            case CI_UI_STATE_SUSTAINED:
-            {
-                draw_fill_highlight = false;            
-                draw_outline_highlight = false;                         
-            }
-                break;            
-                
-            default:
-                break;
-        }        
-    }
+    ciUILabel *addLabel(string name, int size = CI_UI_FONT_MEDIUM);
+    ciUILabel *addLabel(string name, string label, int size = CI_UI_FONT_MEDIUM);
     
-    void autoSizeToFitWidgets()
-    {        
-        float maxWidth = 0;
-        float maxHeight = 0;
+    ciUIFPS *addFPS(int size = CI_UI_FONT_MEDIUM);
+    
+    ciUISlider* addSlider(string _name, float _min, float _max, float _value);
+    ciUISlider* addSlider(string _name, float _min, float _max, float _value, float w, float h, float x = 0, float y = 0);
+    ciUISlider* addSlider(string _name, float _min, float _max, float *_value);
+    ciUISlider* addSlider(string _name, float _min, float _max, float *_value, float w, float h, float x = 0, float y = 0);
+    
+    ciUIIntSlider* addIntSlider(string _name, int _min, int _max, int _value);
+    ciUIIntSlider* addIntSlider(string _name, int _min, int _max, int _value, float w, float h, float x = 0, float y = 0);
+    ciUIIntSlider* addIntSlider(string _name, int _min, int _max, int *_value);
+    ciUIIntSlider* addIntSlider(string _name, int _min, int _max, int *_value, float w, float h, float x = 0, float y = 0);
 
-        for(int i = 0; i < widgets.size(); i++)
-        {
-            if(widgets[i]->isVisible())
-            {
-                ciUIRectangle* wr = widgets[i]->getRect(); 
-                float widgetwidth = wr->getRawX()+wr->getWidth();
+    ciUIDoubleSlider* addDoubleSlider(string _name, double _min, double _max, double _value);
+    ciUIDoubleSlider* addDoubleSlider(string _name, double _min, double _max, double _value, float w, float h, float x = 0, float y = 0);
+    ciUIDoubleSlider* addDoubleSlider(string _name, double _min, double _max, double *_value);
+    ciUIDoubleSlider* addDoubleSlider(string _name, double _min, double _max, double *_value, float w, float h, float x = 0, float y = 0);
+    
+    ciUIRotarySlider* addRotarySlider(string _name, float _min, float _max, float _value, int _size = CI_UI_FONT_SMALL);
+    ciUIRotarySlider* addRotarySlider(string _name, float _min, float _max, float _value, float w, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIRotarySlider* addRotarySlider(string _name, float _min, float _max, float *_value, int _size = CI_UI_FONT_SMALL);
+    ciUIRotarySlider* addRotarySlider(string _name, float _min, float _max, float *_value, float w, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    
+    ciUIImageSlider* addImageSlider(string _name, string _pathURL, float _min, float _max, float _value);
+    ciUIImageSlider* addImageSlider(string _name, string _pathURL, float _min, float _max, float _value, float w, float h, float x = 0, float y = 0);
+    ciUIImageSlider* addImageSlider(string _name, string _pathURL, float _min, float _max, float *_value);
+    ciUIImageSlider* addImageSlider(string _name, string _pathURL, float _min, float _max, float *_value, float w, float h, float x = 0, float y = 0);
+    
+    ciUINumberDialer *addNumberDialer(string _name, float _min, float _max, float _value, int _precision);
+    ciUINumberDialer *addNumberDialer(string _name, float _min, float _max, float *_value, int _precision);
+    
+    ciUIMinimalSlider* addMinimalSlider(string _name, float _min, float _max, float _value, int size = CI_UI_FONT_SMALL);
+    ciUIMinimalSlider* addMinimalSlider(string _name, float _min, float _max, float _value, float w, float h, float x = 0, float y = 0, int size = CI_UI_FONT_SMALL);
+    ciUIMinimalSlider* addMinimalSlider(string _name, float _min, float _max, float *_value, int size = CI_UI_FONT_SMALL);
+    ciUIMinimalSlider* addMinimalSlider(string _name, float _min, float _max, float *_value, float w, float h, float x = 0, float y = 0, int size = CI_UI_FONT_SMALL);
 
-                float widgetheight = wr->getRawY()+wr->getHeight();
-                
-                if(widgetwidth > maxWidth)
-                {
-                    maxWidth = wr->getRawX()+widgets[i]->getPaddingRect()->getWidth();
-                }                        
-                if(widgetheight > maxHeight)
-                {
-                    maxHeight = wr->getRawY()+widgets[i]->getPaddingRect()->getHeight();                                                                        
-                }        
-            }
-        }
+    ciUIRangeSlider* addRangeSlider(string _name, float _min, float _max, float _valuelow, float _valuehigh);
+    ciUIRangeSlider* addRangeSlider(string _name, float _min, float _max, float _valuelow, float _valuehigh, float w, float h, float x = 0, float y = 0);
+    ciUIRangeSlider* addRangeSlider(string _name, float _min, float _max, float *_valuelow, float *_valuehigh);
+    ciUIRangeSlider* addRangeSlider(string _name, float _min, float _max, float *_valuelow, float *_valuehigh, float w, float h, float x = 0, float y = 0);
+    
+    ciUIFPSSlider* addFPSSlider(string _name, float _max = 400);
+    ciUIFPSSlider* addFPSSlider(string _name, float w, float h, float _max = 400, float x = 0, float y = 0);
+    
+    ciUIRadio* addRadio(string _name, vector<string> names, int _orientation = CI_UI_ORIENTATION_VERTICAL, int _size = CI_UI_FONT_SMALL);
+    ciUIRadio* addRadio(string _name, vector<string> names, int _orientation, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    
+    ciUIButton* addButton(string _name, bool _value);
+    ciUIButton* addButton(string _name, bool _value, float w, float h, float x = 0, float y = 0);
+    ciUIButton* addButton(string _name, bool *_value);
+    ciUIButton* addButton(string _name, bool *_value, float w, float h, float x = 0, float y = 0);
+    
+    ciUIToggle* addToggle(string _name, bool _value);
+    ciUIToggle* addToggle(string _name, bool _value, float w, float h, float x = 0, float y = 0);
+    ciUIToggle* addToggle(string _name, bool *_value);
+    ciUIToggle* addToggle(string _name, bool *_value, float w, float h, float x = 0, float y = 0);
+    
+    ciUIToggleMatrix* addToggleMatrix(string _name, int _rows, int _cols);
+    ciUIToggleMatrix* addToggleMatrix(string _name, int _rows, int _cols, float w, float h);
+
+    ciUI2DPad* add2DPad(string _name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f _value);
+    ciUI2DPad* add2DPad(string _name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f _value, float w, float h, float x = 0, float y = 0);
+    ciUI2DPad* add2DPad(string _name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f *_value);
+    ciUI2DPad* add2DPad(string _name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f *_value, float w, float h, float x = 0, float y = 0);
         
-        rect->setWidth(maxWidth);
-        rect->setHeight(maxHeight);
-        paddedRect->setWidth(rect->getWidth()+padding*2.0);
-        paddedRect->setHeight(rect->getHeight()+padding*2.0);        
-    }
+    ciUITextInput* addTextInput(string _name, string _textstring, int _size = -1);
+    ciUITextInput* addTextInput(string _name, string _textstring, float w, float h = 0, float x = 0, float y = 0, int _size = -1);
     
-    void centerWidgetsOnCanvas(bool centerHorizontally=true, bool centerVertically=true)
-    {            
-        float xMin = 0; 
-        float yMin = 0;
-        
-        float xMax = 0; 
-        float yMax = 0;
-        
-        float w = 0; 
-        float h = 0; 
-        
-        for(int i = 0; i < widgets.size(); i++)
-        {
-//            if(widgets[i]->isVisible())
-//            {
-                ciUIRectangle* wr = widgets[i]->getRect(); 
-                if(wr->getRawX() < xMin)
-                {
-                    xMin = wr->getRawX(); 
-                }
-                if((wr->getRawX() + wr->getWidth()) > xMax)
-                {
-                    xMax = (wr->getRawX() + wr->getWidth()); 
-                }
-                
-                if(wr->getRawY() < yMin)
-                {
-                    yMin = wr->getRawY(); 
-                }
-                if((wr->getRawY() + wr->getHeight()) > yMax)
-                {
-                    yMax = (wr->getRawY() + wr->getHeight()); 
-                }                                                                    
-//            }
-        }     
-        
-        w = xMax - xMin;
-        h = yMax - yMin;            
-        
-        float moveDeltaX = rect->getHalfWidth() - w*.5; 
-        float moveDeltaY = rect->getHalfHeight() - h*.5;
-                
-        for(int i = 0; i < widgets.size(); i++)
-        {
-            if(widgets[i]->isVisible() && !(widgets[i]->isEmbedded()))
-            {
-                ciUIRectangle* wr = widgets[i]->getRect(); 
-                if(centerHorizontally) wr->setX(wr->getRawX()+ moveDeltaX-padding);             
-                if(centerVertically) wr->setY(wr->getRawY()+ moveDeltaY-padding);                             
-            }
-        }           
-//        addWidget(new ciUISpacer(xMin+moveDeltaX, yMin+moveDeltaY, w, h));
-    }    
-    
-    void centerWidgetsHorizontallyOnCanvas()
-    {
-        centerWidgetsOnCanvas(true, false);
-    }
+    ciUILabelToggle* addLabelToggle(string _name, bool _value, bool _justifyLeft = false);
+    ciUILabelToggle* addLabelToggle(string _name, bool _value, float w, float h = 0, float x = 0, float y = 0, bool _justifyLeft = false);
+    ciUILabelToggle* addLabelToggle(string _name, bool *_value, bool _justifyLeft = false);
+    ciUILabelToggle* addLabelToggle(string _name, bool *_value, float w, float h = 0, float x = 0, float y = 0, bool _justifyLeft = false);
 
-    void centerWidgetsVerticallyOnCanvas()
-    {
-        centerWidgetsOnCanvas(false, true);
-    }
-    
-    void centerWidgets()
-    {
-        centerWidgetsOnCanvas(); 
-    }
-    
-    void removeWidget(ciUIWidget *widget)
-    {
-//        cout << endl; 
-//        cout << "Widget to find: " << widget->getName() << endl; 
-//        cout << endl; 
-        
-        //for the map
-        map<string, ciUIWidget*>::iterator it;        
-        it=widgets_map.find(widget->getName());
-        if(it != widgets_map.end())
-        {
-            widgets_map.erase(it);     
-        }
-                
-        for(int i = 0; i < widgetsWithState.size(); i++)
-        {
-            ciUIWidget *other = widgetsWithState[i]; 
-            if(widget->getName() == other->getName())
-            {
-                widgetsWithState.erase(widgetsWithState.begin()+i);                
-                break; 
-            }
-        }
-        vector<ciUIWidget *>::iterator wit;
-        //for all the widgets 
-        for(wit=widgets.begin(); wit != widgets.end(); wit++)
-        {
-            ciUIWidget *other = *wit;                   
-            if(widget->getName() == other->getName())
-            { 
-                widgets.erase(wit);                             
-                break; 
-            }
-        }
-        
-        if(widget->hasLabel())
-        {
-            ciUIWidgetWithLabel *wwl = (ciUIWidgetWithLabel *) widget; 
-            ciUILabel *label = wwl->getLabelWidget();
-            removeWidget(label);
-        }        
+    ciUILabelButton* addLabelButton(string _name, bool _value, bool _justifyLeft = false);
+    ciUILabelButton* addLabelButton(string _name, bool _value, float w, float h = 0, float x = 0, float y = 0, bool _justifyLeft = false);
+    ciUILabelButton* addLabelButton(string _name, bool *_value, bool _justifyLeft = false);
+    ciUILabelButton* addLabelButton(string _name, bool *_value, float w, float h = 0, float x = 0, float y = 0, bool _justifyLeft = false);
 
-        delete widget;
-    }    
+    ciUIDropDownList* addDropDownList(string _name, vector<string> items);
+    ciUIDropDownList* addDropDownList(string _name, vector<string> items, float w, float x = 0, float y = 0);
 
-    void addWidget(ciUIWidget *widget)
-	{
-        if(widget->getKind() == CI_UI_WIDGET_LABEL)
-		{
-			ciUILabel *label = (ciUILabel *) widget;
-			setLabelFont(label); 
-		}
-		else if(widget->getKind() == CI_UI_WIDGET_SLIDER_H || widget->getKind() == CI_UI_WIDGET_SLIDER_V || widget->getKind() == CI_UI_WIDGET_BILABELSLIDER || widget->getKind() == CI_UI_WIDGET_MINIMALSLIDER || widget->getKind() == CI_UI_WIDGET_CIRCLESLIDER || widget->getKind() == CI_UI_WIDGET_IMAGESLIDER_H || widget->getKind() == CI_UI_WIDGET_IMAGESLIDER_V || widget->getKind() == CI_UI_WIDGET_MULTIIMAGESLIDER_H || widget->getKind() == CI_UI_WIDGET_MULTIIMAGESLIDER_V)           
-		{
-			ciUISlider *slider = (ciUISlider *) widget;
-			ciUILabel *label = (ciUILabel *) slider->getLabel();
-			setLabelFont(label); 			
-			pushbackWidget(label); 				
+    ciUIWaveform* addWaveform(string _name, float *_buffer, int _bufferSize, float _min = -1.0, float _max = 1.0, float _h = -1);
+    ciUIWaveform* addWaveform(string _name, float *_buffer, int _bufferSize, float _min, float _max, float _w, float _h);
+    
+    ciUISpectrum* addSpectrum(string _name, float *_buffer, int _bufferSize, float _min = 0.0, float _max = 1.0, float _h = CI_UI_GLOBAL_GRAPH_HEIGHT);
+    ciUISpectrum* addSpectrum(string _name, float *_buffer, int _bufferSize, float _min, float _max, float _w, float _h);
+    
+    ciUIMovingGraph* addMovingGraph(string _name, vector<float> _buffer, int _bufferSize, float _min, float _max, float _h = CI_UI_GLOBAL_GRAPH_HEIGHT);
+    ciUIMovingGraph* addMovingGraph(string _name, vector<float> _buffer, int _bufferSize, float _min, float _max, float _w, float _h);
 
-            if(widget->getKind() == CI_UI_WIDGET_BILABELSLIDER)
-            {
-                ciUIBiLabelSlider *biSlider = (ciUIBiLabelSlider *) widget;
-                ciUILabel *rlabel = (ciUILabel *) biSlider->getRightLabel();
-                setLabelFont(rlabel); 			
-                pushbackWidget(rlabel); 				                
-            }
-            
-            widgetsWithState.push_back(widget);                         
-		}
-		else if(widget->getKind() == CI_UI_WIDGET_2DPAD)		
-		{
-			ciUI2DPad *pad = (ciUI2DPad *) widget;
-			ciUILabel *label = (ciUILabel *) pad->getLabel();
-			setLabelFont(label); 			
-			pushbackWidget(label); 				
+    ciUIImage *addImage(string _name, ofImage *_image, float _w, float _h, bool _showLabel = false);
+    ciUIImage *addImage(string _name, ofImage *_image, bool _showLabel = false);
 
-            widgetsWithState.push_back(widget);             
-		}		
-		else if(widget->getKind() == CI_UI_WIDGET_IMAGE)		
-		{
-			ciUIImage *image = (ciUIImage *) widget;
-			ciUILabel *label = (ciUILabel *) image->getLabel();
-			setLabelFont(label); 			
-			pushbackWidget(label); 				
-		}	
-		else if(widget->getKind() == CI_UI_WIDGET_IMAGESAMPLER)		
-		{
-			ciUIImage *image = (ciUIImage *) widget;
-			ciUILabel *label = (ciUILabel *) image->getLabel();
-			setLabelFont(label); 			
-			pushbackWidget(label); 				
-            
-            widgetsWithState.push_back(widget);                                     
-		}	        
-		else if(widget->getKind() == CI_UI_WIDGET_RSLIDER_H || widget->getKind() == CI_UI_WIDGET_RSLIDER_V)
-		{
-			ciUIRangeSlider *rslider = (ciUIRangeSlider *) widget;
-			ciUILabel *label = (ciUILabel *) rslider->getLabel();
-			setLabelFont(label); 			
-			pushbackWidget(label); 			
-            
-            widgetsWithState.push_back(widget);                         
-		}		
-		else if(widget->getKind() == CI_UI_WIDGET_ROTARYSLIDER)
-		{
-			ciUIRotarySlider *rslider = (ciUIRotarySlider *) widget;
-			ciUILabel *label = (ciUILabel *) rslider->getLabel();
-			setLabelFont(label); 			
-			pushbackWidget(label); 				
-            
-            widgetsWithState.push_back(widget);                         
-		}		
-		else if(widget->getKind() == CI_UI_WIDGET_BUTTON || widget->getKind() == CI_UI_WIDGET_TOGGLE || widget->getKind() ==  CI_UI_WIDGET_LABELBUTTON || widget->getKind() == CI_UI_WIDGET_LABELTOGGLE || widget->getKind() == CI_UI_WIDGET_MULTIIMAGEBUTTON || widget->getKind() == CI_UI_WIDGET_MULTIIMAGETOGGLE)
-		{
-			ciUIButton *button = (ciUIButton *) widget;
-			ciUILabel *label = (ciUILabel *) button->getLabel();
-			setLabelFont(label); 			
-			pushbackWidget(label); 		
-            if(widget->getKind() != CI_UI_WIDGET_BUTTON && widget->getKind() != CI_UI_WIDGET_LABELBUTTON && widget->getKind() != CI_UI_WIDGET_MULTIIMAGEBUTTON)
-            {
-                widgetsWithState.push_back(widget);                         
-            }
-		}
-        else if(widget->getKind() == CI_UI_WIDGET_DROPDOWNLIST)            
-        { 
-			ciUIDropDownList *list = (ciUIDropDownList *) widget;
-			ciUILabel *label = (ciUILabel *) list->getLabel();
-			setLabelFont(label); 			
-			pushbackWidget(label); 		
-            
-            vector<ciUILabelToggle *> toggles = list->getToggles(); 
-			for(int i = 0; i < toggles.size(); i++)
-			{
-				ciUILabelToggle *t = toggles[i]; 
-				ciUILabel *l2 = (ciUILabel *) t->getLabel();
-				setLabelFont(l2); 	
-                pushbackWidget(l2); 					
-                pushbackWidget(t); 
+    ciUIBaseDraws *addBaseDraws(string _name, ofBaseDraws *_base, float _w, float _h, bool _showLabel = false);
+    ciUIBaseDraws *addBaseDraws(string _name, ofBaseDraws *_base, bool _showLabel = false);
 
-                widgetsWithState.push_back(t);             
-			}            
-        }
-		else if(widget->getKind() == CI_UI_WIDGET_TEXTINPUT)
-		{
-			ciUITextInput *textinput = (ciUITextInput *) widget;
-			ciUILabel *label = (ciUILabel *) textinput->getLabel();
-			setLabelFont(label); 			
-			pushbackWidget(label); 	
-            
-            widgetsWithState.push_back(widget);             
-		}		
-		else if(widget->getKind() == CI_UI_WIDGET_NUMBERDIALER)
-		{
-			ciUINumberDialer *numberDialer = (ciUINumberDialer *) widget;
-			ciUILabel *label = (ciUILabel *) numberDialer->getLabel();
-			setLabelFont(label); 			
-			pushbackWidget(label); 			
-            
-            widgetsWithState.push_back(widget);                         
-		}		        
-		else if(widget->getKind() == CI_UI_WIDGET_RADIO)
-		{
-			ciUIRadio *radio = (ciUIRadio *) widget;
-			ciUILabel *label = (ciUILabel *) radio->getLabel();			
-			setLabelFont(label); 
-			pushbackWidget(label); 				
-			
-			vector<ciUIToggle *> toggles = radio->getToggles(); 
-			
-			for(int i = 0; i < toggles.size(); i++)
-			{
-				ciUIToggle *t = toggles[i]; 
-				ciUILabel *l2 = (ciUILabel *) t->getLabel();
-				setLabelFont(l2); 	
-				pushbackWidget(t); 
-				pushbackWidget(l2);
-                
-                widgetsWithState.push_back(t);                             
-			}
-		}
-        else if(widget->getKind() == CI_UI_WIDGET_TOGGLEMATRIX)
-		{
-			ciUIToggleMatrix *matrix = (ciUIToggleMatrix *) widget;
-			ciUILabel *label = (ciUILabel *) matrix->getLabel();			
-			setLabelFont(label); 
-			pushbackWidget(label); 				
-			
-			vector<ciUIToggle *> toggles = matrix->getToggles(); 
-			
-			for(int i = 0; i < toggles.size(); i++)
-			{
-				ciUIToggle *t = toggles[i]; 
-				ciUILabel *l2 = (ciUILabel *) t->getLabel();
-				setLabelFont(l2); 	
-				pushbackWidget(t); 
-				pushbackWidget(l2); 			
-                
-                widgetsWithState.push_back(t);                             
-			}
-		}
-		else if(widget->getKind() == CI_UI_WIDGET_FPS)
-		{
-			ciUILabel *fps = (ciUILabel *) widget;
-			setLabelFont(fps); 
-		}
-        else if(widget->getKind() == CI_UI_WIDGET_IMAGETOGGLE)
-        {
-            widgetsWithState.push_back(widget);              
-        }
-	
-		widget->setRectParent(this->rect); 		
-		widget->setParent(this); 
-		pushbackWidget(widget); 	
-	}
+    ciUIImageSampler *addImageSampler(string _name, ofImage *_image, float _w, float _h);
+    ciUIImageSampler *addImageSampler(string _name, ofImage *_image);
     
-	ciUIWidget* addWidgetDown(ciUIWidget *widget, ciUIWidgetAlignment align = CI_UI_ALIGN_LEFT, bool reAdd = false)
-	{
-        if(!reAdd) addWidget(widget); 
-        ciUIRectangle *widgetRect = widget->getRect();         
-		if(lastAdded != NULL)
-		{
-			ciUIRectangle *lastPaddedRect = lastAdded->getPaddingRect(); 
-			widgetRect->setY(lastPaddedRect->getY()+lastPaddedRect->getHeight()-rect->getY()+widgetSpacing); 
-		}
-		else 
-		{
-			widgetRect->setY(widgetSpacing);
-		}
-        switch(align)
-        {
-            case CI_UI_ALIGN_TOP: 
-                
-                break; 
-            case CI_UI_ALIGN_BOTTOM:
-                
-                break;
-                
-            case CI_UI_ALIGN_LEFT: 
-                widgetRect->setX(widgetSpacing);             
-                break;                    
-            case CI_UI_ALIGN_FREE: 
-                
-                break; 
-            case CI_UI_ALIGN_RIGHT: 
-                widgetRect->setX(rect->getWidth()-widgetRect->getWidth()-widgetSpacing); 
-                break;                     
-        }                           
-		lastAdded = widget; 
-		return widget;
-	}
+    ciUIBiLabelSlider *addBiLabelSlider(string _name, string _leftLabel, string _rightLabel, float _min, float _max, float _value, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider *addBiLabelSlider(string _name, string _leftLabel, string _rightLabel, float _min, float _max, float *_value, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider *addBiLabelSlider(string _name, string _leftLabel, string _rightLabel, float _min, float _max, float _value, float _w, float _h, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider *addBiLabelSlider(string _name, string _leftLabel, string _rightLabel, float _min, float _max, float *_value, float _w, float _h, int _size = CI_UI_FONT_SMALL);
     
-	ciUIWidget* addWidgetUp(ciUIWidget *widget, ciUIWidgetAlignment align = CI_UI_ALIGN_LEFT, bool reAdd = false)
-	{
-        if(!reAdd) addWidget(widget); 
-        ciUIRectangle *widgetRect = widget->getRect();                 
-		if(lastAdded != NULL)
-		{
-			ciUIRectangle *lastPaddedRect = lastAdded->getPaddingRect(); 
-            ciUIRectangle *widgetPaddedRect = widget->getPaddingRect();                                     
-			widgetRect->setY(lastPaddedRect->getY()-widgetPaddedRect->getHeight()-rect->getY());                                     
-		}
-		else 
-		{
-			widgetRect->setY(widgetSpacing);             
-		}
-        switch(align)
-        {
-            case CI_UI_ALIGN_TOP: 
-                
-                break; 
-            case CI_UI_ALIGN_BOTTOM:
-                
-                break;
-                
-            case CI_UI_ALIGN_LEFT: 
-                widgetRect->setX(widgetSpacing);             
-                break;                    
-            case CI_UI_ALIGN_FREE: 
-                
-                break; 
-            case CI_UI_ALIGN_RIGHT: 
-                widgetRect->setX(rect->getWidth()-widgetRect->getWidth()-widgetSpacing); 
-                break;                     
-        }          
-		lastAdded = widget; 
-		return widget;
-	}    
-    
-	ciUIWidget* addWidgetRight(ciUIWidget *widget, ciUIWidgetAlignment align = CI_UI_ALIGN_FREE, bool reAdd = false)
-	{
-        if(!reAdd) addWidget(widget); 
-        ciUIRectangle *widgetRect = widget->getRect();                         
-		if(lastAdded != NULL)
-		{
-			ciUIRectangle *lastRect = lastAdded->getRect(); 
-			ciUIRectangle *lastPaddedRect = lastAdded->getPaddingRect();                         
-			
-            widgetRect->setX(lastPaddedRect->getX()+lastPaddedRect->getWidth()-rect->getX()+widgetSpacing); 
-			widgetRect->setY(lastRect->getY()-rect->getY()); 
-		}
-		else 
-		{
-			widgetRect->setX(widgetSpacing); 
-            widgetRect->setY(widgetSpacing);                         
-		}
-        switch(align)
-        {
-            case CI_UI_ALIGN_LEFT: 
-                widgetRect->setX(widgetSpacing);             
-                break;                    
-            case CI_UI_ALIGN_FREE: 
-                
-                break; 
-            case CI_UI_ALIGN_RIGHT: 
-                widgetRect->setX(rect->getWidth()-widgetRect->getWidth()-widgetSpacing); 
-                break;                     
-            case CI_UI_ALIGN_TOP: 
-                widgetRect->setY(widgetSpacing);                         
-                break;                     
-            case CI_UI_ALIGN_BOTTOM: 
-                widgetRect->setY(rect->getHeight()-widgetRect->getHeight()-widgetSpacing); 
-                break;                                     
-        }                  
-        lastAdded = widget; 
-        return widget; 	
-	}
-    
-    ciUIWidget* addWidgetLeft(ciUIWidget *widget, ciUIWidgetAlignment align = CI_UI_ALIGN_FREE, bool reAdd = false)
-	{
-        if(!reAdd) addWidget(widget);     
-        ciUIRectangle *widgetRect = widget->getRect(); 
-		if(lastAdded != NULL)
-		{
-			ciUIRectangle *lastRect = lastAdded->getRect(); 
-			ciUIRectangle *lastPaddedRect = lastAdded->getPaddingRect();                         
-            ciUIRectangle *widgetPaddedRect = widget->getPaddingRect();                         
-			
-            widgetRect->setX(lastPaddedRect->getX()-widgetPaddedRect->getWidth()-rect->getX()); 
-			widgetRect->setY(lastRect->getY()-rect->getY()); 
-		}
-		else 
-		{
-			widgetRect->setX(widgetSpacing); 
-            widgetRect->setY(widgetSpacing);                         
-		}
-        switch(align)
-        {
-            case CI_UI_ALIGN_LEFT: 
-                widgetRect->setX(widgetSpacing);             
-                break;                    
-            case CI_UI_ALIGN_FREE: 
-                
-                break; 
-            case CI_UI_ALIGN_RIGHT: 
-                widgetRect->setX(rect->getWidth()-widgetRect->getWidth()-widgetSpacing); 
-                break;        
-            case CI_UI_ALIGN_TOP: 
-                widgetRect->setY(widgetSpacing);                         
-                break;                     
-            case CI_UI_ALIGN_BOTTOM: 
-                widgetRect->setY(rect->getHeight()-widgetRect->getHeight()-widgetSpacing); 
-                break;                                                     
-        }                          
-        lastAdded = widget;  	
-        return widget;
-	}    
-    
-    ciUIWidget* addWidgetSouthOf(ciUIWidget *widget, string referenceName, bool reAdd = false)
-	{
-        if(!reAdd) addWidget(widget); 
-        ciUIWidget *referenceWidget = getWidget(referenceName);
-		if(referenceWidget != NULL)
-		{
-			ciUIRectangle *referencePaddedRect = referenceWidget->getPaddingRect(); 
-			ciUIRectangle *referenceRect = referenceWidget->getRect();             
-			ciUIRectangle *widgetRect = widget->getRect(); 
-            
-			widgetRect->setY(referencePaddedRect->getY()+referencePaddedRect->getHeight()-rect->getY()+widgetSpacing); 
-            widgetRect->setX(referenceRect->getX()-rect->getX());   
-		}
-		else 
-		{
-			ciUIRectangle *widgetRect = widget->getRect(); 
-			widgetRect->setY(widgetSpacing); 
-		}
-        lastAdded = widget;  		
-        return widget;
-    }    
-    
-    ciUIWidget* addWidgetNorthOf(ciUIWidget *widget, string referenceName, bool reAdd = false)
-	{
-        if(!reAdd) addWidget(widget); 
-        ciUIWidget *referenceWidget = getWidget(referenceName);
-		if(referenceWidget != NULL)
-		{
-			ciUIRectangle *referencePaddedRect = referenceWidget->getPaddingRect(); 
-			ciUIRectangle *referenceRect = referenceWidget->getRect();             
-			ciUIRectangle *widgetRect = widget->getRect(); 
-            ciUIRectangle *widgetPaddedRect = widget->getPaddingRect();             
-            
-			widgetRect->setY(referencePaddedRect->getY()-widgetPaddedRect->getHeight()-rect->getY());             
-            widgetRect->setX(referenceRect->getX()-rect->getX());   
-		}
-		else 
-		{
-			ciUIRectangle *widgetRect = widget->getRect(); 
-			widgetRect->setY(widgetSpacing); 
-		}
-        lastAdded = widget;  	        
-        return widget;
-    }      
-    
-    ciUIWidget* addWidgetWestOf(ciUIWidget *widget, string referenceName, bool reAdd = false)
-	{
-        if(!reAdd) addWidget(widget);      
-        ciUIWidget *referenceWidget = getWidget(referenceName);
-		if(referenceWidget != NULL)
-		{
-			ciUIRectangle *referencePaddedRect = referenceWidget->getPaddingRect(); 
-			ciUIRectangle *referenceRect = referenceWidget->getRect();             			
-            ciUIRectangle *widgetRect = widget->getRect(); 
-            ciUIRectangle *widgetPaddedRect = widget->getPaddingRect();             
-            
-            widgetRect->setY(referenceRect->getY()-rect->getY());                         
-            widgetRect->setX(referencePaddedRect->getX()-rect->getX()-widgetPaddedRect->getWidth());   
-		}
-		else 
-		{			
-            ciUIRectangle *currentRect = widget->getRect(); 			
-            currentRect->setY(widgetSpacing); 
-		}
-        lastAdded = widget;  	
-        return widget;
-    }        
-    
-    ciUIWidget* addWidgetEastOf(ciUIWidget *widget, string referenceName, bool reAdd = false)
-	{
-        if(!reAdd) addWidget(widget);     
-        ciUIWidget *referenceWidget = getWidget(referenceName);
-		if(referenceWidget != NULL)
-		{
-			ciUIRectangle *referencePaddedRect = referenceWidget->getPaddingRect(); 
-			ciUIRectangle *referenceRect = referenceWidget->getRect();             			
-            ciUIRectangle *widgetRect = widget->getRect(); 	            
-            widgetRect->setY(referenceRect->getY()-rect->getY());                        
-            widgetRect->setX(referencePaddedRect->getX()-rect->getX()+referencePaddedRect->getWidth()+widgetSpacing); 
-		}
-		else 
-		{			
-            ciUIRectangle *currentRect = widget->getRect(); 			
-            currentRect->setY(widgetSpacing); 
-		}
-        lastAdded = widget;  	
-        return widget;
-    }         
-    
-    void resetPlacer()
-    {
-        lastAdded = NULL; 
-    }
-    
-    void setPlacer(ciUIWidget *referenceWidget)
-    {
-        lastAdded = referenceWidget; 
-    }
-    
-	void setLabelFont(ciUILabel *label)
-	{
-		switch(label->getSize())
-		{
-			case CI_UI_FONT_LARGE:
-				label->setFont(font_large); 					
-				break; 
-			case CI_UI_FONT_MEDIUM:
-				label->setFont(font_medium); 					
-				break; 
-			case CI_UI_FONT_SMALL:
-				label->setFont(font_small); 					
-				break; 					
-		}		
-	}
-	
-	void triggerEvent(ciUIWidget *child)
-	{        
-        checkForKeyFocus(child); 
-		GUIevent->widget = child; 		
-        uiEventCallbackMgr.call( GUIevent ); 
-	}
-    
-    void setUIColors(ColorA &cb, ColorA &co, ColorA &coh, ColorA &cf, ColorA &cfh, ColorA &cp, ColorA &cpo)
-    {
-        setWidgetColor(CI_UI_WIDGET_COLOR_BACK, cb);
-        setWidgetColor(CI_UI_WIDGET_COLOR_OUTLINE, co);                
-        setWidgetColor(CI_UI_WIDGET_COLOR_OUTLINE_HIGHLIGHT, coh);
-        setWidgetColor(CI_UI_WIDGET_COLOR_FILL, cf);                
-        setWidgetColor(CI_UI_WIDGET_COLOR_FILL_HIGHLIGHT, cfh);
-        setWidgetColor(CI_UI_WIDGET_COLOR_PADDED, cp);
-        setWidgetColor(CI_UI_WIDGET_COLOR_PADDED_OUTLINE, cpo);
-        
-        setColorBack(cb);
-        setColorOutline(co);
-        setColorOutlineHighlight(coh);
-        setColorFill(cf);
-        setColorFillHighlight(cfh);
-        setColorPadded(cp);
-        setColorPaddedOutline(cpo); 
-    }
-	    
-    void setTheme(int theme)
-    {
-        switch(theme)
-        {
-            case CI_UI_THEME_DEFAULT:
-            {
-                ColorA cb = CI_UI_COLOR_BACK; 
-                ColorA co = CI_UI_COLOR_OUTLINE; 
-                ColorA coh = CI_UI_COLOR_OUTLINE_HIGHLIGHT;
-                ColorA cf = CI_UI_COLOR_FILL; 
-                ColorA cfh = CI_UI_COLOR_FILL_HIGHLIGHT;
-                ColorA cp = CI_UI_COLOR_PADDED;
-                ColorA cpo = CI_UI_COLOR_PADDED_OUTLINE;
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
+    ciUICircleSlider* addCircleSlider(string _name, float _min, float _max, float _value);
+    ciUICircleSlider* addCircleSlider(string _name, float _min, float _max, float _value, float w, float x = 0, float y = 0);
+    ciUICircleSlider* addCircleSlider(string _name, float _min, float _max, float *_value);
+    ciUICircleSlider* addCircleSlider(string _name, float _min, float _max, float *_value, float w, float x = 0, float y = 0);
 
-            case CI_UI_THEME_HACKER:
-            {
-                ColorA cb = ColorA( 0.294118, 0, 0.0588235, 0.196078 );
-                ColorA co = ColorA( 0.254902, 0.239216, 0.239216, 0.392157 );
-                ColorA coh = ColorA( 0.294118, 0, 0.0588235, 0.784314 );
-                ColorA cf = ColorA( 0.784314, 1, 0, 0.784314 );
-                ColorA cfh = ColorA( 0.980392, 0.00784314, 0.235294, 1 );
-                ColorA cp = ColorA( 0.0156863, 0, 0.0156863, 0.392157 );
-                ColorA cpo = ColorA( 0.254902, 0.239216, 0.239216, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-
-                
-        case CI_UI_THEME_HIPSTER:
-            {
-                ColorA cb = ColorA( 0.607843, 0.6, 0.509804, 0.196078 );
-                ColorA co = ColorA( 0.231373, 0.392157, 0.501961, 0.392157 );
-                ColorA coh = ColorA( 0.607843, 0.6, 0.509804, 0.784314 );
-                ColorA cf = ColorA( 1, 0.52549, 0.0666667, 0.784314 );
-                ColorA cfh = ColorA( 0.0313725, 0.101961, 0.188235, 1 );
-                ColorA cp = ColorA( 0.196078, 0.25098, 0.352941, 0.392157 );
-                ColorA cpo = ColorA( 0.231373, 0.392157, 0.501961, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-
-            case CI_UI_THEME_DIETER:
-            {
-                ColorA cb = ColorA( 0.803922, 0.741176, 0.682353, 0.196078 );
-                ColorA co = ColorA( 0.478431, 0.356863, 0.243137, 0.392157 );
-                ColorA coh = ColorA( 0.803922, 0.741176, 0.682353, 0.784314 );
-                ColorA cf = ColorA( 0.980392, 0.294118, 0, 0.784314 );
-                ColorA cfh = ColorA( 0.980392, 0.980392, 0.980392, 1 );
-                ColorA cp = ColorA( 0.121569, 0.121569, 0.121569, 0.392157 );
-                ColorA cpo = ColorA( 0.478431, 0.356863, 0.243137, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-
-            case CI_UI_THEME_BARBIE:
-            {
-                ColorA cb = ColorA( 0.92549, 0, 0.54902, 0.196078 );
-                ColorA co = ColorA( 0, 0, 0, 0.392157 );
-                ColorA coh = ColorA( 0, 0.678431, 0.937255, 0.784314 );
-                ColorA cf = ColorA( 0.92549, 0, 0.54902, 0.784314 );
-                ColorA cfh = ColorA( 1, 0.94902, 0, 1 );
-                ColorA cp = ColorA( 0, 0, 0, 0.392157 );
-                ColorA cpo = ColorA( 0, 0.678431, 0.937255, 0.784314 ); 
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-
-            case CI_UI_THEME_WINDOWS:
-            {
-                ColorA cb = ColorA( 0.0470588, 0.0588235, 0.4, 0.196078 );
-                ColorA co = ColorA( 0.0431373, 0.0627451, 0.54902, 0.392157 );
-                ColorA coh = ColorA( 0.0470588, 0.0588235, 0.4, 0.784314 );
-                ColorA cf = ColorA( 0.054902, 0.305882, 0.678431, 0.784314 );
-                ColorA cfh = ColorA( 0.0627451, 0.498039, 0.788235, 1 );
-                ColorA cp = ColorA( 0.027451, 0.0352941, 0.239216, 0.392157 );
-                ColorA cpo = ColorA( 0.0431373, 0.0627451, 0.54902, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-
-            case CI_UI_THEME_MACOSX:
-            {
-                ColorA cb = ColorA( 0, 0.678431, 0.937255, 0.196078 );
-                ColorA co = ColorA( 1, 0.94902, 0, 0.392157 );
-                ColorA coh = ColorA( 0, 0, 0, 0.784314 );
-                ColorA cf = ColorA( 0, 0.678431, 0.937255, 0.784314 );
-                ColorA cfh = ColorA( 0.92549, 0, 0.54902, 1 );
-                ColorA cp = ColorA( 1, 0.94902, 0, 0.392157 );
-                ColorA cpo = ColorA( 0, 0, 0, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-
-            case CI_UI_THEME_ZOOLANDER:
-            {
-                ColorA cb = ColorA( 0.160784, 0.133333, 0.121569, 0.196078 );
-                ColorA co = ColorA( 0.0745098, 0.454902, 0.490196, 0.392157 );
-                ColorA coh = ColorA( 0.160784, 0.133333, 0.121569, 0.784314 );
-                ColorA cf = ColorA( 0.988235, 0.207843, 0.298039, 0.784314 );
-                ColorA cfh = ColorA( 0.988235, 0.968627, 0.772549, 1 );
-                ColorA cp = ColorA( 0.0392157, 0.74902, 0.737255, 0.392157 );
-                ColorA cpo = ColorA( 0.0745098, 0.454902, 0.490196, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-
-            case CI_UI_THEME_VEGAN2:
-            {
-                ColorA cb = ColorA( 0.745098, 0.94902, 0.00784314, 0.196078 );
-                ColorA co = ColorA( 0.533333, 0.768627, 0.145098, 0.392157 );
-                ColorA coh = ColorA( 0.745098, 0.94902, 0.00784314, 0.784314 );
-                ColorA cf = ColorA( 0.917647, 0.992157, 0.901961, 0.784314 );
-                ColorA cfh = ColorA( 0.105882, 0.403922, 0.419608, 1 );
-                ColorA cp = ColorA( 0.317647, 0.584314, 0.282353, 0.392157 );
-                ColorA cpo = ColorA( 0.533333, 0.768627, 0.145098, 0.784314 );                
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-
-            case CI_UI_THEME_BERLIN:
-            {
-                ColorA cb = ColorA( 0.6, 0.894118, 1, 0.196078 );
-                ColorA co = ColorA( 0.294118, 0.34902, 0.419608, 0.392157 );
-                ColorA coh = ColorA( 0.6, 0.894118, 1, 0.784314 );
-                ColorA cf = ColorA( 0.968627, 0.309804, 0.309804, 0.784314 );
-                ColorA cfh = ColorA( 1, 0.231373, 0.231373, 1 );
-                ColorA cp = ColorA( 0.105882, 0.12549, 0.14902, 0.392157 );
-                ColorA cpo = ColorA( 0.294118, 0.34902, 0.419608, 0.784314 ); 
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                
-            case CI_UI_THEME_METALGEAR:
-            {
-                ColorA cb = ColorA( 0.2, 0.172549, 0.172549, 0.294118 );
-                ColorA co = ColorA( 0.0980392, 0.101961, 0.141176, 0.392157 );
-                ColorA coh = ColorA( 0.2, 0.172549, 0.172549, 0.784314 );
-                ColorA cf = ColorA( 0.980392, 0.396078, 0.341176, 0.784314 );
-                ColorA cfh = ColorA( 1, 1, 1, 1 );
-                ColorA cp = ColorA( 0, 0, 0, 0.392157 );
-                ColorA cpo = ColorA( 0.0980392, 0.101961, 0.141176, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                
-            case CI_UI_THEME_TEALLIME:
-            {
-                ColorA cb = ColorA( 0.105882, 0.403922, 0.419608, 0.294118 );
-                ColorA co = ColorA( 0.917647, 0.992157, 0.901961, 0.392157 );
-                ColorA coh = ColorA( 0.105882, 0.403922, 0.419608, 0.784314 );
-                ColorA cf = ColorA( 0.317647, 0.584314, 0.282353, 0.784314 );
-                ColorA cfh = ColorA( 0.533333, 0.768627, 0.145098, 1 );
-                ColorA cp = ColorA( 0.745098, 0.94902, 0.00784314, 0.392157 );
-                ColorA cpo = ColorA( 0.917647, 0.992157, 0.901961, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-
-            case CI_UI_THEME_VEGAN:
-            {
-                ColorA cb = ColorA( 0.317647, 0.584314, 0.282353, 0.294118 );
-                ColorA co = ColorA( 0.105882, 0.403922, 0.419608, 0.392157 );
-                ColorA coh = ColorA( 0.317647, 0.584314, 0.282353, 0.784314 );
-                ColorA cf = ColorA( 0.533333, 0.768627, 0.145098, 0.784314 );
-                ColorA cfh = ColorA( 0.745098, 0.94902, 0.00784314, 1 );
-                ColorA cp = ColorA( 0.917647, 0.992157, 0.901961, 0.392157 );
-                ColorA cpo = ColorA( 0.105882, 0.403922, 0.419608, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-
-            case CI_UI_THEME_RUSTIC:
-            {
-                ColorA cb = ColorA( 0.768627, 0.713725, 0.427451, 0.294118 );
-                ColorA co = ColorA( 0.968627, 0.427451, 0.235294, 0.392157 );
-                ColorA coh = ColorA( 0.768627, 0.713725, 0.427451, 0.784314 );
-                ColorA cf = ColorA( 0.835294, 0.152941, 0.0196078, 0.784314 );
-                ColorA cfh = ColorA( 0.941176, 0.827451, 0.466667, 1 );
-                ColorA cp = ColorA( 0.952941, 0.909804, 0.894118, 0.392157 );
-                ColorA cpo = ColorA( 0.968627, 0.427451, 0.235294, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                            
-            case CI_UI_THEME_MIDNIGHT:
-            {
-                ColorA cb = ColorA( 0.0431373, 0.282353, 0.419608, 0.294118 );
-                ColorA co = ColorA( 0.811765, 0.941176, 0.619608, 0.392157 );
-                ColorA coh = ColorA( 0.0431373, 0.282353, 0.419608, 0.784314 );
-                ColorA cf = ColorA( 0.231373, 0.52549, 0.52549, 0.784314 );
-                ColorA cfh = ColorA( 0.47451, 0.741176, 0.603922, 1 );
-                ColorA cp = ColorA( 0.658824, 0.858824, 0.658824, 0.392157 );
-                ColorA cpo = ColorA( 0.811765, 0.941176, 0.619608, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                                
-            case CI_UI_THEME_MINBLUE:
-            {
-                ColorA cb = ColorA( 0.996078, 0.976471, 0.941176, 0.294118 );
-                ColorA co = ColorA( 0.690196, 0.972549, 1, 0.392157 );
-                ColorA coh = ColorA( 0.996078, 0.976471, 0.941176, 0.784314 );
-                ColorA cf = ColorA( 0, 0.737255, 0.819608, 0.784314 );
-                ColorA cfh = ColorA( 0.462745, 0.827451, 0.870588, 1 );
-                ColorA cp = ColorA( 0.682353, 0.909804, 0.984314, 0.392157 );
-                ColorA cpo = ColorA( 0.690196, 0.972549, 1, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                            
-            case CI_UI_THEME_LIMESTONE:
-            {
-                ColorA cb = ColorA( 0.423529, 0.564706, 0.52549, 0.294118 );
-                ColorA co = ColorA( 0.988235, 0.329412, 0.388235, 0.392157 );
-                ColorA coh = ColorA( 0.423529, 0.564706, 0.52549, 0.784314 );
-                ColorA cf = ColorA( 0.662745, 0.8, 0.0941176, 0.784314 );
-                ColorA cfh = ColorA( 0.811765, 0.286275, 0.423529, 1 );
-                ColorA cp = ColorA( 0.921569, 0.917647, 0.737255, 0.392157 );
-                ColorA cpo = ColorA( 0.988235, 0.329412, 0.388235, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;                  
-                
-            case CI_UI_THEME_SPEARMINT:
-            {
-                ColorA cb = ColorA( 0.0980392, 0.54902, 0.0352941, 0.294118 );
-                ColorA co = ColorA( 1, 0.772549, 0.372549, 0.392157 );
-                ColorA coh = ColorA( 0.0980392, 0.54902, 0.0352941, 0.784314 );
-                ColorA cf = ColorA( 0.862745, 0.980392, 0.980392, 0.784314 );
-                ColorA cfh = ColorA( 0.937255, 0.345098, 0.552941, 1 );
-                ColorA cp = ColorA( 0.996078, 0.662745, 0.0705882, 0.392157 );
-                ColorA cpo = ColorA( 1, 0.772549, 0.372549, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;                  
-                
-            case CI_UI_THEME_MINPINK:
-            {
-                ColorA cb = ColorA( 0.862745, 0.980392, 0.980392, 0.294118 );
-                ColorA co = ColorA( 0.0980392, 0.54902, 0.0352941, 0.392157 );
-                ColorA coh = ColorA( 0.862745, 0.980392, 0.980392, 0.784314 );
-                ColorA cf = ColorA( 0.937255, 0.345098, 0.552941, 0.784314 );
-                ColorA cfh = ColorA( 0.996078, 0.662745, 0.0705882, 1 );
-                ColorA cp = ColorA( 1, 0.772549, 0.372549, 0.392157 );
-                ColorA cpo = ColorA( 0.0980392, 0.54902, 0.0352941, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                
-            case CI_UI_THEME_PEPTOBISMOL:
-            {
-                ColorA cb = ColorA( 0.87451, 0.0823529, 0.101961, 0.294118 );
-                ColorA co = ColorA( 0, 0.854902, 0.235294, 0.392157 );
-                ColorA coh = ColorA( 0.87451, 0.0823529, 0.101961, 0.784314 );
-                ColorA cf = ColorA( 0.956863, 0.952941, 0.156863, 0.784314 );
-                ColorA cfh = ColorA( 0.992157, 0.52549, 0.0117647, 1 );
-                ColorA cp = ColorA( 0, 0.796078, 0.905882, 0.392157 );
-                ColorA cpo = ColorA( 0, 0.854902, 0.235294, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                
-            case CI_UI_THEME_BILEBLUE:
-            {
-                ColorA cb = ColorA( 0.992157, 0.52549, 0.0117647, 0.294118 );
-                ColorA co = ColorA( 0.956863, 0.952941, 0.156863, 0.392157 );
-                ColorA coh = ColorA( 0.992157, 0.52549, 0.0117647, 0.784314 );
-                ColorA cf = ColorA( 0, 0.796078, 0.905882, 0.784314 );
-                ColorA cfh = ColorA( 0, 0.854902, 0.235294, 1 );
-                ColorA cp = ColorA( 0.87451, 0.0823529, 0.101961, 0.392157 );
-                ColorA cpo = ColorA( 0.956863, 0.952941, 0.156863, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                                
-            case CI_UI_THEME_COOLCLAY:
-            {
-                ColorA cb = ColorA( 0.6, 0.894118, 1, 0.294118 );
-                ColorA co = ColorA( 0.294118, 0.34902, 0.419608, 0.392157 );
-                ColorA coh = ColorA( 0.6, 0.894118, 1, 0.784314 );
-                ColorA cf = ColorA( 0.968627, 0.309804, 0.309804, 0.784314 );
-                ColorA cfh = ColorA( 1, 0.231373, 0.231373, 1 );
-                ColorA cp = ColorA( 0.105882, 0.12549, 0.14902, 0.392157 );
-                ColorA cpo = ColorA( 0.294118, 0.34902, 0.419608, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                                
-            case CI_UI_THEME_BLUEBLUE:
-            {
-                ColorA cb = ColorA( 0, 0.678431, 0.937255, 0.294118 );
-                ColorA co = ColorA( 1, 0.94902, 0, 0.392157 );
-                ColorA coh = ColorA( 0, 0, 0, 0.784314 );
-                ColorA cf = ColorA( 0, 0.678431, 0.937255, 0.784314 );
-                ColorA cfh = ColorA( 0.92549, 0, 0.54902, 1 );
-                ColorA cp = ColorA( 1, 0.94902, 0, 0.392157 );
-                ColorA cpo = ColorA( 0, 0, 0, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                                
-            case CI_UI_THEME_PINKPANTHER:
-            {
-                ColorA cb = ColorA( 0.92549, 0, 0.54902, 0.294118 );
-                ColorA co = ColorA( 0, 0, 0, 0.392157 );
-                ColorA coh = ColorA( 0, 0.678431, 0.937255, 0.784314 );
-                ColorA cf = ColorA( 0.92549, 0, 0.54902, 0.784314 );
-                ColorA cfh = ColorA( 1, 0.94902, 0, 1 );
-                ColorA cp = ColorA( 0, 0, 0, 0.392157 );
-                ColorA cpo = ColorA( 0, 0.678431, 0.937255, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                
-            case CI_UI_THEME_MAROON:
-            {
-                ColorA cb = ColorA( 0.396078, 0.588235, 0.619608, 0.294118 );
-                ColorA co = ColorA( 0.858824, 0.85098, 0.823529, 0.392157 );
-                ColorA coh = ColorA( 0.396078, 0.588235, 0.619608, 0.784314 );
-                ColorA cf = ColorA( 0.670588, 0.0784314, 0.172549, 0.784314 );
-                ColorA cfh = ColorA( 0.741176, 0.858824, 0.870588, 1 );
-                ColorA cp = ColorA( 0.803922, 0.831373, 0.423529, 0.392157 );
-                ColorA cpo = ColorA( 0.858824, 0.85098, 0.823529, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-       
-            case CI_UI_THEME_PINKLATTE:
-            {
-                ColorA cb = ColorA( 0.854902, 0.847059, 0.654902, 0.294118 );
-                ColorA co = ColorA( 0.498039, 0.780392, 0.686275, 0.392157 );
-                ColorA coh = ColorA( 0.854902, 0.847059, 0.654902, 0.784314 );
-                ColorA cf = ColorA( 1, 0.239216, 0.498039, 0.784314 );
-                ColorA cfh = ColorA( 1, 0.619608, 0.615686, 1 );
-                ColorA cp = ColorA( 0.247059, 0.721569, 0.686275, 0.392157 );
-                ColorA cpo = ColorA( 0.498039, 0.780392, 0.686275, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                                
-            case CI_UI_THEME_MINGREEN:
-            {
-                ColorA cb = ColorA( 1, 1, 1, 0.294118 );
-                ColorA co = ColorA( 0.94902, 0.901961, 0.760784, 0.392157 );
-                ColorA coh = ColorA( 1, 1, 1, 0.784314 );
-                ColorA cf = ColorA( 0.435294, 0.74902, 0.635294, 0.784314 );
-                ColorA cfh = ColorA( 0.74902, 0.721569, 0.682353, 1 );
-                ColorA cp = ColorA( 0.94902, 0.780392, 0.466667, 0.392157 );
-                ColorA cpo = ColorA( 0.94902, 0.901961, 0.760784, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                                
-            case CI_UI_THEME_HELLOYELLOW:
-            {
-                ColorA cb = ColorA( 1, 0.827451, 0, 0.294118 );
-                ColorA co = ColorA( 0.290196, 0.729412, 0.690196, 0.392157 );
-                ColorA coh = ColorA( 0.596078, 0.129412, 0, 0.784314 );
-                ColorA cf = ColorA( 1, 0.827451, 0, 0.784314 );
-                ColorA cfh = ColorA( 1, 0.960784, 0.619608, 1 );
-                ColorA cp = ColorA( 0.290196, 0.729412, 0.690196, 0.392157 );
-                ColorA cpo = ColorA( 0.596078, 0.129412, 0, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                                
-            case CI_UI_THEME_TEALTEAL:
-            {
-                ColorA cb = ColorA( 0.290196, 0.729412, 0.690196, 0.294118 );
-                ColorA co = ColorA( 1, 0.827451, 0, 0.392157 );
-                ColorA coh = ColorA( 1, 0.960784, 0.619608, 0.784314 );
-                ColorA cf = ColorA( 0.290196, 0.729412, 0.690196, 0.784314 );
-                ColorA cfh = ColorA( 0.596078, 0.129412, 0, 1 );
-                ColorA cp = ColorA( 1, 0.827451, 0, 0.392157 );
-                ColorA cpo = ColorA( 1, 0.960784, 0.619608, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                                
-            case CI_UI_THEME_RUSTICORANGE:
-            {
-                ColorA cb = ColorA( 0.419608, 0.333333, 0.188235, 0.294118 );
-                ColorA co = ColorA( 0.192157, 0.188235, 0.258824, 0.392157 );
-                ColorA coh = ColorA( 0.419608, 0.333333, 0.188235, 0.784314 );
-                ColorA cf = ColorA( 1, 0.427451, 0.141176, 0.784314 );
-                ColorA cfh = ColorA( 1, 0.921569, 0.419608, 1 );
-                ColorA cp = ColorA( 0.164706, 0.529412, 0.196078, 0.392157 );
-                ColorA cpo = ColorA( 0.192157, 0.188235, 0.258824, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                                
-            case CI_UI_THEME_TEALSALMON:
-            {
-                ColorA cb = ColorA( 0.305882, 0.521569, 0.533333, 0.294118 );
-                ColorA co = ColorA( 0.219608, 0.270588, 0.231373, 0.392157 );
-                ColorA coh = ColorA( 0.305882, 0.521569, 0.533333, 0.784314 );
-                ColorA cf = ColorA( 1, 0.27451, 0.329412, 0.784314 );
-                ColorA cfh = ColorA( 1, 0.835294, 0.415686, 1 );
-                ColorA cp = ColorA( 1, 0.996078, 0.827451, 0.392157 );
-                ColorA cpo = ColorA( 0.219608, 0.270588, 0.231373, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                                
-            case CI_UI_THEME_CITRUSBLUE:
-            {
-                ColorA cb = ColorA( 0.223529, 0.556863, 0.713725, 0.294118 );
-                ColorA co = ColorA( 0.133333, 0.407843, 0.533333, 0.392157 );
-                ColorA coh = ColorA( 0.223529, 0.556863, 0.713725, 0.784314 );
-                ColorA cf = ColorA( 1, 0.635294, 0, 0.784314 );
-                ColorA cfh = ColorA( 1, 0.839216, 0, 1 );
-                ColorA cp = ColorA( 1, 0.960784, 0, 0.392157 );
-                ColorA cpo = ColorA( 0.133333, 0.407843, 0.533333, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                                
-            case CI_UI_THEME_LIMEPURPLE:
-            {
-                ColorA cb = ColorA( 0.341176, 0.211765, 1, 0.294118 );
-                ColorA co = ColorA( 0.14902, 0.14902, 0.14902, 0.392157 );
-                ColorA coh = ColorA( 0.341176, 0.211765, 1, 0.784314 );
-                ColorA cf = ColorA( 0.905882, 1, 0.211765, 0.784314 );
-                ColorA cfh = ColorA( 1, 0.211765, 0.435294, 1 );
-                ColorA cp = ColorA( 0.137255, 0.454902, 0.870588, 0.392157 );
-                ColorA cpo = ColorA( 0.14902, 0.14902, 0.14902, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                                
-            case CI_UI_THEME_LIMESTONE2:
-            {
-                ColorA cb = ColorA( 0.396078, 0.384314, 0.45098, 0.294118 );
-                ColorA co = ColorA( 0.34902, 0.729412, 0.662745, 0.392157 );
-                ColorA coh = ColorA( 0.396078, 0.384314, 0.45098, 0.784314 );
-                ColorA cf = ColorA( 0.847059, 0.945098, 0.443137, 0.784314 );
-                ColorA cfh = ColorA( 0.988235, 1, 0.85098, 1 );
-                ColorA cp = ColorA( 0.25098, 0.0705882, 0.172549, 0.392157 );
-                ColorA cpo = ColorA( 0.34902, 0.729412, 0.662745, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                                
-            case CI_UI_THEME_COOLPURPLE:
-            {
-                ColorA cb = ColorA( 0.14902, 0.537255, 0.913725, 0.294118 );
-                ColorA co = ColorA( 0.0431373, 0.964706, 0.576471, 0.392157 );
-                ColorA coh = ColorA( 0.14902, 0.537255, 0.913725, 0.784314 );
-                ColorA cf = ColorA( 0.913725, 0.101961, 0.615686, 0.784314 );
-                ColorA cfh = ColorA( 0.964706, 0.713725, 0.0431373, 1 );
-                ColorA cp = ColorA( 0.964706, 0.94902, 0.0431373, 0.392157 );
-                ColorA cpo = ColorA( 0.0431373, 0.964706, 0.576471, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                
-            case CI_UI_THEME_GRAYRED:
-            {
-                ColorA cb = ColorA( 0.160784, 0.133333, 0.121569, 0.294118 );
-                ColorA co = ColorA( 0.0745098, 0.454902, 0.490196, 0.392157 );
-                ColorA coh = ColorA( 0.160784, 0.133333, 0.121569, 0.784314 );
-                ColorA cf = ColorA( 0.988235, 0.207843, 0.298039, 0.784314 );
-                ColorA cfh = ColorA( 0.988235, 0.968627, 0.772549, 1 );
-                ColorA cp = ColorA( 0.0392157, 0.74902, 0.737255, 0.392157 );
-                ColorA cpo = ColorA( 0.0745098, 0.454902, 0.490196, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                
-            case CI_UI_THEME_METALGEAR2:
-            {
-                ColorA cb = ColorA( 0.803922, 0.741176, 0.682353, 0.294118 );
-                ColorA co = ColorA( 0.478431, 0.356863, 0.243137, 0.392157 );
-                ColorA coh = ColorA( 0.803922, 0.741176, 0.682353, 0.784314 );
-                ColorA cf = ColorA( 0.980392, 0.294118, 0, 0.784314 );
-                ColorA cfh = ColorA( 0.980392, 0.980392, 0.980392, 1 );
-                ColorA cp = ColorA( 0.121569, 0.121569, 0.121569, 0.392157 );
-                ColorA cpo = ColorA( 0.478431, 0.356863, 0.243137, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                
-            case CI_UI_THEME_LIGHTPINK:
-            {
-                ColorA cb = ColorA( 0.619608, 0.117647, 0.298039, 0.294118 );
-                ColorA co = ColorA( 0.560784, 0.560784, 0.560784, 0.392157 );
-                ColorA coh = ColorA( 0.619608, 0.117647, 0.298039, 0.784314 );
-                ColorA cf = ColorA( 0.92549, 0.92549, 0.92549, 0.784314 );
-                ColorA cfh = ColorA( 1, 0.0666667, 0.407843, 1 );
-                ColorA cp = ColorA( 0.145098, 0.00784314, 0.0588235, 0.392157 );
-                ColorA cpo = ColorA( 0.560784, 0.560784, 0.560784, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                
-            case CI_UI_THEME_MINPINK2:
-            {
-                ColorA cb = ColorA( 0.92549, 0.92549, 0.92549, 0.294118 );
-                ColorA co = ColorA( 0.619608, 0.117647, 0.298039, 0.392157 );
-                ColorA coh = ColorA( 0.92549, 0.92549, 0.92549, 0.784314 );
-                ColorA cf = ColorA( 1, 0.0666667, 0.407843, 0.784314 );
-                ColorA cfh = ColorA( 0.145098, 0.00784314, 0.0588235, 1 );
-                ColorA cp = ColorA( 0.560784, 0.560784, 0.560784, 0.392157 );
-                ColorA cpo = ColorA( 0.619608, 0.117647, 0.298039, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                
-            case CI_UI_THEME_MAXPINK:
-            {
-                ColorA cb = ColorA( 1, 0.0784314, 0.341176, 0.294118 );
-                ColorA co = ColorA( 0.0392157, 0.0392157, 0.0392157, 0.392157 );
-                ColorA coh = ColorA( 0.890196, 0.964706, 1, 0.784314 );
-                ColorA cf = ColorA( 1, 0.0784314, 0.341176, 0.784314 );
-                ColorA cfh = ColorA( 1, 0.847059, 0.490196, 1 );
-                ColorA cp = ColorA( 0.0392157, 0.0392157, 0.0392157, 0.392157 );
-                ColorA cpo = ColorA( 0.890196, 0.964706, 1, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                
-            case CI_UI_THEME_MINYELLOW:
-            {
-                ColorA cb = ColorA( 0.898039, 0.894118, 0.854902, 0.294118 );
-                ColorA co = ColorA( 0.847059, 0.823529, 0.6, 0.392157 );
-                ColorA coh = ColorA( 0.898039, 0.894118, 0.854902, 0.784314 );
-                ColorA cf = ColorA( 0.960784, 0.878431, 0.219608, 0.784314 );
-                ColorA cfh = ColorA( 0.0901961, 0.0862745, 0.360784, 1 );
-                ColorA cp = ColorA( 0.745098, 0.74902, 0.619608, 0.392157 );
-                ColorA cpo = ColorA( 0.847059, 0.823529, 0.6, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-
-            case CI_UI_THEME_MINLIME:
-            {
-                ColorA cb = ColorA( 0.960784, 0.882353, 0.886275, 0.294118 );
-                ColorA co = ColorA( 0.882353, 0.717647, 0.929412, 0.392157 );
-                ColorA coh = ColorA( 0.960784, 0.882353, 0.886275, 0.784314 );
-                ColorA cf = ColorA( 0.72549, 0.870588, 0.317647, 0.784314 );
-                ColorA cfh = ColorA( 0.819608, 0.890196, 0.537255, 1 );
-                ColorA cp = ColorA( 0.878431, 0.282353, 0.568627, 0.392157 );
-                ColorA cpo = ColorA( 0.882353, 0.717647, 0.929412, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-
-            case CI_UI_THEME_MINORANGE:
-            {
-                ColorA cb = ColorA( 0.8, 0.8, 0.8, 0.294118 );
-                ColorA co = ColorA( 0.435294, 0.435294, 0.435294, 0.392157 );
-                ColorA coh = ColorA( 0.8, 0.8, 0.8, 0.784314 );
-                ColorA cf = ColorA( 1, 0.392157, 0, 0.784314 );
-                ColorA cfh = ColorA( 1, 1, 1, 1 );
-                ColorA cp = ColorA( 0.2, 0.2, 0.2, 0.392157 );
-                ColorA cpo = ColorA( 0.435294, 0.435294, 0.435294, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-
-            case CI_UI_THEME_GRAYDAY:
-            {
-                ColorA cb = ColorA( 0.694118, 0.776471, 0.8, 0.294118 );
-                ColorA co = ColorA( 1, 1, 1, 0.392157 );
-                ColorA coh = ColorA( 0.0784314, 0.0784314, 0.0784314, 0.784314 );
-                ColorA cf = ColorA( 0.694118, 0.776471, 0.8, 0.784314 );
-                ColorA cfh = ColorA( 1, 0.937255, 0.368627, 1 );
-                ColorA cp = ColorA( 1, 1, 1, 0.392157 );
-                ColorA cpo = ColorA( 0.0784314, 0.0784314, 0.0784314, 0.784314 );
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-
-            case CI_UI_THEME_MINBLACK:
-            {
-                ColorA cb = ColorA( 1, 1, 1, 0.294118 );
-                ColorA co = ColorA( 0.819608, 0.905882, 0.317647, 0.392157 );
-                ColorA coh = ColorA( 1, 1, 1, 0.784314 );
-                ColorA cf = ColorA( 0, 0, 0, 0.784314 );
-                ColorA cfh = ColorA( 0.14902, 0.678431, 0.894118, 1 );
-                ColorA cp = ColorA( 0.301961, 0.737255, 0.913725, 0.392157 );
-                ColorA cpo = ColorA( 0.819608, 0.905882, 0.317647, 0.784314 );                                
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break;  
-                
-            default:
-            {
-                ColorA cb = CI_UI_COLOR_BACK; 
-                ColorA co = CI_UI_COLOR_OUTLINE; 
-                ColorA coh = CI_UI_COLOR_OUTLINE_HIGHLIGHT;
-                ColorA cf = CI_UI_COLOR_FILL; 
-                ColorA cfh = CI_UI_COLOR_FILL_HIGHLIGHT;
-                ColorA cp = CI_UI_COLOR_PADDED;
-                ColorA cpo = CI_UI_COLOR_PADDED_OUTLINE;
-                setUIColors( cb, co, coh, cf, cfh, cp, cpo );                                 
-            }
-                break; 
-        }
-    }
+    ciUIValuePlotter* addValuePlotter(string _name, int _bufferSize, float _min, float _max, float *_value, float _h = CI_UI_GLOBAL_GRAPH_HEIGHT);
+    ciUIValuePlotter* addValuePlotter(string _name, int _bufferSize, float _min, float _max, float *_value, float _w, float _h);
     
-    
-	void setWidgetColor(int _target, ColorA _color)
-	{
-		switch (_target) 
-		{
-			case CI_UI_WIDGET_COLOR_BACK:
-				for(int i = 0; i < widgets.size(); i++)
-				{
-					widgets[i]->setColorBack(_color); 
-				}				
-				break;
+    ciUI2DGraph *add2DGraph(string _name, ciUIVec2f _rangeX, ciUIVec2f _rangeY, int _bufferSize, float * _xValues, float * _yValues);
+    ciUI2DGraph *add2DGraph(string _name, ciUIVec2f _rangeX, ciUIVec2f _rangeY, int _bufferSize, float * _xValues, float * _yValues, float _w, float _h, float _x = 0, float _y = 0);
 
-			case CI_UI_WIDGET_COLOR_OUTLINE:
-				for(int i = 0; i < widgets.size(); i++)
-				{
-					widgets[i]->setColorOutline(_color); 
-				}				
-				break;
-			
-			case CI_UI_WIDGET_COLOR_OUTLINE_HIGHLIGHT:
-				for(int i = 0; i < widgets.size(); i++)
-				{
-					widgets[i]->setColorOutlineHighlight(_color); 
-				}				
-				break;
-			
-			case CI_UI_WIDGET_COLOR_FILL:
-				for(int i = 0; i < widgets.size(); i++)
-				{
-					widgets[i]->setColorFill(_color); 
-				}				
-				break;
-			
-			case CI_UI_WIDGET_COLOR_FILL_HIGHLIGHT:
-				for(int i = 0; i < widgets.size(); i++)
-				{
-					widgets[i]->setColorFillHighlight(_color); 
-				}					
-				break;
-                
-			case CI_UI_WIDGET_COLOR_PADDED:
-				for(int i = 0; i < widgets.size(); i++)
-				{
-					widgets[i]->setColorPadded(_color); 
-				}					
-				break;
-                
-			case CI_UI_WIDGET_COLOR_PADDED_OUTLINE:
-				for(int i = 0; i < widgets.size(); i++)
-				{
-					widgets[i]->setColorPaddedOutline(_color); 
-				}					
-				break;                
-				
-			default:
-				break;
-		}
-	}
-    
-    ciUIWidget *getWidget(string _name)
-	{
-		return widgets_map[_name]; 
-	}
-	
-    void removeWidget(string _name)    
-    {
-        ciUIWidget *toDelete = getWidget(_name);
-        if(toDelete != NULL)
-        {
-            removeWidget(toDelete);
-        }    
-    }
-    
-	void setDrawPadding(bool _draw_padded_rect)
-	{
-		draw_padded_rect = _draw_padded_rect; 
-	}
+    ciUIImageToggle *addImageToggle(string _name, string _path, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIImageToggle *addImageToggle(string _name, string _path, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIImageToggle *addImageToggle(string _name, string _path, bool *_value, int _size = CI_UI_FONT_SMALL);
+    ciUIImageToggle *addImageToggle(string _name, string _path, bool _value, int _size = CI_UI_FONT_SMALL);
 
-    void setDrawWidgetPadding(bool _draw_padded_rect)
-    {
-		for(int i = 0; i < widgets.size(); i++)
-		{
-			widgets[i]->setDrawPadding(_draw_padded_rect); 
-		}		        
-    }
+    ciUIImageButton *addImageButton(string _name, string _path, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIImageButton *addImageButton(string _name, string _path, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIImageButton *addImageButton(string _name, string _path, bool *_value, int _size = CI_UI_FONT_SMALL);
+    ciUIImageButton *addImageButton(string _name, string _path, bool _value, int _size = CI_UI_FONT_SMALL);
+    
+    ciUIMultiImageButton *addMultiImageButton(string _name, string _path, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageButton *addMultiImageButton(string _name, string _path, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageButton *addMultiImageButton(string _name, string _path, bool *_value, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageButton *addMultiImageButton(string _name, string _path, bool _value, int _size = CI_UI_FONT_SMALL);
+    
+    ciUIMultiImageToggle *addMultiImageToggle(string _name, string _path, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageToggle *addMultiImageToggle(string _name, string _path, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageToggle *addMultiImageToggle(string _name, string _path, bool *_value, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageToggle *addMultiImageToggle(string _name, string _path, bool _value, int _size = CI_UI_FONT_SMALL);
+    
+    ciUITextArea* addTextArea(string _name, string _textstring, int _size = CI_UI_FONT_MEDIUM);
+    
+    ciUISortableList *addSortableList(string _name, vector<std::string> _items, int _size = -1, int _itemHeight = 30);
+    
+    void resetPlacer();
+    void setPlacer(ciUIWidget *referenceWidget);
+	void setLabelFont(ciUILabel *label);
+    void setRetinaResolution();
+    void setGlobalSliderHeight(float _globalSliderHeight);
+    void setGlobalGraphHeight(float _globalGraphHeight);
+    void setGlobalButtonDimension(float _globalButtonDimension);
+    void setGlobalSpacerHeight(float _globalSpacerHeight);
+    float getGlobalSliderHeight();
+    float getGlobalGraphHeight();
+    float getGlobalButtonDimension();
+    float getGlobalSpacerHeight();
+    void setGlobalCanvasWidth(float _globalCanvasWidth);
+    float getGlobalCanvasWidth();
+	void setWidgetPosition(ciUIWidgetPosition _position, int _align = -1);
+    void setWidgetFontSize(ciUIWidgetFontType _widgetFontSize);
+    
+    ciUIWidgetPosition getWidgetPosition();
+    ciUIWidgetFontType getWidgetFontSize();
+	void triggerEvent(ciUIWidget *child);
+    void setUIColors(ciUIColor &cb, ciUIColor &co, ciUIColor &coh, ciUIColor &cf, ciUIColor &cfh, ciUIColor &cp, ciUIColor &cpo);
+    void setTheme(int theme);
+    ciUIColor& getWidgetColorPadded();
+	ciUIColor& getWidgetColorPaddedOutline();
+	ciUIColor& getWidgetColorBack();
+	ciUIColor& getWidgetColorOutline();
+	ciUIColor& getWidgetColorOutlineHighlight();
+	ciUIColor& getWidgetColorFill();
+	ciUIColor& getWidgetColorFillHighlight();
+    void setWidgetDrawingProperties(ciUIWidget *widget);
+    void setWidgetColor(ciUIWidget *widget);
+	void setWidgetColor(int _target, ciUIColor _color);
+    ciUIWidget *getWidget(string _name, int widgetID = -1);
+    void removeWidget(string _name);
+    virtual void setPosition(int x, int y);
+    virtual void setHeight(float _height);
+    virtual void setWidth(float _width);
+    virtual void setDimensions(float _width, float _height);
+	void setDrawPadding(bool _draw_padded_rect);
+    void setDrawWidgetPadding(bool _draw_padded_rect);
+    bool getDrawWidgetPadding();
+	void setDrawPaddingOutline(bool _draw_padded_rect_outline);
+    void setDrawWidgetPaddingOutline(bool _draw_padded_rect_outline);
+    bool getDrawWidgetPaddingOutline();
+    vector<ciUIWidget*> getWidgets();
+    vector<ciUIWidget*> getWidgetsOfType(ciUIWidgetType type);
+	ofEvent<ciUIEventArgs> newGUIEvent;
 
-	void setDrawPaddingOutline(bool _draw_padded_rect_outline)
-	{
-		draw_padded_rect_outline = _draw_padded_rect_outline; 
-	}
+protected:
+    void pushbackWidget(ciUIWidget *widget, bool addWidgetToFront = false);
+    //Easy Font setting contributed from Colin Duffy (colin@tomorrowevening.com)
+    bool updateFont(ciUIWidgetFontType _kind, string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours=false, float simplifyAmt=0.3, int dpi=0);
+    void checkForKeyFocus(ciUIWidget *child);
 
-    void setDrawWidgetPaddingOutline(bool _draw_padded_rect_outline)
-	{
-		for(int i = 0; i < widgets.size(); i++)
-		{
-			widgets[i]->setDrawPaddingOutline(_draw_padded_rect_outline); 
-		}		
-	}
+	ciUIFont *font_large;
+	ciUIFont *font_medium; 		
+	ciUIFont *font_small;
+    ciUIEventArgs *GUIevent;
 
-    
-    vector<ciUIWidget*> getWidgets()
-    {
-        return widgets;
-    }
-    
-    vector<ciUIWidget*> getWidgetsOfType(ciUIWidgetType type)
-    {
-        vector<ciUIWidget*> widgetToReturn; 
-        for(int i = 0; i < widgets.size(); i++)
-		{
-            if(widgets[i]->getKind() == type)
-            {
-                widgetToReturn.push_back(widgets[i]);
-            }
-		}	 
-        return widgetToReturn;                                         
-    }
-
-    template<typename T> ci::CallbackId registerUIEvents( T *obj, void (T::*callback)( ciUIEvent *event ) )
-    {
-        return uiEventCallbackMgr.registerCb( std::bind1st( std::mem_fun( callback ), obj ) );
-    }
-    
-    void unregisterUIEvents( ci::CallbackId id ) 
-    {
-        uiEventCallbackMgr.unregisterCb( id ); 
-    }
-
-	
-protected:    
-    
-    void pushbackWidget(ciUIWidget *widget)
-    {
-        widget->setID(uniqueIDs); 
-        uniqueIDs++;
-        widgets.push_back(widget);    
-		widgets_map[widget->getName()] = widget;                             
-    }
-    
-    ci::CallbackMgr<void(ciUIEvent*)> uiEventCallbackMgr;
-    
-    
-#if defined( CINDER_COCOA_TOUCH )
-    app::AppCocoaTouch *mApp;
-    ci::CallbackId mCbTouchesBegan, mCbTouchesMoved, mCbTouchesEnded; 
-#else
-    app::App *mApp;    	
-    ci::CallbackId mCbMouseDown, mCbMouseDrag, mCbMouseUp, mCbMouseMove;
-    ci::CallbackId mCbKeyDown, mCbKeyUp;
-#endif 
-    
-    gl::TextureFontRef font_large; 	
-    gl::TextureFontRef font_medium; 		
-    gl::TextureFontRef font_small;
- 	
-    Font fontLarge; 
-    Font fontMedium; 
-    Font fontSmall;     
-    
-    
-	ciUIEvent *GUIevent; 
-    int state; 
+    bool bInsideCanvas;
     bool hasSharedResources;
     
-    map<string, ciUIWidget*> widgets_map;     
-	vector<ciUIWidget*> widgets; 
-	vector<ciUIWidget*> widgetsWithState;     
-	ciUIWidget *lastAdded; 
-	ciUIWidget *activeFocusedWidget; 
-	bool enable_highlight_outline; 
-	bool enable_highlight_fill; 	
-	bool enabled; 
+    multimap<string, ciUIWidget*> widgets_map;
+	vector<ciUIWidget*> widgets;
+    map<string, ciUIWidget*> widgetsAreModal;
+	vector<ciUIWidget*> widgetsWithState;
+	vector<ciUIWidget*> lastAddeds; 
+
+	bool enable_highlight_outline;
+	bool enable_highlight_fill;
+	bool enabled;
+    bool bTriggerWidgetsUponLoad;
     int uniqueIDs; 
     bool hasKeyBoard; 
     
-    float widgetSpacing; 
+    float widgetSpacing;
+    float globalCanvasWidth;
+    float globalSliderHeight;
+    float globalGraphHeight;
+    float globalButtonDimension;
+    float globalSpacerHeight;
     
     string fontName;
 
-    bool updateFont(ciUIWidgetFontType _kind, string filename, int fontsize) 
-    {
-        bool success = true;
-        switch(_kind)
-        {
-            case CI_UI_FONT_LARGE:              
-                fontLarge = Font( loadResource(filename), fontsize);                
-                font_large = gl::TextureFont::create(fontLarge);
-                break; 
-                
-            case CI_UI_FONT_MEDIUM:
-                fontMedium = Font( loadResource(filename), fontsize);                
-                font_medium = gl::TextureFont::create(fontMedium);
-                
-                break; 
-                
-            case CI_UI_FONT_SMALL:
-                fontSmall = Font( loadResource(filename), fontsize);                
-                font_small = gl::TextureFont::create(fontSmall);
-
-                break; 
-
-        }
-        return success;
-    }
+    ciUIWidgetPosition widgetPosition;
+    ciUIWidgetAlignment widgetAlign;
+    ciUIWidgetFontType widgetFontSize;
     
-    void checkForKeyFocus(ciUIWidget *child)
-    {
-        if(child->getKind() == CI_UI_WIDGET_TEXTINPUT)
-        {
-            ciUITextInput *textinput = (ciUITextInput *) child;         
-            switch(textinput->getTriggerType())
-            {
-                case CI_UI_TEXTINPUT_ON_FOCUS:
-                {
-                    cout << "has focus" << endl; 
-                    hasKeyBoard = true;         
-                }
-                    break; 
-                    
-                case CI_UI_TEXTINPUT_ON_ENTER:
-                {
-                    cout << "has focus" << endl;                     
-                    hasKeyBoard = true; 
-                }        
-                    break; 
-                    
-                case CI_UI_TEXTINPUT_ON_UNFOCUS:
-                {
-                    cout << "lost focus" << endl;  
-                    hasKeyBoard = false; 
-                }        
-                    break; 
-                    
-                default:
-                {
-                    hasKeyBoard = false; 
-                }
-                    break;                     
-            }
-        }
-    }
+	ciUIColor widget_color_back;
+	ciUIColor widget_color_outline;
+	ciUIColor widget_color_outline_highlight;
+	ciUIColor widget_color_fill;
+	ciUIColor widget_color_fill_highlight;
+    ciUIColor widget_color_padded_rect;
+	ciUIColor widget_color_padded_rect_outline;
     
+    bool bDrawWidgetPadding;
+    bool bDrawWidgetPaddingOutline;    
 };
-
-#endif
-

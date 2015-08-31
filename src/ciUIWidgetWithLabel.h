@@ -22,37 +22,27 @@
  
  **********************************************************************************/
 
-#ifndef CIUI_WIDGETWITHLABEL
-#define CIUI_WIDGETWITHLABEL
+#pragma once
 
 #include "ciUIWidget.h"
-#include "ciUILabel.h"
+
+class ciUILabel; 
 
 class ciUIWidgetWithLabel : public ciUIWidget           
 {
 public:
-    ciUIWidgetWithLabel() : ciUIWidget() 
-    {        
- 
-    }
+    ciUIWidgetWithLabel();
+    virtual ~ciUIWidgetWithLabel();
+    virtual bool hasLabel();
+    virtual void setVisible(bool _visible);
+	virtual void setParent(ciUIWidget *_parent);
+    virtual ciUILabel* getLabelWidget();
+    virtual void setLabelVisible(bool _visible);
+    virtual void toggleColors();
+    virtual void setModal(bool _modal);
+    virtual bool hasState();
     
-    virtual ~ciUIWidgetWithLabel() 
-    {
-
-    }    
-    
-    virtual bool hasLabel()
-    {
-        return true; 
-    }
-    
-    virtual ciUILabel* getLabelWidget()
-    {
-        return label;
-    }
-    
-protected:    
+protected:
     ciUILabel *label;
+    bool drawLabel;    
 };
-
-#endif

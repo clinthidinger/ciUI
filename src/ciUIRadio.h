@@ -22,177 +22,32 @@
  
  **********************************************************************************/
 
-#ifndef CIUI_RADIO
-#define CIUI_RADIO
+#pragma once
 
 #include "ciUIWidgetWithLabel.h"
+#include "ciUIDefines.h"
 #include "ciUIToggle.h"
 
-class ciUIRadio : public ciUIWidgetWithLabel
+class ciUIRadio : public ciUIWidget
 {
 public:
-    ciUIRadio(float x, float y, float w, float h, string _name, vector<string> names, int _orientation)
-    {
-        rect = new ciUIRectangle(x,y,w,h); 
-        init(w, h, _name, names, _orientation);         
-    }
-
-    ciUIRadio(float w, float h, string _name, vector<string> names, int _orientation)
-    {
-        rect = new ciUIRectangle(0,0,w,h); 
-        init(w, h, _name, names, _orientation);         
-    }    
+    ciUIRadio(string _name, vector<string> names, int _orientation, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    void init(string _name, vector<string> names, int _orientation, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    void setVisible(bool _visible);
+    bool hasToggle(string _name); 
+	void activateToggle(string _name);
+    void triggerSelf();
+	void setParent(ciUIWidget *_parent);
+	vector<ciUIToggle *> getToggles();
+	ciUIToggle* getActive();
+	string getActiveName();
+    int getValue();
+	void triggerEvent(ciUIWidget *child);
+    ciUIToggle *addToggle(ciUIToggle *toggle);
     
-    void init(float w, float h, string _name, vector<string> names, int _orientation)
-    {
-		name = _name; 		
-		kind = CI_UI_WIDGET_RADIO; 		
-        
-        draw_back = false; 
-        orientation = _orientation; 
-		
-		paddedRect = new ciUIRectangle(-padding, -padding, w+padding*2.0, h+padding*2.0);
-		paddedRect->setParent(rect); 
-		
-		label = new ciUILabel(0,0,(name+" LABEL"), name, CI_UI_FONT_MEDIUM); 
-		label->setParent(label); 
-		label->setRectParent(rect); 
-        label->setEmbedded(true);
-        
-		for(int i = 0; i < names.size(); i++)
-		{
-			string tname = names[i]; 
-			ciUIToggle *toggle = new ciUIToggle(0,0, w, h, false, tname); 
-			toggles.push_back(toggle); 
-		}
-        allowMultiple = false; 
-    }
-        
-    virtual void setDrawPadding(bool _draw_padded_rect)
-	{
-		draw_padded_rect = _draw_padded_rect; 
-        label->setDrawPadding(false);
-		for(int i = 0; i < toggles.size(); i++)
-		{
-			ciUIToggle *t = toggles[i]; 			
-            t->setDrawPadding(false);             
-        }           
-	}
-    
-    virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline)
-	{
-		draw_padded_rect_outline = _draw_padded_rect_outline; 
-        label->setDrawPaddingOutline(false);
-		for(int i = 0; i < toggles.size(); i++)
-		{
-			ciUIToggle *t = toggles[i]; 			
-            t->setDrawPaddingOutline(false);             
-        }        
-	}  
-    
-	ciUILabel *getLabel()
-	{
-		return label; 
-	}
-	    
-    void setVisible(bool _visible)
-    {
-        visible = _visible; 
-        label->setVisible(visible); 
-		for(int i = 0; i < toggles.size(); i++)
-		{
-			ciUIToggle *t = toggles[i]; 			
-            t->setVisible(visible);             
-        }
-    }
-	void activateToggle(string _name)
-	{
-		for(int i = 0; i < toggles.size(); i++)
-		{
-			ciUIToggle *t = toggles[i]; 			
-			if(!(t->getName().compare(_name.c_str())))
-			{
-				t->setValue(true); 					
-			}
-			else 
-			{
-				t->setValue(false); 
-			}			
-		}
-	}
-	
-	void setParent(ciUIWidget *_parent)
-	{
-		parent = _parent;         
-		rect->setParent(parent->getRect());
-        
-		float tWidth = label->getPaddingRect()->getWidth(); 
-		float tHeight = label->getPaddingRect()->getHeight(); 
-
-		float xt = 0; 
-		float yt = label->getPaddingRect()->getHeight();
-		
-		for(int i = 0; i < toggles.size(); i++)
-		{
-			ciUIToggle *t = toggles[i]; 			
-			t->setParent(this); 			
-             t->getRect()->setParent(rect);
-			
-			if(orientation == CI_UI_ORIENTATION_HORIZONTAL)
-			{
-				t->getRect()->setX(xt); 
-				t->getRect()->setY(yt); 				
-				xt+=t->getPaddingRect()->getWidth(); 
-				tHeight = label->getPaddingRect()->getHeight()+t->getPaddingRect()->getHeight(); 								
-			}			
-			else 
-			{
-				xt+=t->getPaddingRect()->getWidth(); 				
-				t->getRect()->setY(yt); 			
-				if(t->getPaddingRect()->getWidth() > tWidth)
-				{
-					tWidth = t->getPaddingRect()->getWidth(); 
-				}
-				tHeight+=t->getPaddingRect()->getHeight(); 				
-				yt +=t->getPaddingRect()->getHeight(); 
-			}			
-		}
-        
-        if(orientation == CI_UI_ORIENTATION_HORIZONTAL)
-        {            
-            if(xt > tWidth)
-            {
-                tWidth = xt; 
-            }
-        }
-        rect->setHeight(tHeight);
-		tHeight += padding; 
-		paddedRect->setWidth(tWidth); 	
-		paddedRect->setHeight(tHeight); 			
-	}	
-	
-	vector<ciUIToggle *> getToggles()
-	{
-		return toggles; 
-	}
-	
-	void triggerEvent(ciUIWidget *child)
-	{
-        if(!allowMultiple)
-        {
-            activateToggle(child->getName().c_str()); 
-        }
-		if(parent != NULL)
-		{
-			parent->triggerEvent(child); 
-		}
-	}	
-    
-    
-protected:    //inherited: ciUIRectangle *rect; ciUIWidget *parent; 
+protected:
+    int value; 
 	int orientation; 
-	vector<ciUIToggle *> toggles; 		   
-    bool allowMultiple;
+	vector<ciUIToggle *> toggles; 		
+    ciUIToggle *active;     
 }; 
-
-#endif

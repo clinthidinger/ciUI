@@ -22,364 +22,63 @@
  
  **********************************************************************************/
 
-#ifndef CIUI_TEXT_INPUT
-#define CIUI_TEXT_INPUT
+#pragma once
 
 #include "ciUIWidgetWithLabel.h"
+#include "ciUIDefines.h"
 
 class ciUITextInput : public ciUIWidgetWithLabel
 {
 public:
-    ciUITextInput(float x, float y, float w, string _name, string _textstring, int _size, float h = 0)
-    {
-        rect = new ciUIRectangle(x,y,w,h); 
-        init(w, _name, _textstring, _size); 
-    }
-    
-    ciUITextInput(float w, string _name, string _textstring, int _size, float h = 0)
-    {
-        rect = new ciUIRectangle(0,0,w,h); 
-        init(w, _name, _textstring, _size); 
-    }    
-    
-    void init(float w, string _name, string _textstring, int _size)
-    {
-		name = _name; 		
-		kind = CI_UI_WIDGET_TEXTINPUT; 		
-		textstring = _textstring; 
-		defaultstring = _textstring; 
-		displaystring = _textstring; 
-        
-		paddedRect = new ciUIRectangle(-padding, -padding, w+padding*2.0, padding*2.0);
-		paddedRect->setParent(rect); 
-        
-		clicked = false;                                            //the widget's value
-        autoclear = true; 
-		
-		label = new ciUILabel(padding*2.0,0,(name+" LABEL"), _size); 
-		label->setParent(label); 
-		label->setRectParent(rect); 
-        label->setEmbedded(true);
-        
-		triggerType = CI_UI_TEXTINPUT_ON_FOCUS;
-		cursorWidth = 0; spaceOffset = 0; 		
-		theta = 0;         
-    }
-    
-    virtual void setDrawPadding(bool _draw_padded_rect)
-	{
-		draw_padded_rect = _draw_padded_rect; 
-        label->setDrawPadding(false);
-	}
-    
-    virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline)
-	{
-		draw_padded_rect_outline = _draw_padded_rect_outline; 
-        label->setDrawPaddingOutline(false);
-	}  
-    
-    virtual void drawFill() 
-    {
-        if(draw_fill)
-        {         
-            ci::gl::color(color_fill); 
-            rect->draw(); 
-        }
-        if(clicked)
-		{						            
-			ci::gl::color(label->getColorFillHighlight().r,label->getColorFillHighlight().g,label->getColorFillHighlight().b, fabs(cos(theta))); 
-			theta +=0.05; 
-			
-			spaceOffset = label->getStringWidth(displaystring)-cursorWidth; 
-            if(spaceOffset > rect->getWidth()-padding*4.0)
-            {
-                spaceOffset = rect->getWidth()-padding*4.0; 
-            }
-			float x = label->getRect()->getX()+spaceOffset;			
-			float y = label->getRect()->getY()-padding; 
-			float t = label->getRect()->getHeight()+padding*2.0; 			
-            ci::gl::drawSolidRect(Rectf(x, y, x+cursorWidth, y+t)); 
-		}		
-    }
-	
-    void mouseMove(int x, int y ) 
-    {
-        if(rect->inside(x, y))
-        {
-            state = CI_UI_STATE_OVER;         			
-        }    
-        else
-        {
-            state = CI_UI_STATE_NORMAL;        
-            unClick(); 
-        }
-        stateChange();         
-    }
-    
-    void mouseDrag(int x, int y, int button) 
-    {
-        if(hit)
-        {
-            state = CI_UI_STATE_DOWN;         
-        }    
-        else
-        {
-            state = CI_UI_STATE_NORMAL;  
-            unClick(); 
-        }
-        stateChange();     
-    }
-    
-    void mouseDown(int x, int y, int button) 
-    {
-        if(rect->inside(x, y))
-        {
-			if(state == CI_UI_STATE_OVER)
-			{
-				clicked = true; 
-				theta = 0; 
-                hit = true; 
-			}
-#if defined( CINDER_COCOA_TOUCH )
-			clicked = true;
-			theta = 0;
-			hit = true;
-#endif
-            state = CI_UI_STATE_DOWN;     
-			triggerType = CI_UI_TEXTINPUT_ON_FOCUS; 
-			triggerEvent(this); 			
-        }    
-        else
-        {
-            state = CI_UI_STATE_NORMAL;        
-        }
-        stateChange();         
-    }
-    
-    void mouseUp(int x, int y, int button) 
-    {
-        if(hit)
-        {
-#if defined( CINDER_COCOA_TOUCH )
-            state = CI_UI_STATE_NORMAL;        
-#else            
-            state = CI_UI_STATE_OVER; 
-#endif 
-        }    
-        else
-        {
-            state = CI_UI_STATE_NORMAL;         
-        }
-        hit = false; 
-        stateChange();         
-    }
-	
-    void keyDown( KeyEvent &event )
-    {    
-		if(clicked)            
-		{
-            switch (event.getCode()) 
-			{
-				case ci::app::KeyEvent::KEY_BACKSPACE:
-					if (textstring.size() > 0) 
-					{
-						textstring.erase(textstring.size()-1); 
-                        displaystring = textstring;                         
-                        while(label->getStringWidth(displaystring) > rect->getWidth()-padding*4.0)
-                        {
-                            string::iterator it;
-                            it=displaystring.begin();
-                            displaystring.erase (it);                    
-                        }
-						label->setLabel(displaystring);                           
-					}
-					break;
-					
-				case ci::app::KeyEvent::KEY_RETURN:
-					triggerType = CI_UI_TEXTINPUT_ON_ENTER; 					
-					triggerEvent(this); 			
-					if(autoclear)
-					{
-						textstring.clear(); 
-                        displaystring = textstring;                         
-						label->setLabel(displaystring); 
-					}
-					break;
-						
-                        
-				default:
-                {
-                    textstring+=event.getChar(); 
-                    displaystring+=event.getChar(); 
-                    while(label->getStringWidth(displaystring) > rect->getWidth()-padding*4.0)
-                    {
-                        string::iterator it;
-                        it=displaystring.begin();
-                        displaystring.erase (it);                    
-                    }
-                    label->setLabel(displaystring);                         
-                }
-					break;
-			}
-            float h = label->getRect()->getHeight(); 			
-			float ph = rect->getHeight(); 
-			label->getRect()->setY(ph/2.0 - h/2.0); 
-        }        
-    }
-    
-    void unClick()
-    {
-        if(clicked)
-        {
-            clicked = false;          
-			triggerType = CI_UI_TEXTINPUT_ON_UNFOCUS; 
-			triggerEvent(this);             
-        }     
-    }
-    void stateChange()
-    {        
-        switch (state) {
-            case CI_UI_STATE_NORMAL:
-            {            
-                draw_fill_highlight = false;             
-                draw_outline_highlight = false;  
-				label->unfocus(); 								
-            }
-                break;
-            case CI_UI_STATE_OVER:
-            {
-                draw_fill_highlight = false;            
-                draw_outline_highlight = true;  
-				label->focus(); 								
-            }
-                break;
-            case CI_UI_STATE_DOWN:
-            {
-                draw_fill_highlight = false;            
-                draw_outline_highlight = true;             
-				label->focus(); 					
-            }
-                break;
-            case CI_UI_STATE_SUSTAINED:
-            {
-                draw_fill_highlight = false;            
-                draw_outline_highlight = false;                         
-				label->unfocus(); 								
-            }
-                break;                            
-            default:
-                break;
-        }        
-    }
-	
-    void setVisible(bool _visible)
-    {
-        visible = _visible; 
-        label->setVisible(visible); 
-    }
-    
-	bool isClicked()
-	{
-		return clicked; 
-	}
-	
-	ciUILabel *getLabel()
-	{
-		return label; 
-	}
-	
-	string getTextString()
-	{
-		return textstring; 
-	}
-	
-	int getTriggerType()
-	{
-		return triggerType; 
-	}
-	
-	void setTextString(string s)	
-	{
-		textstring = ""; 
-		string temp = ""; 
-		
-        int length = s.length(); 
-        
-        if(length > 0)
-        {
-            for(int i = 0; i < length; i++)
-            {
-                temp+=s.at(i); 
-                float newWidth = label->getStringWidth(temp); 
-                
-                if(newWidth < rect->getWidth()-padding*4.0)
-                {
-                    textstring+=s.at(i); 
-                    label->setLabel(textstring); 
-                }				
-            }		
-        }
-        else
-        {
-            textstring = s; 
-            label->setLabel(textstring);                
-        }
-        float h = label->getRect()->getHeight(); 			
-        float ph = rect->getHeight(); 
-        label->getRect()->setY(ph/2.0 - h/2.0);         
-        displaystring = textstring; 
-	}
-	
-	void setParent(ciUIWidget *_parent)
-	{
-		parent = _parent; 
-        if(rect->getHeight() == 0)
-        {
-            rect->setHeight(label->getPaddingRect()->getHeight()+padding*2.0); 
-        }
-        label->setLabel(textstring);
-		ciUIRectangle *labelrect = label->getRect(); 
-		float h = labelrect->getHeight(); 
-		float ph = rect->getHeight(); 	
-		
-		labelrect->setY(ph/2.0 - h/2.0); 
-		defaultY = labelrect->getRawY()+labelrect->getHeight(); 
-		defaultX = labelrect->getRawX(); 
- 		
-		paddedRect->setHeight(rect->getHeight()+padding*2.0);
-		
-		cursorWidth = label->getStringWidth("."); 
-        
-        while(label->getStringWidth(textstring) > rect->getWidth()-padding*4.0)
-        {
-            string::iterator it;
-            it=textstring.begin();
-            textstring.erase (it);                    
-        }        
-        
-        defaultstring = textstring; 
-		displaystring = textstring; 
-        setTextString(textstring);        
-	}	
-	
-	void setAutoClear(bool _autoclear)
-	{
-		autoclear = _autoclear; 
-	}
+    ciUITextInput(string _name, string _textstring, float w, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    void init(string _name, string _textstring, float w, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    virtual void setDrawPadding(bool _draw_padded_rect);
+    virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline);
+    virtual void drawFill();
+    void mouseMoved(int x, int y);
+    void mouseDragged(int x, int y, int button);
+    void mousePressed(int x, int y, int button);
+    void mouseReleased(int x, int y, int button);
+    void keyPressed(int key);
+    void unClick();
+    void stateChange();
+	bool isClicked();
+	string getTextString();
+    int getIntValue();
+    float getFloatValue();
+    void setInputTriggerType(int _triggerType);
+    int getInputTriggerType();
+	void setTextString(string s);
+	void setParent(ciUIWidget *_parent);
+	void setAutoClear(bool _autoclear);
+    void setAutoUnfocus(bool _autoUnfocus);
+    void setOnlyNumericInput(bool _onlyNumericInput);
+    bool isFocused();
+    void setFocus(bool _focus); 
+    void setTriggerOnClick(bool _triggerOnClick);
+    void recalculateDisplayString();
+    bool hasState(){ return true; };
+#ifndef CI_UI_NO_XML
+    virtual void saveState(ofxXmlSettings *XML);
+    virtual void loadState(ofxXmlSettings *XML);
+#endif    
 
-    
-protected:    //inherited: ciUIRectangle *rect; ciUIWidget *parent; 
+protected:
 	string textstring; 
 	string defaultstring; 
-    string displaystring; 
-	bool clicked; 
+    string displaystring;
+    bool onlyNumericInput;
+	bool clicked;
+    bool autoUnfocus; 
 	float theta; 
 	float cursorWidth; 
 	float spaceOffset;		
 	bool autoclear; 
 	float defaultY, defaultX; 	
-	int triggerType;
-    int maxsize; 
+	int inputTriggerType;
+    int maxsize;
+    bool triggerOnClick;
+    
+    unsigned int cursorPosition;
+    unsigned int firstVisibleCharacterIndex;
 }; 
-
-#endif

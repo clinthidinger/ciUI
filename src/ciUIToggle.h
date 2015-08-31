@@ -22,121 +22,29 @@
  
  **********************************************************************************/
 
-#ifndef CIUI_TOGGLE
-#define CIUI_TOGGLE
+#pragma once
 
 #include "ciUIButton.h"
 
 class ciUIToggle : public ciUIButton
 {
 public:
-    ciUIToggle() {}
-    
-	ciUIToggle(float x, float y, float w, float h, bool _value, string _name, int _size = CI_UI_FONT_SMALL) : ciUIButton( x, y, w, h, _value, _name, _size )
-    {
-		kind = CI_UI_WIDGET_TOGGLE; 	        
-    }
-
-	ciUIToggle(float w, float h, bool _value, string _name, int _size = CI_UI_FONT_SMALL): ciUIButton( w, h, _value, _name, _size )
-    {
-		kind = CI_UI_WIDGET_TOGGLE; 	                
-    }    
-    
-	ciUIToggle(float x, float y, float w, float h, bool *_value, string _name, int _size = CI_UI_FONT_SMALL) : ciUIButton( x, y, w, h, _value, _name, _size )
-    {
-		kind = CI_UI_WIDGET_TOGGLE; 	        
-    }
-    
-	ciUIToggle(float w, float h, bool *_value, string _name, int _size = CI_UI_FONT_SMALL): ciUIButton( w, h, _value, _name, _size )
-    {
-		kind = CI_UI_WIDGET_TOGGLE; 	                
-    }        
-    
-    virtual void setDrawPadding(bool _draw_padded_rect)
-	{
-		draw_padded_rect = _draw_padded_rect; 
-        label->setDrawPadding(false);
-	}
-    
-    virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline)
-	{
-		draw_padded_rect_outline = _draw_padded_rect_outline; 
-        label->setDrawPaddingOutline(false);
-	}  
-    
-    virtual void draw() 
-    {        
-        drawPadded();
-        drawPaddedOutline();        
-        
-        drawBack();
-        
-        drawOutline();
-        drawOutlineHighlight();
-        
-        drawFill();
-        drawFillHighlight();        
-    }
-    
-    virtual void mouseMove(int x, int y ) 
-    {
-        if(rect->inside(x, y))
-        {
-            state = CI_UI_STATE_OVER;         
-        }    
-        else
-        {
-            state = CI_UI_STATE_NORMAL;        
-        }
-        stateChange();         
-    }
-    
-    virtual void mouseDrag(int x, int y, int button) 
-    {
-        if(hit)
-        {
-            state = CI_UI_STATE_DOWN;         
-        }    
-        else
-        {
-            state = CI_UI_STATE_NORMAL;        
-        }
-        stateChange();     
-    }
-    
-    virtual void mouseDown(int x, int y, int button) 
-    {
-        if(rect->inside(x, y))
-        {
-            hit = true;             
-            state = CI_UI_STATE_DOWN;         
-        }    
-        else
-        {
-            state = CI_UI_STATE_NORMAL;        
-        }
-        stateChange();         
-    }
-    
-    virtual void mouseUp(int x, int y, int button) 
-    {
-        if(rect->inside(x, y) && hit)
-        {
-            setValue(!(*value));
-#if defined( CINDER_COCOA_TOUCH )
-            state = CI_UI_STATE_NORMAL;        
-#else            
-            state = CI_UI_STATE_OVER; 
-#endif 
-			triggerEvent(this); 
-        }    
-        else
-        {
-            state = CI_UI_STATE_NORMAL;         
-        }
-        stateChange();     
-        hit = false; 
-    }
-}; 
-
+    ciUIToggle();
+    ciUIToggle(string _name, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIToggle(string _name, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+	virtual void setParent(ciUIWidget *_parent);
+    virtual void setDrawPadding(bool _draw_padded_rect);
+    virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline);
+    virtual void mouseMoved(int x, int y );
+    virtual void mouseDragged(int x, int y, int button);
+    virtual void mousePressed(int x, int y, int button);
+    virtual void mouseReleased(int x, int y, int button);
+    virtual void setValue(bool _value);
+    bool hasState(){ return true; };
+    virtual void keyPressed(int key);
+    virtual void keyReleased(int key);
+#ifndef CI_UI_NO_XML
+    virtual void saveState(ofxXmlSettings *XML);
+    virtual void loadState(ofxXmlSettings *XML);
 #endif
+};

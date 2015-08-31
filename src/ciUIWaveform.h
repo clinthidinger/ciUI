@@ -22,94 +22,29 @@
  
  **********************************************************************************/
 
-#ifndef CIUI_WAVEFORM
-#define CIUI_WAVEFORM
+#pragma once
 
-#include "cinder/Shape2d.h"
 #include "ciUIWidget.h"
 
 class ciUIWaveform : public ciUIWidget
 {
 public:    
-    ciUIWaveform(float x, float y, float w, float h, float *_buffer, int _bufferSize, float _min, float _max, string _name)
-    {
-        rect = new ciUIRectangle(x,y,w,h); 
-        init(w, h, _buffer, _bufferSize, _min, _max, _name);
-    }
+    ciUIWaveform(float x, float y, float w, float h, float *_buffer, int _bufferSize, float _min, float _max, string _name);
+    ciUIWaveform(float w, float h, float *_buffer, int _bufferSize, float _min, float _max, string _name);
+    virtual void init(float x, float y, float w, float h, float *_buffer, int _bufferSize, float _min, float _max, string _name);
+    virtual void drawBack();
+    virtual void drawFill();
+    void setBuffer(float *_buffer);
+    void setBufferSize(int _bufferSize);
+    void setMax(float _max);
+    float getMax();
+    void setMin(float _min);
+    float getMin();
+    ofVec2f getMaxAndMind();
+    void setMaxAndMin(float _max, float _min);
     
-    ciUIWaveform(float w, float h, float *_buffer, int _bufferSize, float _min, float _max, string _name)
-    {
-        rect = new ciUIRectangle(0,0,w,h); 
-        init(w, h, _buffer, _bufferSize, _min, _max, _name);
-    }    
-    
-    void init(float w, float h, float *_buffer, int _bufferSize, float _min, float _max, string _name)
-    {
-		name = _name; 				
-		kind = CI_UI_WIDGET_WAVEFORM; 
-		
-		paddedRect = new ciUIRectangle(-padding, -padding, w+padding*2.0, h+padding*2.0);
-		paddedRect->setParent(rect); 
-		
-        draw_fill = true; 
-        
-        if(_buffer != NULL)
-        {
-            buffer = _buffer;					//the widget's value
-        }
-        else
-        {
-            buffer = NULL; 
-        }
-        
-		bufferSize = _bufferSize; 
-		max = _max; 
-		min = _min; 		
-		scale = rect->getHeight()*.5; 
-        inc = rect->getWidth()/((float)bufferSize-1.0);         
-    }
-    
-    virtual void drawFill()
-    {
-        if(draw_fill)
-        {			
-			if(draw_fill_highlight)
-			{
-                ci::gl::color(color_fill_highlight); 
-			}        
-			else 
-			{
-				ci::gl::color(color_fill); 		 	
-			}
-            if(buffer != NULL)
-            {
-                ci::gl::pushMatrices();
-                ci::gl::translate(rect->getX(),rect->getY()+scale);         
-                shape.clear();
-                
-                shape.moveTo(0.0f, ci::lmap<float>(buffer[0], min, max, scale, -scale));
-                for (int i = 1; i < bufferSize; i++)
-                {			
-                    shape.lineTo(inc*(float)i, ci::lmap<float>(buffer[i], min, max, scale, -scale)); 
-                }                
-                ci::gl::draw(shape);
-                ci::gl::popMatrices();                
-            }
-        }
-    }
-		
-	void setParent(ciUIWidget *_parent)
-	{
-		parent = _parent; 
-	}	
-    
-protected:    //inherited: ciUIRectangle *rect; ciUIWidget *parent; 
+protected:
 	float *buffer; 
 	float max, min, scale, inc; 
 	int bufferSize; 
-    Shape2d shape; 
 }; 
-
-
-
-#endif
