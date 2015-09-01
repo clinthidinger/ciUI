@@ -24,13 +24,14 @@
 
 #pragma once
 
+#include <string>
 #include "ciUIImage.h"
 
 class ciUIImageSampler : public ciUIImage
 {
 public:
-    ciUIImageSampler(float x, float y, float w, float h, ofImage *_image, string _name);
-    ciUIImageSampler(float w, float h, ofImage *_image, string _name);
+    ciUIImageSampler(float x, float y, float w, float h, ofImage *_image, const std::string &_name);
+    ciUIImageSampler(float w, float h, ofImage *_image, const std::string &_name);
     void initSampler();
     void setSquareSize(float _squareSize);
     void drawFill();
@@ -40,19 +41,19 @@ public:
     void mouseReleased(int x, int y, int button);
     void stateChange();
     void input(int x, int y);
-    ofColor& getColor();
-    void setColor(ofColor _sampledColor);
-    ofPoint getValue();
-    void setValue(ofPoint _value);
+    const ci::Color &getColor() const;
+    void setColor(const ci::Color &_sampledColor);
+    const ci::vec2 &getValue() const;
+    void setValue(const ci::vec2 &_value);
     bool isDraggable();
     bool hasState(){ return true; };
-#ifndef CI_UI_NO_XML
-    virtual void saveState(ofxXmlSettings *XML);
-    virtual void loadState(ofxXmlSettings *XML);
-#endif    
+//#ifndef CI_UI_NO_XML
+//    virtual void saveState(ofxXmlSettings *XML);
+//    virtual void loadState(ofxXmlSettings *XML);
+//#endif    
     
 protected: 
-    ofColor sampledColor; 
-	ofPoint value;     
+    ci::Color sampledColor;
+    ci::vec2 value;
     float squareSize; 
 }; 

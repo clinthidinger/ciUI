@@ -25,13 +25,13 @@
 #include "ciUI2DPad.h"
 #include "ciUI.h"
 
-ciUI2DPad::ciUI2DPad(string _name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f _value, float w, float h, float x, float y) : ciUIWidgetWithLabel()
+ciUI2DPad::ciUI2DPad(const std::string &_name, const ciUIVec3f &_rangeX, const ciUIVec3f &_rangeY, const ciUIVec3f &_value, float w, float h, float x, float y) : ciUIWidgetWithLabel()
 {
     useReference = false;
     init(_name, _rangeX, _rangeY, &_value, w, h, x, y);
 }
 
-ciUI2DPad::ciUI2DPad(string _name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f *_value, float w, float h, float x, float y) : ciUIWidgetWithLabel()
+ciUI2DPad::ciUI2DPad(const std::string &_name, const ciUIVec3f &_rangeX, const ciUIVec3f &_rangeY, ciUIVec3f *_value, float w, float h, float x, float y) : ciUIWidgetWithLabel()
 {
     useReference = true;
     init(_name, _rangeX, _rangeY, _value, w, h, x, y);
@@ -45,7 +45,7 @@ ciUI2DPad::~ciUI2DPad()
     }
 }
 
-void ciUI2DPad::init(string _name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f *_value, float w, float h, float x, float y)
+void ciUI2DPad::init(const std::string _name, const ciUIVec3f &_rangeX, const ciUIVec3f &_rangeY, ciUIVec3f *_value, float w, float h, float x, float y)
 {
     initRect(x, y, w, h);
     name = string(_name);
@@ -400,17 +400,17 @@ void ciUI2DPad::setLabelPrecision(int _precision)
     updateLabel();
 }
 
-#ifndef CI_UI_NO_XML
-
-void ciUI2DPad::saveState(ofxXmlSettings *XML)
-{
-    XML->setValue("XValue", getScaledValue().x, 0);
-    XML->setValue("YValue", getScaledValue().y, 0);
-}
-
-void ciUI2DPad::loadState(ofxXmlSettings *XML)
-{
-    setValue(ciUIVec3f(XML->getValue("XValue", getScaledValue().x, 0), XML->getValue("YValue", getScaledValue().y, 0)));
-}
-
-#endif
+//#ifndef CI_UI_NO_XML
+//
+//void ciUI2DPad::saveState(ofxXmlSettings *XML)
+//{
+//    XML->setValue("XValue", getScaledValue().x, 0);
+//    XML->setValue("YValue", getScaledValue().y, 0);
+//}
+//
+//void ciUI2DPad::loadState(ofxXmlSettings *XML)
+//{
+//    setValue(ciUIVec3f(XML->getValue("XValue", getScaledValue().x, 0), XML->getValue("YValue", getScaledValue().y, 0)));
+//}
+//
+//#endif

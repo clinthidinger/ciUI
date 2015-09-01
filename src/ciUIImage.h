@@ -30,19 +30,19 @@
 class ciUIImage : public ciUIWidgetWithLabel
 {
 public:
-    ciUIImage(float x, float y, float w, float h, ofImage *_image, string _name);
-    ciUIImage(float x, float y, float w, float h, ofImage *_image, string _name, bool _showLabel);
-    ciUIImage(float w, float h, ofImage *_image, string _name);
-    ciUIImage(float w, float h, ofImage *_image, string _name, bool _showLabel);
-    void init(float x, float y, float w, float h, ofImage *_image, string _name);
+    ciUIImage(float x, float y, float w, float h, ci::Image *_image, const std::string &_name);
+    ciUIImage(float x, float y, float w, float h, ci::Image *_image, const std::string &_name, bool _showLabel);
+    ciUIImage(float w, float h, ci::Image *_image, const std::string &_name);
+    ciUIImage(float w, float h, ci::Image *_image, const std::string &_name, bool _showLabel);
+    void init(float x, float y, float w, float h, ci::Image *_image, const std::string &_name);
     virtual void setDrawPadding(bool _draw_padded_rect);
     virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline);
     virtual void drawFill();
     void setCropImageToFitRect(bool _cropImageToFitRect);
-    void setImage(ofImage *_image);
+    void setImage(ci::Image *_image);
     virtual bool isDraggable();
     
 protected:  
-	ofImage *image;
+    ci::Image *image;
     bool cropImageToFitRect; 
 }; 

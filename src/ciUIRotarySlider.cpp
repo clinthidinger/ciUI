@@ -25,25 +25,25 @@
 #include "ciUIRotarySlider.h"
 #include "ciUI.h"
 
-ciUIRotarySlider::ciUIRotarySlider(float x, float y, float w, float _min, float _max, float _value, string _name, int _size) : ciUIWidgetWithLabel()
+ciUIRotarySlider::ciUIRotarySlider(float x, float y, float w, float _min, float _max, float _value, const std::string &_name, int _size) : ciUIWidgetWithLabel()
 {
     useReference = false;
     init(x, y, w, _min, _max, &_value, _name, _size);
 }
 
-ciUIRotarySlider::ciUIRotarySlider(float w, float _min, float _max, float _value, string _name, int _size) : ciUIWidgetWithLabel()
+ciUIRotarySlider::ciUIRotarySlider(float w, float _min, float _max, float _value, const std::string &_name, int _size) : ciUIWidgetWithLabel()
 {
     useReference = false;
     init(0, 0, w, _min, _max, &_value, _name, _size);
 }
 
-ciUIRotarySlider::ciUIRotarySlider(float x, float y, float w, float _min, float _max, float *_value, string _name, int _size) : ciUIWidgetWithLabel()
+ciUIRotarySlider::ciUIRotarySlider(float x, float y, float w, float _min, float _max, float *_value, const std::string &_name, int _size) : ciUIWidgetWithLabel()
 {
     useReference = true;
     init(x, y, w, _min, _max, _value, _name, _size);
 }
 
-ciUIRotarySlider::ciUIRotarySlider(float w, float _min, float _max, float *_value, string _name, int _size) : ciUIWidgetWithLabel()
+ciUIRotarySlider::ciUIRotarySlider(float w, float _min, float _max, float *_value, const std::string &_name, int _size) : ciUIWidgetWithLabel()
 {
     useReference = true;
     init(0, 0, w, _min, _max, _value, _name, _size);
@@ -57,7 +57,7 @@ ciUIRotarySlider::~ciUIRotarySlider()
     }
 }
 
-void ciUIRotarySlider::init(float x, float y, float w, float _min, float _max, float *_value, string _name, int _size)
+void ciUIRotarySlider::init(float x, float y, float w, float _min, float _max, float *_value, const std::string &_name, int _size)
 {
     initRect(x,y,w,w);
     name = string(_name);

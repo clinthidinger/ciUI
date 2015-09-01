@@ -30,31 +30,31 @@ ciUIImageButton::ciUIImageButton() : ciUIButton()
     
 }
 
-ciUIImageButton::ciUIImageButton(float x, float y, float w, float h, bool _value, string _pathURL, string _name, int _size) : ciUIButton()
+ciUIImageButton::ciUIImageButton(float x, float y, float w, float h, bool _value, const std::string &_pathURL, const std::string &_name, int _size) : ciUIButton()
 {
     useReference = false;
     init(x, y, w, h, &_value, _pathURL, _name, _size);
 }
 
-ciUIImageButton::ciUIImageButton(float w, float h, bool _value, string _pathURL, string _name, int _size) : ciUIButton()
+ciUIImageButton::ciUIImageButton(float w, float h, bool _value, const std::string &_pathURL, const std::string &_name, int _size) : ciUIButton()
 {
     useReference = false;
     init(0, 0, w, h, &_value, _pathURL, _name, _size);
 }
 
-ciUIImageButton::ciUIImageButton(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size) : ciUIButton()
+ciUIImageButton::ciUIImageButton(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size) : ciUIButton()
 {
     useReference = true;
     init(x, y, w, h, _value, _pathURL, _name, _size);
 }
 
-ciUIImageButton::ciUIImageButton(float w, float h, bool *_value, string _pathURL, string _name, int _size) : ciUIButton()
+ciUIImageButton::ciUIImageButton(float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size) : ciUIButton()
 {
     useReference = true;
     init(0, 0, w, h, _value, _pathURL, _name, _size);
 }
 
-void ciUIImageButton::init(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size)
+void ciUIImageButton::init(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size)
 {
     initRect(0,0,w,h);
     name = string(_name);

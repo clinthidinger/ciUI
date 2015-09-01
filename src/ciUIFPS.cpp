@@ -35,7 +35,7 @@ ciUIFPS::ciUIFPS(int _size) : ciUIWidgetWithLabel()
     init(0, 0, "FPS", "FPS: 0000", _size);
 }
 
-void ciUIFPS::init(float x, float y, string _name, string _label, int _size)
+void ciUIFPS::init(float x, float y, const std::string &_name, const std::string &_label, int _size)
 {
     initRect(x, y, 0, 0);
     name = string(_name);

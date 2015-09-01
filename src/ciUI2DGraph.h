@@ -24,21 +24,23 @@
 
 #pragma once
 
+#include <string>
+#include "cinder/Vector.h"
 #include "ciUIWidget.h"
 
 class ciUI2DGraph : public ciUIWidget
 {
 public:    
-    ciUI2DGraph(string _name, ofPoint _rangeX, ofPoint _rangeY, int _bufferSize, float * _xValues, float * _yValues, float w, float h, float x = 0, float y = 0);
+    ciUI2DGraph(const std::string &_name, const ci::vec2 &_rangeX, const ci::vec2 &_rangeY, int _bufferSize, float * _xValues, float * _yValues, float w, float h, float x = 0, float y = 0);
 
 protected:
-    void init(string _name, ofPoint _rangeX, ofPoint _rangeY, float _bufferSize, float * _xValues, float * _yValues, float w, float h, float x = 0, float y = 0);
+    void init(const std::string _name, const ci::vec2 &_rangeX, const ci::vec2 &_rangeY, float _bufferSize, float * _xValues, float * _yValues, float w, float h, float x = 0, float y = 0);
     void drawBack();
     void drawFill();
 
 	float *xValues;
 	float *yValues;
-    ofPoint rangeX, rangeY;
+    ci::vec2 rangeX, rangeY;
 	float inc;
 	int bufferSize;
 };

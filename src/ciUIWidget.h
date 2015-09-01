@@ -24,12 +24,15 @@
 
 #pragma once
 
+#include <string>
+#include <vector>
+#include <map>
 #include "ciUIWrapper.h"
 #include "ciUIDefines.h"
 
-#ifndef CI_UI_NO_XML
-    #include "ofxXmlSettings.h"
-#endif 
+//#ifndef CI_UI_NO_XML
+//    #include "ofxXmlSettings.h"
+//#endif
 
 class ciUIWidget           
 {
@@ -78,8 +81,8 @@ public:
 	virtual void setParent(ciUIWidget *_parent);
     virtual ciUIWidget *getParent();
     
-	virtual void setName(string _name);
-    virtual string& getName();
+    virtual void setName(const std::string &_name);
+    virtual std::string& getName();
     
     virtual void setModal(bool _modal);
     virtual bool isModal();
@@ -114,7 +117,7 @@ public:
     
     virtual void setState(int _state);
     virtual int getState();
-    virtual void setFont(ciUIFont *_font);
+    virtual void setFont(ci::UIFont *_font);
 
     virtual void setPadding(float _padding);
     virtual float getPadding();
@@ -177,12 +180,12 @@ public:
     virtual ciUIWidget* unbindToKey(int key);
     virtual ciUIWidget* unbindAllKeys(); 
 
-#ifndef CI_UI_NO_XML
+//#ifndef CI_UI_NO_XML
     
-    virtual void saveState(ofxXmlSettings *XML);
-    virtual void loadState(ofxXmlSettings *XML);
+//    virtual void saveState(ofxXmlSettings *XML);
+//    virtual void loadState(ofxXmlSettings *XML);
     
-#endif
+//#endif
     
 protected:
 	ciUIWidget *parent;
@@ -219,10 +222,10 @@ protected:
     ciUIColor color_padded_rect; 
 	ciUIColor color_padded_rect_outline;
     
-    vector<ciUIWidget *> embeddedWidgets; 
+    std::vector<ciUIWidget *> embeddedWidgets;
 
     bool bKeyHit;
-    map<int, bool> keyBindings;
+    std::map<int, bool> keyBindings;
 #ifdef CI_UI_TARGET_TOUCH       
     int touchId;     
 #endif

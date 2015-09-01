@@ -32,14 +32,14 @@ ciUISlider_<T>::ciUISlider_() : ciUIWidgetWithLabel()
 }
 
 template<typename T>
-ciUISlider_<T>::ciUISlider_(string _name, T _min, T _max, T _value, float w, float h, float x, float y) : ciUIWidgetWithLabel()
+ciUISlider_<T>::ciUISlider_(const std::string &_name, T _min, T _max, T _value, float w, float h, float x, float y) : ciUIWidgetWithLabel()
 {
     useReference = false;
     init(_name, _min, _max, &_value, w, h, x, y);
 }
 
 template<typename T>
-ciUISlider_<T>::ciUISlider_(string _name, T _min, T _max, T *_value, float w, float h, float x, float y) : ciUIWidgetWithLabel()
+ciUISlider_<T>::ciUISlider_(const std::string &_name, T _min, T _max, T *_value, float w, float h, float x, float y) : ciUIWidgetWithLabel()
 {
     useReference = true;
     init(_name, _min, _max, _value, w, h, x, y);
@@ -55,7 +55,7 @@ ciUISlider_<T>::~ciUISlider_()
 }
 
 template<typename T>
-void ciUISlider_<T>::init(string _name, T _min, T _max, T *_value, float w, float h, float x, float y)
+void ciUISlider_<T>::init(const std::string &_name, T _min, T _max, T *_value, float w, float h, float x, float y)
 {
     initRect(x,y,w,h);
     name = string(_name);
@@ -93,11 +93,11 @@ void ciUISlider_<T>::init(string _name, T _min, T _max, T *_value, float w, floa
     
     if(orientation == CI_UI_ORIENTATION_HORIZONTAL)
     {
-        label = new ciUILabel(0,h+padding,string(name+" LABEL"), string(name + ": " + ciUIToString(max,labelPrecision)), CI_UI_FONT_SMALL);
+        label = new ciUILabel(0,h+padding, std::string(name+" LABEL"), std::string(name + ": " + ciUIToString(max,labelPrecision)), CI_UI_FONT_SMALL);
     }
     else
     {
-        label = new ciUILabel(0,h+padding,string(name+" LABEL"), string(name), CI_UI_FONT_SMALL);
+        label = new ciUILabel(0,h+padding, std::string(name+" LABEL"), std::string(name), CI_UI_FONT_SMALL);
     }
     addEmbeddedWidget(label);
     label->setVisible(drawLabel);

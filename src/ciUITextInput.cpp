@@ -26,15 +26,15 @@
 #include "ciUITextInput.h"
 #include "ciUI.h"
 
-ciUITextInput::ciUITextInput(string _name, string _textstring, float w, float h, float x, float y, int _size) : ciUIWidgetWithLabel()
+ciUITextInput::ciUITextInput(const std::string &_name, const std::string &_textstring, float w, float h, float x, float y, int _size) : ciUIWidgetWithLabel()
 {
     init(_name, _textstring, w, h, x, y, _size);
 }
 
-void ciUITextInput::init(string _name, string _textstring, float w, float h, float x, float y, int _size)
+void ciUITextInput::init(const std::string &_name, const std::string &_textstring, float w, float h, float x, float y, int _size)
 {
     initRect(x,y,w,h);
-    name = string(_name);
+    name = std::string(_name);
     kind = CI_UI_WIDGET_TEXTINPUT;
     textstring = string(_textstring);
     defaultstring = string(_textstring);
@@ -388,7 +388,7 @@ int ciUITextInput::getInputTriggerType()
     return inputTriggerType;
 }
 
-void ciUITextInput::setTextString(string s)
+void ciUITextInput::setTextString(const std::string &s)
 {
     textstring = "";
     string temp = "";

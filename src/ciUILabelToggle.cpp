@@ -25,19 +25,19 @@
 #include "ciUILabelToggle.h"
 #include "ciUI.h"
 
-ciUILabelToggle::ciUILabelToggle(string _name, bool _value, float w, float h, float x, float y, int _size, bool _justifyLeft) : ciUIToggle()
+ciUILabelToggle::ciUILabelToggle(const std::string &_name, bool _value, float w, float h, float x, float y, int _size, bool _justifyLeft) : ciUIToggle()
 {
     useReference = false;
     init(_name, &_value, w, h, x, y, _size, _justifyLeft);
 }
 
-ciUILabelToggle::ciUILabelToggle(string _name, bool *_value, float w, float h, float x, float y, int _size, bool _justifyLeft) : ciUIToggle()
+ciUILabelToggle::ciUILabelToggle(const std::string &_name, bool *_value, float w, float h, float x, float y, int _size, bool _justifyLeft) : ciUIToggle()
 {
     useReference = true;
     init(_name, _value, w, h, x, y, _size, _justifyLeft);
 }
 
-void ciUILabelToggle::init(string _name, bool *_value, float w, float h, float x, float y, int _size, bool _justifyLeft)
+void ciUILabelToggle::init(const std::string &_name, bool *_value, float w, float h, float x, float y, int _size, bool _justifyLeft)
 {
     initRect(x,y,w,h);
     autoSize = (w == 0) ? true : false;
@@ -61,7 +61,7 @@ void ciUILabelToggle::init(string _name, bool *_value, float w, float h, float x
     setValue(*_value);
 }
 
-void ciUILabelToggle::setLabelText(string labeltext)
+void ciUILabelToggle::setLabelText(const std::string &labeltext)
 {
     label->setLabel(labeltext);
     if(!autoSize)

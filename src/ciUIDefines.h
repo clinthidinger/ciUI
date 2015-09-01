@@ -24,9 +24,9 @@
 
 #pragma once
 
-#ifndef CI_UI_NO_XML
-    #include "ofxXmlSettings.h"
-#endif
+//#ifndef CI_UI_NO_XML
+//    #include "ofxXmlSettings.h"
+//#endif
 
 #ifdef TARGET_OF_IOS
     #define CI_UI_FONT_NAME "GUI/Helvetica.ttf"

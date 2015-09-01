@@ -25,17 +25,17 @@
 #include "ciUIMovingGraph.h"
 #include "ciUI.h"
 
-ciUIMovingGraph::ciUIMovingGraph(float x, float y, float w, float h, vector<float> _buffer, int _bufferSize, float _min, float _max, string _name) : ciUIWidget()
+ciUIMovingGraph::ciUIMovingGraph(float x, float y, float w, float h, const std::vector<float> &_buffer, int _bufferSize, float _min, float _max, const std::string &_name) : ciUIWidget()
 {
     init(x, y, w, h, _buffer, _bufferSize, _min, _max, _name);
 }
 
-ciUIMovingGraph::ciUIMovingGraph(float w, float h, vector<float> _buffer, int _bufferSize, float _min, float _max, string _name) : ciUIWidget()
+ciUIMovingGraph::ciUIMovingGraph(float w, float h, const std::vector<float> &_buffer, int _bufferSize, float _min, float _max, const std::string &_name) : ciUIWidget()
 {
     init(0, 0, w, h, _buffer, _bufferSize, _min, _max, _name);
 }
 
-void ciUIMovingGraph::init(float x, float y, float w, float h, vector<float> _buffer, int _bufferSize, float _min, float _max, string _name)
+void ciUIMovingGraph::init(float x, float y, float w, float h, const std::vector<float> &_buffer, int _bufferSize, float _min, float _max, const std::string &_name)
 {
     initRect(x,y,w,h);
     name = string(_name);
@@ -95,7 +95,7 @@ void ciUIMovingGraph::addPoint(float _point)
     }
 }
 
-vector<float> &ciUIMovingGraph::getBuffer()
+const std::vector<float> &ciUIMovingGraph::getBuffer()
 {
     return buffer;
 }
@@ -125,9 +125,9 @@ float ciUIMovingGraph::getMin()
     return min;
 }
 
-ofVec2f ciUIMovingGraph::getMaxAndMind()
+ci::vec2 ciUIMovingGraph::getMaxAndMind()
 {
-    return ofVec2f(max, min);
+    return ci::vec2(max, min);
 }
 
 void ciUIMovingGraph::setMaxAndMin(float _max, float _min)

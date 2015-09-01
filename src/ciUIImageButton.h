@@ -30,20 +30,20 @@ class ciUIImageButton : public ciUIButton
 {
 public:
     ciUIImageButton();
-    ciUIImageButton(float x, float y, float w, float h, bool _value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
-    ciUIImageButton(float w, float h, bool _value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
-    ciUIImageButton(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
-    ciUIImageButton(float w, float h, bool *_value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
-    void init(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
+    ciUIImageButton(float x, float y, float w, float h, bool _value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    ciUIImageButton(float w, float h, bool _value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    ciUIImageButton(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    ciUIImageButton(float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    void init(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_SMALL);
     virtual ~ciUIImageButton();
     virtual void drawBack();
     virtual void drawFill();
     virtual void drawFillHighlight();
     virtual void drawOutlineHighlight();
-    virtual ofImage *getImage();
-    virtual void setImage(ofImage *_img);
+    virtual ci::Image *getImage();
+    virtual void setImage(ci::Image *_img);
     
 protected:   
-    ofImage *img;
+    ci::Image *img;
     bool bChangedImage;    
 }; 

@@ -25,31 +25,31 @@
 #include "ciUIImageToggle.h"
 #include "ciUI.h"
 
-ciUIImageToggle::ciUIImageToggle(float x, float y, float w, float h, bool _value, string _pathURL, string _name, int _size) : ciUIToggle()
+ciUIImageToggle::ciUIImageToggle(float x, float y, float w, float h, bool _value, const std::string &_pathURL, const std::string &_name, int _size) : ciUIToggle()
 {
     useReference = false;
     init(x, y, w, h, &_value, _pathURL, _name, _size);
 }
 
-ciUIImageToggle::ciUIImageToggle(float w, float h, bool _value, string _pathURL, string _name, int _size) : ciUIToggle()
+ciUIImageToggle::ciUIImageToggle(float w, float h, bool _value, const std::string &_pathURL, const std::string &_name, int _size) : ciUIToggle()
 {
     useReference = false;
     init(0, 0, w, h, &_value, _pathURL, _name, _size);
 }
 
-ciUIImageToggle::ciUIImageToggle(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size) : ciUIToggle()
+ciUIImageToggle::ciUIImageToggle(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size) : ciUIToggle()
 {
     useReference = true;
     init(x, y, w, h, _value, _pathURL, _name, _size);
 }
 
-ciUIImageToggle::ciUIImageToggle(float w, float h, bool *_value, string _pathURL, string _name, int _size) : ciUIToggle()
+ciUIImageToggle::ciUIImageToggle(float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size) : ciUIToggle()
 {
     useReference = true;
     init(0, 0, w, h, _value, _pathURL, _name, _size);
 }
 
-void ciUIImageToggle::init(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size)
+void ciUIImageToggle::init(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size)
 {
     initRect(x, y, w, h);
     name = string(_name);
@@ -72,7 +72,7 @@ void ciUIImageToggle::init(float x, float y, float w, float h, bool *_value, str
     
     setValue(*_value);
     
-    img = new ofImage(_pathURL);
+    img = new ci::Image(_pathURL);
     bChangedImage = false;
 }
 

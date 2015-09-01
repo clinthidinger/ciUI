@@ -25,12 +25,12 @@
 #include "ciUIImageSampler.h"
 #include "ciUI.h"
 
-ciUIImageSampler::ciUIImageSampler(float x, float y, float w, float h, ofImage *_image, string _name) : ciUIImage(x, y, w, h, _image, _name)
+ciUIImageSampler::ciUIImageSampler(float x, float y, float w, float h, ci::Image *_image, const std::string &_name) : ciUIImage(x, y, w, h, _image, _name)
 {
     initSampler();
 }
 
-ciUIImageSampler::ciUIImageSampler(float w, float h, ofImage *_image, string _name) : ciUIImage(w, h, _image, _name)
+ciUIImageSampler::ciUIImageSampler(float w, float h, ci::Image *_image, const std::string &_name) : ciUIImage(w, h, _image, _name)
 {
     initSampler();
 }
@@ -193,7 +193,7 @@ ofColor& ciUIImageSampler::getColor()
     return sampledColor;
 }
 
-void ciUIImageSampler::setColor(ofColor _sampledColor)
+void ciUIImageSampler::setColor(const ci::Color &_sampledColor)
 {
     sampledColor = _sampledColor;
 }
@@ -203,7 +203,7 @@ ofPoint ciUIImageSampler::getValue()
     return value;
 }
 
-void ciUIImageSampler::setValue(ofPoint _value)
+void ciUIImageSampler::setValue(const ci::vec2 &_value)
 {
     value.x = MIN(1.0, MAX(0.0, _value.x));
     value.y = MIN(1.0, MAX(0.0, _value.y));
@@ -215,25 +215,25 @@ bool ciUIImageSampler::isDraggable()
     return true;
 }
 
-#ifndef CI_UI_NO_XML
-
-void ciUIImageSampler::saveState(ofxXmlSettings *XML)
-{
-    XML->setValue("XValue", getValue().x, 0);
-    XML->setValue("YValue", getValue().y, 0);
-    XML->setValue("RColor", getColor().r, 0);
-    XML->setValue("GColor", getColor().g, 0);
-    XML->setValue("BColor", getColor().b, 0);
-    XML->setValue("AColor", getColor().a, 0);
-}
-
-void ciUIImageSampler::loadState(ofxXmlSettings *XML)
-{
-    setValue(ciUIVec2f(XML->getValue("XValue", getValue().x, 0), XML->getValue("YValue", getValue().y, 0)));
-    setColor(ciUIColor(XML->getValue("RColor", getColor().r, 0),
-                        XML->getValue("GColor", getColor().g, 0),
-                        XML->getValue("BColor", getColor().b, 0),
-                        XML->getValue("AColor", getColor().a, 0)));
-}
-
-#endif
+//#ifndef CI_UI_NO_XML
+//
+//void ciUIImageSampler::saveState(ofxXmlSettings *XML)
+//{
+//    XML->setValue("XValue", getValue().x, 0);
+//    XML->setValue("YValue", getValue().y, 0);
+//    XML->setValue("RColor", getColor().r, 0);
+//    XML->setValue("GColor", getColor().g, 0);
+//    XML->setValue("BColor", getColor().b, 0);
+//    XML->setValue("AColor", getColor().a, 0);
+//}
+//
+//void ciUIImageSampler::loadState(ofxXmlSettings *XML)
+//{
+//    setValue(ciUIVec2f(XML->getValue("XValue", getValue().x, 0), XML->getValue("YValue", getValue().y, 0)));
+//    setColor(ciUIColor(XML->getValue("RColor", getColor().r, 0),
+//                        XML->getValue("GColor", getColor().g, 0),
+//                        XML->getValue("BColor", getColor().b, 0),
+//                        XML->getValue("AColor", getColor().a, 0)));
+//}
+//
+//#endif

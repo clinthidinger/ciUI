@@ -29,10 +29,10 @@
 class ciUI2DPad : public ciUIWidgetWithLabel
 {
 public:
-    ciUI2DPad(string _name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f _value, float w, float h, float x = 0, float y = 0);
-    ciUI2DPad(string _name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f *_value, float w, float h, float x = 0, float y = 0);
-    ~ciUI2DPad();
-    void init(string _name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f *_value, float w, float h, float x = 0, float y = 0);
+    ciUI2DPad(const std::string &_name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f _value, float w, float h, float x = 0, float y = 0);
+    ciUI2DPad(const std::string &_name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f *_value, float w, float h, float x = 0, float y = 0);
+    virtual ~ciUI2DPad();
+    void init(const std::string &_name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f *_value, float w, float h, float x = 0, float y = 0);
     virtual void update();
     virtual void setDrawPadding(bool _draw_padded_rect);
     virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline);
@@ -56,10 +56,10 @@ public:
     bool isDraggable();
     void setLabelPrecision(int _precision);
     bool hasState(){ return true; };
-#ifndef CI_UI_NO_XML
-    virtual void saveState(ofxXmlSettings *XML);
-    virtual void loadState(ofxXmlSettings *XML);
-#endif
+//#ifndef CI_UI_NO_XML
+//    virtual void saveState(ofxXmlSettings *XML);
+//    virtual void loadState(ofxXmlSettings *XML);
+//#endif
 
 protected:
 	ciUIVec3f value;

@@ -30,7 +30,7 @@
 class ciUILabelButton : public ciUIButton
 {
 public:
-    ciUILabelButton(string _name,
+    ciUILabelButton(const std::string &_name,
                      bool _value,
                      float w = 0,
                      float h = 0,
@@ -39,7 +39,7 @@ public:
                      int _size = CI_UI_FONT_MEDIUM,
                      bool _justifyLeft = false);
     
-    ciUILabelButton(string _name,
+    ciUILabelButton(const std::string &_name,
                      bool *_value,
                      float w = 0,
                      float h = 0,
@@ -48,7 +48,7 @@ public:
                      int _size = CI_UI_FONT_MEDIUM,
                      bool _justifyLeft = false);
     
-    virtual void init(string _name,
+    virtual void init(const std::string &_name,
                       bool *_value,
                       float w,
                       float h,
@@ -57,7 +57,7 @@ public:
                       int _size = CI_UI_FONT_MEDIUM,
                       bool _justifyLeft = false);
     
-    void setLabelText(string labeltext);
+    void setLabelText(const std::string &labeltext);
 	void setParent(ciUIWidget *_parent);
     virtual void setValue(bool _value);
     

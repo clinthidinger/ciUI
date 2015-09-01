@@ -24,24 +24,26 @@
 
 #pragma once
 
+#include <vector>
+#include <string>
 #include "ciUIWidget.h"
 
 class ciUIValuePlotter : public ciUIWidget
 {
 public:
-    ciUIValuePlotter(float x, float y, float w, float h, int _bufferSize, float _min, float _max, float *_value, string _name);
-    ciUIValuePlotter(float w, float h, int _bufferSize, float _min, float _max, float *_value, string _name);
-    void init(float x, float y, float w, float h, int _bufferSize, float _min, float _max, float *_value, string _name);
+    ciUIValuePlotter(float x, float y, float w, float h, int _bufferSize, float _min, float _max, float *_value, const std::string &_name);
+    ciUIValuePlotter(float w, float h, int _bufferSize, float _min, float _max, float *_value, const std::string &_name);
+    void init(float x, float y, float w, float h, int _bufferSize, float _min, float _max, float *_value, const std::string &_name);
     virtual void update();
     virtual void drawBack();
     virtual void drawFill();
     void addPoint(float _point);
-    vector<float> &getBuffer();
-    void setBuffer(vector<float> _buffer);
+    const std::vector<float> &getBuffer();
+    void setBuffer(const std::vector<float> &_buffer);
     
 protected:   
     float *value; 
-    vector<float> buffer;
+    std::vector<float> buffer;
 	float max, min, scale, inc;
 	unsigned int bufferSize;
 };

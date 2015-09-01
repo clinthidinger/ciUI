@@ -30,12 +30,12 @@ ciUIValuePlotter::ciUIValuePlotter(float x, float y, float w, float h, int _buff
     init(x, y, w, h, _bufferSize, _min, _max, _value, _name);
 }
 
-ciUIValuePlotter::ciUIValuePlotter(float w, float h, int _bufferSize, float _min, float _max, float *_value, string _name) : ciUIWidget()
+ciUIValuePlotter::ciUIValuePlotter(float w, float h, int _bufferSize, float _min, float _max, float *_value, const std::string &_name) : ciUIWidget()
 {
     init(0, 0, w, h, _bufferSize, _min, _max, _value, _name);
 }
 
-void ciUIValuePlotter::init(float x, float y, float w, float h, int _bufferSize, float _min, float _max, float *_value, string _name)
+void ciUIValuePlotter::init(float x, float y, float w, float h, int _bufferSize, float _min, float _max, float *_value, const std::string &_name)
 {
     initRect(x,y,w,h);
     name = string(_name);

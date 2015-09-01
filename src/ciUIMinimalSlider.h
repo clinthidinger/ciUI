@@ -24,15 +24,16 @@
 
 #pragma once
 
+#include <string>
 #include "ciUISlider.h"
 #include "ciUIDefines.h"
 
 class ciUIMinimalSlider : public ciUISlider
 {
 public:    
-    ciUIMinimalSlider(string _name, float _min, float _max, float _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    ciUIMinimalSlider(string _name, float _min, float _max, float *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    void init(string _name, float _min, float _max, float *_value, float w, float h, float x, float y, int _size = CI_UI_FONT_SMALL);
+    ciUIMinimalSlider(const std::string &_name, float _min, float _max, float _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIMinimalSlider(const std::string &_name, float _min, float _max, float *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    void init(const std::string &_name, float _min, float _max, float *_value, float w, float h, float x, float y, int _size = CI_UI_FONT_SMALL);
     virtual void drawFill();
     virtual void drawFillHighlight();
     virtual void drawOutlineHighlight();
@@ -45,4 +46,4 @@ public:
 protected:   
     bool autoSize;
     bool showValue; 
-}; 
+};

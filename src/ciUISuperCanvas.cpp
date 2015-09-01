@@ -45,32 +45,32 @@ bTitleLabelHit(other.bTitleLabelHit)
     }
 }
 
-ciUISuperCanvas::ciUISuperCanvas(string _label, ciUIRectangle r, int _size) : ciUICanvas(r)
+ciUISuperCanvas::ciUISuperCanvas(const std::string &_label, ciUIRectangle r, int _size) : ciUICanvas(r)
 {
     superInit(_label, _size);
 }
 
-ciUISuperCanvas::ciUISuperCanvas(string _label, float x, float y, float w, float h, int _size) : ciUICanvas(x, y, w, h)
+ciUISuperCanvas::ciUISuperCanvas(const std::string &_label, float x, float y, float w, float h, int _size) : ciUICanvas(x, y, w, h)
 {
     superInit(_label, _size);
 }
 
-ciUISuperCanvas::ciUISuperCanvas(string _label, float x, float y, float w, float h, ciUICanvas *sharedResources, int _size) : ciUICanvas(x, y, w, h, sharedResources)
+ciUISuperCanvas::ciUISuperCanvas(const std::string &_label, float x, float y, float w, float h, ciUICanvas *sharedResources, int _size) : ciUICanvas(x, y, w, h, sharedResources)
 {
     superInit(_label, _size);
 }
 
-ciUISuperCanvas::ciUISuperCanvas(string _label, int _size) : ciUICanvas()
+ciUISuperCanvas::ciUISuperCanvas(const std::string &_label, int _size) : ciUICanvas()
 {
     superInit(_label, _size);
 }
 
-ciUISuperCanvas::ciUISuperCanvas(string _label, ciUICanvas *sharedResources, int _size) : ciUICanvas(sharedResources)
+ciUISuperCanvas::ciUISuperCanvas(const std::string &_label, ciUICanvas *sharedResources, int _size) : ciUICanvas(sharedResources)
 {
     superInit(_label, _size);
 }
 
-void ciUISuperCanvas::superInit(string _label, int _size)
+void ciUISuperCanvas::superInit(const std::&string _label, int _size)
 {
     size = _size;
     title = _label;

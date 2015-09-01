@@ -25,19 +25,19 @@
 #include "ciUIMinimalSlider.h"
 #include "ciUI.h"
 
-ciUIMinimalSlider::ciUIMinimalSlider(string _name, float _min, float _max, float _value, float w, float h, float x, float y, int _size) : ciUISlider()
+ciUIMinimalSlider::ciUIMinimalSlider(const std::string &_name, float _min, float _max, float _value, float w, float h, float x, float y, int _size) : ciUISlider()
 {
     useReference = false;
     init(_name, _min, _max, &_value, w, h, x, y, _size);
 }
 
-ciUIMinimalSlider::ciUIMinimalSlider(string _name, float _min, float _max, float *_value, float w, float h, float x, float y, int _size) : ciUISlider()
+ciUIMinimalSlider::ciUIMinimalSlider(const std::string &_name, float _min, float _max, float *_value, float w, float h, float x, float y, int _size) : ciUISlider()
 {
     useReference = true;
     init(_name, _min, _max, _value, w, h, x, y, _size);
 }
 
-void ciUIMinimalSlider::init(string _name, float _min, float _max, float *_value, float w, float h, float x, float y, int _size)
+void ciUIMinimalSlider::init(const std::string &_name, float _min, float _max, float *_value, float w, float h, float x, float y, int _size)
 {
     if(h < .1)
     {

@@ -27,12 +27,12 @@
 
 // TODO easing
 
-ciUISortableList::ciUISortableList(string _name, vector<string> items, float w, float h, float x, float y, int _size, int _itemHeight) : ciUIButton(_name, false, w, h, x, y, _size)
+ciUISortableList::ciUISortableList(const std::string _name, const std::vector<std::string> &items, float w, float h, float x, float y, int _size, int _itemHeight) : ciUIButton(_name, false, w, h, x, y, _size)
 {
     init(_name, items, w, x, y, _size, _itemHeight);
 }
 
-void ciUISortableList::init(string _name, vector<string> items, float w, float x, float y, int _size, int _itemHeight)
+void ciUISortableList::init(const std::string _name, const std::vector<std::string> &items, float w, float x, float y, int _size, int _itemHeight)
 {
     itemHeight = _itemHeight;
     padding = 2;
@@ -51,12 +51,12 @@ void ciUISortableList::init(string _name, vector<string> items, float w, float x
 }
 
 
-vector<ciUIDraggableLabelButton*> ciUISortableList::getListItems()
+std::vector<ciUIDraggableLabelButton*> ciUISortableList::getListItems()
 {
     return listItems;
 }
 
-void ciUISortableList::reshuffle(std::vector<string> ordering)// reshuffle based on saved ordering
+void ciUISortableList::reshuffle(const std::std::vector<std::string> &ordering)// reshuffle based on saved ordering
 {
     for (int i = 0; i < ordering.size(); i++)
     {

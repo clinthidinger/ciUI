@@ -25,25 +25,25 @@
 #include "ciUIMultiImageButton.h"
 #include "ciUI.h"
 
-ciUIMultiImageButton::ciUIMultiImageButton(float x, float y, float w, float h, bool _value, string _pathURL, string _name, int _size) : ciUIButton()
+ciUIMultiImageButton::ciUIMultiImageButton(float x, float y, float w, float h, bool _value, const std::string &_pathURL, const std::string &_name, int _size) : ciUIButton()
 {
     useReference = false;
     init(x, y, w, h, &_value, _pathURL, _name, _size);
 }
 
-ciUIMultiImageButton::ciUIMultiImageButton(float w, float h, bool _value, string _pathURL, string _name, int _size) : ciUIButton()
+ciUIMultiImageButton::ciUIMultiImageButton(float w, float h, bool _value, const std::string &_pathURL, const std::string &_name, int _size) : ciUIButton()
 {
     useReference = false;
     init(0, 0, w, h, &_value, _pathURL, _name, _size);
 }
 
-ciUIMultiImageButton::ciUIMultiImageButton(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size) : ciUIButton()
+ciUIMultiImageButton::ciUIMultiImageButton(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size) : ciUIButton()
 {
     useReference = true;
     init(x, y, w, h, _value, _pathURL, _name, _size);
 }
 
-ciUIMultiImageButton::ciUIMultiImageButton(float w, float h, bool *_value, string _pathURL, string _name, int _size) : ciUIButton()
+ciUIMultiImageButton::ciUIMultiImageButton(float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size) : ciUIButton()
 {
     useReference = true;
     init(0, 0, w, h, _value, _pathURL, _name, _size);
@@ -56,7 +56,7 @@ ciUIMultiImageButton::~ciUIMultiImageButton()
     delete on;
 }
 
-void ciUIMultiImageButton::init(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size)
+void ciUIMultiImageButton::init(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size)
 {
     initRect(x,y,w,h);
     name = string(_name);
@@ -80,21 +80,21 @@ void ciUIMultiImageButton::init(float x, float y, float w, float h, bool *_value
     drawLabel = false;
     label->setVisible(drawLabel);
     
-    string coreURL = _pathURL;
-    string extension = "";
-    string period (".");
+    std::string coreURL = _pathURL;
+    std::string extension = "";
+    std::string period (".");
     size_t found;
     
     found=_pathURL.find(period);
-    if (found!=string::npos)
+    if (found != std::string::npos)
     {
         coreURL = _pathURL.substr(0,found);
         extension = _pathURL.substr(found);
     }
     
-    back = new ofImage(_pathURL);
-    over = new ofImage(coreURL+"over"+extension);
-    on = new ofImage(coreURL+"on"+extension);
+    back = new ci::Image(_pathURL);
+    over = new ci::Image(coreURL+"over"+extension);
+    on = new ci::Image(coreURL+"on"+extension);
 }
 
 void ciUIMultiImageButton::drawBack()                     //NORMAL

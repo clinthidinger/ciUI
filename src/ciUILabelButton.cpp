@@ -25,19 +25,19 @@
 #include "ciUILabelButton.h"
 #include "ciUI.h"
 
-ciUILabelButton::ciUILabelButton(string _name, bool _value, float w, float h, float x, float y, int _size, bool _justifyLeft) : ciUIButton()
+ciUILabelButton::ciUILabelButton(const std::string &_name, bool _value, float w, float h, float x, float y, int _size, bool _justifyLeft) : ciUIButton()
 {
     useReference = false;
     init(_name, &_value, w, h, x, y, _size, _justifyLeft);
 }
 
-ciUILabelButton::ciUILabelButton(string _name, bool *_value, float w, float h, float x, float y, int _size, bool _justifyLeft) : ciUIButton()
+ciUILabelButton::ciUILabelButton(const std::string &_name, bool *_value, float w, float h, float x, float y, int _size, bool _justifyLeft) : ciUIButton()
 {
     useReference = true;
     init(_name, _value, w, h, x, y, _size, _justifyLeft);
 }
 
-void ciUILabelButton::init(string _name, bool *_value, float w, float h, float x, float y, int _size, bool _justifyLeft)
+void ciUILabelButton::init(const std::string &_name, bool *_value, float w, float h, float x, float y, int _size, bool _justifyLeft)
 {
     initRect(x, y, w, h);
     justifyLeft = _justifyLeft;
@@ -62,7 +62,7 @@ void ciUILabelButton::init(string _name, bool *_value, float w, float h, float x
     setValue(*_value);
 }
 
-void ciUILabelButton::setLabelText(string labeltext)
+void ciUILabelButton::setLabelText(const std::string &labeltext)
 {
     label->setLabel(labeltext);
     if(!autoSize)

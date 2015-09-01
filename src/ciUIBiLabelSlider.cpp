@@ -25,59 +25,59 @@
 #include "ciUIBiLabelSlider.h"
 #include "ciUI.h"
 
-ciUIBiLabelSlider::ciUIBiLabelSlider(float x, float y, float w, float h, float _min, float _max, float _value, string _name, string _leftLabel, string _rightLabel, int _size) : ciUISlider()
+ciUIBiLabelSlider::ciUIBiLabelSlider(float x, float y, float w, float h, float _min, float _max, float _value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size) : ciUISlider()
 {
     useReference = false;
     init(x, y, w, h, _min, _max, &_value, _name, _leftLabel, _rightLabel, _size);
 }
 
-ciUIBiLabelSlider::ciUIBiLabelSlider(float w, float h, float _min, float _max, float _value, string _name, string _leftLabel, string _rightLabel, int _size) : ciUISlider()
+ciUIBiLabelSlider::ciUIBiLabelSlider(float w, float h, float _min, float _max, float _value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size) : ciUISlider()
 {
     useReference = false;
     init(0, 0, w, h, _min, _max, &_value, _name, _leftLabel, _rightLabel, _size);
 }
 
-ciUIBiLabelSlider::ciUIBiLabelSlider(float x, float y, float w, float _min, float _max, float _value, string _name, string _leftLabel, string _rightLabel, int _size) : ciUISlider()
+ciUIBiLabelSlider::ciUIBiLabelSlider(float x, float y, float w, float _min, float _max, float _value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size) : ciUISlider()
 {
     useReference = false;
     init(x, y, w, 0, _min, _max, &_value, _name, _leftLabel, _rightLabel, _size);
 }
 
-ciUIBiLabelSlider::ciUIBiLabelSlider(float w, float _min, float _max, float _value, string _name, string _leftLabel, string _rightLabel, int _size) : ciUISlider()
+ciUIBiLabelSlider::ciUIBiLabelSlider(float w, float _min, float _max, float _value, const std::string &_name, const std::const std::string &_leftLabel, const std::string &_rightLabel, int _size) : ciUISlider()
 {
     useReference = false;
     init(0, 0, w, 0, _min, _max, &_value, _name, _leftLabel, _rightLabel, _size);
 }
 
-ciUIBiLabelSlider::ciUIBiLabelSlider(float x, float y, float w, float h, float _min, float _max, float *_value, string _name, string _leftLabel, string _rightLabel, int _size) : ciUISlider()
+ciUIBiLabelSlider::ciUIBiLabelSlider(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size) : ciUISlider()
 {
     useReference = true;
     init(x, y, w, h, _min, _max, _value, _name, _leftLabel, _rightLabel, _size);
 }
 
-ciUIBiLabelSlider::ciUIBiLabelSlider(float w, float h, float _min, float _max, float *_value, string _name, string _leftLabel, string _rightLabel, int _size) : ciUISlider()
+ciUIBiLabelSlider::ciUIBiLabelSlider(float w, float h, float _min, float _max, float *_value, const std::string _name, const std::string _leftLabel, const std::string &_rightLabel, int _size) : ciUISlider()
 {
     useReference = true;
     init(0, 0, w, h, _min, _max, _value, _name, _leftLabel, _rightLabel, _size);
 }
 
-ciUIBiLabelSlider::ciUIBiLabelSlider(float x, float y, float w, float _min, float _max, float *_value, string _name, string _leftLabel, string _rightLabel, int _size) : ciUISlider()
+ciUIBiLabelSlider::ciUIBiLabelSlider(float x, float y, float w, float _min, float _max, float *_value, const std::string _name, const std::string &_leftLabel, const std::string &_rightLabel, int _size) : ciUISlider()
 {
     useReference = true;
     init(x, y, w, 0, _min, _max, _value, _name, _leftLabel, _rightLabel, _size);
 }
 
-ciUIBiLabelSlider::ciUIBiLabelSlider(float w, float _min, float _max, float *_value, string _name, string _leftLabel, string _rightLabel, int _size) : ciUISlider()
+ciUIBiLabelSlider::ciUIBiLabelSlider(float w, float _min, float _max, float *_value, const std::string _name, const std::string _leftLabel, const std::string &_rightLabel, int _size) : ciUISlider()
 {
     useReference = true;
     init(0, 0, w, 0, _min, _max, _value, _name, _leftLabel, _rightLabel, _size);
 }
 
-void ciUIBiLabelSlider::init(float x, float y, float w, float h, float _min, float _max, float *_value, string _name, string _leftLabel, string _rightLabel, int _size)
+void ciUIBiLabelSlider::init(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size)
 {
     (h > 0) ? autoSize = false : autoSize = true;
     initRect(x,y,w,h);
-    name = string(_name);
+    name = std::string(_name);
     leftLabel = _leftLabel;
     rightLabel = _rightLabel;
     kind = CI_UI_WIDGET_BILABELSLIDER;

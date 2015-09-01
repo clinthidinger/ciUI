@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <string>
 #include "ciUIWidgetWithLabel.h"
 
 template<typename T>
@@ -31,12 +32,12 @@ class ciUISlider_ : public ciUIWidgetWithLabel
 {
 public:
     ciUISlider_();
-    ciUISlider_(string _name, T _min, T _max, T _value, float w, float h, float x = 0, float y = 0);
-    ciUISlider_(string _name, T _min, T _max, T *_value, float w, float h, float x = 0, float y = 0);
-    ~ciUISlider_();
+    ciUISlider_(const std::string &_name, T _min, T _max, T _value, float w, float h, float x = 0, float y = 0);
+    ciUISlider_(const std::string &_name, T _min, T _max, T *_value, float w, float h, float x = 0, float y = 0);
+    virtual ~ciUISlider_();
     void setKind();
     void setOrientation(float w, float h);
-    virtual void init(string _name, T _min, T _max, T *_value, float w, float h, float x, float y);
+    virtual void init(const std::string &_name, T _min, T _max, T *_value, float w, float h, float x, float y);
     
     virtual void update();
     
@@ -96,10 +97,10 @@ public:
     
     bool isDraggable();
     virtual bool hasState(){ return true; };
-#ifndef CI_UI_NO_XML
-    virtual void saveState(ofxXmlSettings *XML);
-    virtual void loadState(ofxXmlSettings *XML);
-#endif    
+//#ifndef CI_UI_NO_XML
+//    virtual void saveState(ofxXmlSettings *XML);
+//    virtual void loadState(ofxXmlSettings *XML);
+//#endif
     
 protected:
     bool bSticky;
@@ -112,7 +113,7 @@ protected:
 	T max, min;
     int labelPrecision;
     int orientation;
-    string valueString;
+    std::string valueString;
 };
 
 typedef ciUISlider_<int> ciUIIntSlider;

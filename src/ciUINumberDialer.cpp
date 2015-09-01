@@ -26,25 +26,25 @@
 #include "ciUI.h"
 #include <math.h>
 
-ciUINumberDialer::ciUINumberDialer(float x, float y, float _min, float _max, float _value, int _precision, string _name, int _size) : ciUIWidgetWithLabel()
+ciUINumberDialer::ciUINumberDialer(float x, float y, float _min, float _max, float _value, int _precision, const std::string &_name, int _size) : ciUIWidgetWithLabel()
 {
     useReference = false;
     init(x,y,0,0, _min, _max, &_value, _precision, _name, _size);
 }
 
-ciUINumberDialer::ciUINumberDialer(float _min, float _max, float _value, int _precision, string _name, int _size) : ciUIWidgetWithLabel()
+ciUINumberDialer::ciUINumberDialer(float _min, float _max, float _value, int _precision, const std::string &_name, int _size) : ciUIWidgetWithLabel()
 {
     useReference = false;
     init(0,0,0,0, _min, _max, &_value, _precision, _name, _size);
 }
 
-ciUINumberDialer::ciUINumberDialer(float x, float y, float _min, float _max, float *_value, int _precision, string _name, int _size) : ciUIWidgetWithLabel()
+ciUINumberDialer::ciUINumberDialer(float x, float y, float _min, float _max, float *_value, int _precision, const std::string &_name, int _size) : ciUIWidgetWithLabel()
 {
     useReference = true;
     init(x,y,0,0, _min, _max, _value, _precision, _name, _size);
 }
 
-ciUINumberDialer::ciUINumberDialer(float _min, float _max, float *_value, int _precision, string _name, int _size) : ciUIWidgetWithLabel()
+ciUINumberDialer::ciUINumberDialer(float _min, float _max, float *_value, int _precision, const std::string &_name, int _size) : ciUIWidgetWithLabel()
 {
     useReference = true;
     init(0,0,0,0, _min, _max, _value, _precision, _name, _size);
@@ -58,7 +58,7 @@ ciUINumberDialer::~ciUINumberDialer()
     }
 }
 
-void ciUINumberDialer::init(float x, float y, float w, float h, float _min, float _max, float *_value, int _precision, string _name, int _size)
+void ciUINumberDialer::init(float x, float y, float w, float h, float _min, float _max, float *_value, int _precision, const std::string &_name, int _size)
 {
     initRect(x, y, w, h);
     name = string(_name);

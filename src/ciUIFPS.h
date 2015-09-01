@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <string>
 #include "ciUIWidgetWithLabel.h"
 
 class ciUIFPS : public ciUIWidgetWithLabel
@@ -36,6 +37,6 @@ public:
     
 protected:
 	void update();
-    void init(float x, float y, string _name, string _label, int _size);
+    void init(float x, float y, const std::string &_name, const std::string &_label, int _size);
     int labelPrecision;
 }; 

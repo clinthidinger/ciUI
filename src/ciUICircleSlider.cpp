@@ -25,31 +25,31 @@
 #include "ciUICircleSlider.h"
 #include "ciUI.h"
 
-ciUICircleSlider::ciUICircleSlider(float x, float y, float w, float _min, float _max, float _value, string _name, int _size) : ciUISlider()
+ciUICircleSlider::ciUICircleSlider(float x, float y, float w, float _min, float _max, float _value, const std::string &_name, int _size) : ciUISlider()
 {
     useReference = false;
     init(x, y, w, w, _min, _max, &_value, _name, _size);
 }
 
-ciUICircleSlider::ciUICircleSlider(float w, float _min, float _max, float _value, string _name, int _size) : ciUISlider()
+ciUICircleSlider::ciUICircleSlider(float w, float _min, float _max, float _value, const std::string &_name, int _size) : ciUISlider()
 {
     useReference = false;
     init(0, 0, w, w, _min, _max, &_value, _name, _size);
 }
 
-ciUICircleSlider::ciUICircleSlider(float x, float y, float w, float _min, float _max, float *_value, string _name, int _size) : ciUISlider()
+ciUICircleSlider::ciUICircleSlider(float x, float y, float w, float _min, float _max, float *_value, const std::string &_name, int _size) : ciUISlider()
 {
     useReference = true;
     init(x, y, w, w, _min, _max, _value, _name, _size);
 }
 
-ciUICircleSlider::ciUICircleSlider(float w, float _min, float _max, float *_value, string _name, int _size) : ciUISlider()
+ciUICircleSlider::ciUICircleSlider(float w, float _min, float _max, float *_value, const std::string &_name, int _size) : ciUISlider()
 {
     useReference = true;
     init(0, 0, w, w, _min, _max, _value, _name, _size);
 }
 
-void ciUICircleSlider::init(float x, float y, float w, float h, float _min, float _max, float *_value, string _name, int _size)
+void ciUICircleSlider::init(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_name, int _size)
 {
     initRect(x,y,w,h);
     name = string(_name);

@@ -30,13 +30,13 @@ ciUIToggle::ciUIToggle() : ciUIButton()
     
 }
 
-ciUIToggle::ciUIToggle(string _name, bool _value, float w, float h, float x, float y, int _size)
+ciUIToggle::ciUIToggle(const std::string &_name, bool _value, float w, float h, float x, float y, int _size)
 : ciUIButton( _name, _value, w, h, x, y, _size )
 {
     kind = CI_UI_WIDGET_TOGGLE;
 }
 
-ciUIToggle::ciUIToggle(string _name, bool *_value, float w, float h, float x, float y, int _size)
+ciUIToggle::ciUIToggle(const std::string &_name, bool *_value, float w, float h, float x, float y, int _size)
 : ciUIButton( _name, _value, w, h, x, y, _size )
 {
     kind = CI_UI_WIDGET_TOGGLE;
@@ -143,17 +143,17 @@ void ciUIToggle::keyReleased(int key)
     }
 }
 
-#ifndef CI_UI_NO_XML
-
-void ciUIToggle::saveState(ofxXmlSettings *XML)
-{
-    XML->setValue("Value", (getValue() ? 1 : 0), 0);
-}
-
-void ciUIToggle::loadState(ofxXmlSettings *XML)
-{
-    int value = XML->getValue("Value", (getValue() ? 1 : 0), 0);
-    setValue((value ? 1 : 0));
-}
-
-#endif
+//#ifndef CI_UI_NO_XML
+//
+//void ciUIToggle::saveState(ofxXmlSettings *XML)
+//{
+//    XML->setValue("Value", (getValue() ? 1 : 0), 0);
+//}
+//
+//void ciUIToggle::loadState(ofxXmlSettings *XML)
+//{
+//    int value = XML->getValue("Value", (getValue() ? 1 : 0), 0);
+//    setValue((value ? 1 : 0));
+//}
+//
+//#endif

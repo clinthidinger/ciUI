@@ -30,8 +30,8 @@
 class ciUITextInput : public ciUIWidgetWithLabel
 {
 public:
-    ciUITextInput(string _name, string _textstring, float w, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    void init(string _name, string _textstring, float w, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUITextInput(const std::string &_name, const std::string &_textstring, float w, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    void init(const std::string &_name, const std::string &_textstring, float w, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
     virtual void setDrawPadding(bool _draw_padded_rect);
     virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline);
     virtual void drawFill();
@@ -43,12 +43,12 @@ public:
     void unClick();
     void stateChange();
 	bool isClicked();
-	string getTextString();
+	const std::string &getTextString();
     int getIntValue();
     float getFloatValue();
     void setInputTriggerType(int _triggerType);
     int getInputTriggerType();
-	void setTextString(string s);
+	void setTextString(const std::string &s);
 	void setParent(ciUIWidget *_parent);
 	void setAutoClear(bool _autoclear);
     void setAutoUnfocus(bool _autoUnfocus);
@@ -58,15 +58,15 @@ public:
     void setTriggerOnClick(bool _triggerOnClick);
     void recalculateDisplayString();
     bool hasState(){ return true; };
-#ifndef CI_UI_NO_XML
-    virtual void saveState(ofxXmlSettings *XML);
-    virtual void loadState(ofxXmlSettings *XML);
-#endif    
+//#ifndef CI_UI_NO_XML
+//    virtual void saveState(ofxXmlSettings *XML);
+//    virtual void loadState(ofxXmlSettings *XML);
+//#endif    
 
 protected:
-	string textstring; 
-	string defaultstring; 
-    string displaystring;
+    std::string textstring;
+    std::string defaultstring;
+    std::string displaystring;
     bool onlyNumericInput;
 	bool clicked;
     bool autoUnfocus; 

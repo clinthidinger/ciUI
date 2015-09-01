@@ -30,9 +30,9 @@
 class ciUIMovingGraph : public ciUIWidget
 {
 public:    
-    ciUIMovingGraph(float x, float y, float w, float h, vector<float> _buffer, int _bufferSize, float _min, float _max, string _name);
-    ciUIMovingGraph(float w, float h, vector<float> _buffer, int _bufferSize, float _min, float _max, string _name);
-    void init(float x, float y, float w, float h, vector<float> _buffer, int _bufferSize, float _min, float _max, string _name);
+    ciUIMovingGraph(float x, float y, float w, float h, const std::vector<float> &_buffer, int _bufferSize, float _min, float _max, const std::string &_name);
+    ciUIMovingGraph(float w, float h, const std::vector<float> &_buffer, int _bufferSize, float _min, float _max, const std::string &_name);
+    void init(float x, float y, float w, float h, const std::vector<float> &_buffer, int _bufferSize, float _min, float _max, const std::string &_name);
     virtual void drawFill();
 	void setParent(ciUIWidget *_parent);
     void addPoint(float _point);
@@ -42,11 +42,11 @@ public:
     float getMax();
     void setMin(float _min);
     float getMin();
-    ofVec2f getMaxAndMind();
+    ci::vec2 getMaxAndMind();
     void setMaxAndMin(float _max, float _min);
 
 protected:    //inherited: ciUIRectangle *rect; ciUIWidget *parent; 
-    vector<float> buffer;
+    std::vector<float> buffer;
     float max, min, scale, inc;
     unsigned int bufferSize; 
 }; 

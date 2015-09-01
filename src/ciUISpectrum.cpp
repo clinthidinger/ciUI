@@ -25,13 +25,13 @@
 #include "ciUISpectrum.h"
 #include "ciUI.h"
 
-ciUISpectrum::ciUISpectrum(float x, float y, float w, float h, float *_buffer, int _bufferSize, float _min, float _max, string _name) : ciUIWaveform(x, y, w, h, _buffer, _bufferSize, _min, _max, _name)
+ciUISpectrum::ciUISpectrum(float x, float y, float w, float h, float *_buffer, int _bufferSize, float _min, float _max, const std::string &_name) : ciUIWaveform(x, y, w, h, _buffer, _bufferSize, _min, _max, _name)
 {
     kind = CI_UI_WIDGET_SPECTRUM;
     scale = rect->getHeight();    
 }
 
-ciUISpectrum::ciUISpectrum(float w, float h, float *_buffer, int _bufferSize, float _min, float _max, string _name) : ciUIWaveform(0, 0, w, h, _buffer, _bufferSize, _min, _max, _name)
+ciUISpectrum::ciUISpectrum(float w, float h, float *_buffer, int _bufferSize, float _min, float _max, const std::string &_name) : ciUIWaveform(0, 0, w, h, _buffer, _bufferSize, _min, _max, _name)
 {
     kind = CI_UI_WIDGET_SPECTRUM;
     scale = rect->getHeight();

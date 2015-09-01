@@ -24,15 +24,16 @@
 
 #pragma once
 
+#include <string>
 #include "ciUIToggle.h"
 
 class ciUILabelToggle : public ciUIToggle
 {
 public:
-    ciUILabelToggle(string _name, bool _value, float w = 0, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, bool _justifyLeft = false);
-    ciUILabelToggle(string _name, bool *_value, float w = 0, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, bool _justifyLeft = false);
-    virtual void init(string _name, bool *_value, float w = 0, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, bool _justifyLeft = false);
-    void setLabelText(string labeltext);
+    ciUILabelToggle(const std::string &_name, bool _value, float w = 0, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, bool _justifyLeft = false);
+    ciUILabelToggle(const std::string &_name, bool *_value, float w = 0, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, bool _justifyLeft = false);
+    virtual void init(const std::string &_name, bool *_value, float w = 0, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, bool _justifyLeft = false);
+    void setLabelText(const std::string &labeltext);
 	void setParent(ciUIWidget *_parent);
     
 protected:    

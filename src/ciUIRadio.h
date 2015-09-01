@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include <vector>
+#include <string>
 #include "ciUIWidgetWithLabel.h"
 #include "ciUIDefines.h"
 #include "ciUIToggle.h"
@@ -31,16 +33,16 @@
 class ciUIRadio : public ciUIWidget
 {
 public:
-    ciUIRadio(string _name, vector<string> names, int _orientation, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    void init(string _name, vector<string> names, int _orientation, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIRadio(const std::string &_name, const std::vector<std::string> &names, int _orientation, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    void init(const std::string &_name, const std::vector<std::string> &names, int _orientation, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
     void setVisible(bool _visible);
-    bool hasToggle(string _name); 
-	void activateToggle(string _name);
+    bool hasToggle(const std::string &_name);
+    void activateToggle(const std::string &_name);
     void triggerSelf();
 	void setParent(ciUIWidget *_parent);
-	vector<ciUIToggle *> getToggles();
+    std::vector<ciUIToggle *> getToggles();
 	ciUIToggle* getActive();
-	string getActiveName();
+    std::string getActiveName();
     int getValue();
 	void triggerEvent(ciUIWidget *child);
     ciUIToggle *addToggle(ciUIToggle *toggle);
@@ -48,6 +50,6 @@ public:
 protected:
     int value; 
 	int orientation; 
-	vector<ciUIToggle *> toggles; 		
+    std::vector<ciUIToggle *> toggles;
     ciUIToggle *active;     
 }; 

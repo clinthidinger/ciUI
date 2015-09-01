@@ -29,12 +29,12 @@
 class ciUINumberDialer : public ciUIWidgetWithLabel
 {
 public:
-    ciUINumberDialer(float x, float y, float _min, float _max, float _value, int _precision, string _name, int _size);
-    ciUINumberDialer(float _min, float _max, float _value, int _precision, string _name, int _size);
-    ciUINumberDialer(float x, float y, float _min, float _max, float *_value, int _precision, string _name, int _size);
-    ciUINumberDialer(float _min, float _max, float *_value, int _precision, string _name, int _size);
+    ciUINumberDialer(float x, float y, float _min, float _max, float _value, int _precision, const std::string &_name, int _size);
+    ciUINumberDialer(float _min, float _max, float _value, int _precision, const std::string &_name, int _size);
+    ciUINumberDialer(float x, float y, float _min, float _max, float *_value, int _precision, const std::string &_name, int _size);
+    ciUINumberDialer(float _min, float _max, float *_value, int _precision, const std::string &_name, int _size);
     ~ciUINumberDialer();
-    void init(float x, float y, float w, float h, float _min, float _max, float *_value, int _precision, string _name, int _size);
+    void init(float x, float y, float w, float h, float _min, float _max, float *_value, int _precision, const std::string &_name, int _size);
     virtual void update();
     virtual void drawFill();
     virtual void drawFillHighlight();
@@ -57,20 +57,20 @@ public:
     bool isDraggable();
     string numToString(float value, int precision, int width, char fill);
     bool hasState(){ return true; };
-#ifndef CI_UI_NO_XML
-    virtual void saveState(ofxXmlSettings *XML);
-    virtual void loadState(ofxXmlSettings *XML);
-#endif    
+//#ifndef CI_UI_NO_XML
+//    virtual void saveState(ofxXmlSettings *XML);
+//    virtual void loadState(ofxXmlSettings *XML);
+//#endif    
     
 protected:
-	string textstring;
-    string displaystring;
+    std::string textstring;
+    std::string displaystring;
     int precision; 
 	float zoneMultiplier; 
 	float *value;  
     bool useReference;     
 	float max, min; 
-    ofPoint hitPoint; 
+    ci::vec2 hitPoint;
     int numOfPrecisionZones;
     int currentPrecisionZone;
     int hasPeriod; 

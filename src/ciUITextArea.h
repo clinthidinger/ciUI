@@ -30,19 +30,19 @@
 class ciUITextArea : public ciUIWidgetWithLabel
 {
 public:
-    ciUITextArea(string _name, string _textstring, float w, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM);
-    void init(string _name, string _textstring, float w, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM);
+    ciUITextArea(const std::string &_name, const std::string &_textstring, float w, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM);
+    void init(const std::string &_name, const std::string &_textstring, float w, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM);
     virtual void drawBack();
     virtual void drawFill();
-    string getTextString();
+    const std::string &getTextString();
 	void setTextString(string s);
     void formatTextString();
 	void setParent(ciUIWidget *_parent);
     void setDrawShadow(bool _drawShadow);
     
 protected:    
-	string textstring;
-    vector<string> textLines;
+    std::string textstring;
+    std::vector<std::string> textLines;
     bool autoSize;
     bool drawShadow; 
     int lineSpaceSize;

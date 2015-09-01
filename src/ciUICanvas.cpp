@@ -28,27 +28,27 @@
 ciUICanvas::~ciUICanvas()
 {
     disable();
-    if(GUIevent != NULL)
+    if(GUIevent != nullptr)
     {
         delete GUIevent;
     }
     if(hasSharedResources == false)
     {
-        if(font_large != NULL)
+        if(font_large != nullptr)
         {
             delete font_large;
         }
-        if(font_medium != NULL)
+        if(font_medium != nullptr)
         {
             delete font_medium;
         }
-        if(font_small != NULL)
+        if(font_small != nullptr)
         {
             delete font_small;
         }
     }
-    vector<ciUIWidget *>::iterator it = widgets.begin();
-    vector<ciUIWidget *>::iterator eit = widgets.end();
+    std::vector<ciUIWidget *>::iterator it = widgets.begin();
+    std::vector<ciUIWidget *>::iterator eit = widgets.end();
     for(; it != eit; ++it)
     {
         ciUIWidget *w = (*it);

@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <string>
 #include "ciUIWidgetWithLabel.h"
 #include "ciUIDefines.h"
 
@@ -31,10 +32,10 @@ class ciUIButton : public ciUIWidgetWithLabel
 {
 public:
     ciUIButton();    
-    ciUIButton(string _name, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    ciUIButton(string _name, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIButton(const std::string &_name, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIButton(const std::string &_name, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
     ~ciUIButton();
-    virtual void init(string _name, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    virtual void init(const std::string &_name, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
     virtual void drawFill();
     virtual void mouseMoved(int x, int y);
     virtual void mouseDragged(int x, int y, int button);

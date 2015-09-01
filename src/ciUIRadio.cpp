@@ -24,12 +24,12 @@
 
 #include "ciUIRadio.h"
 
-ciUIRadio::ciUIRadio(string _name, vector<string> names, int _orientation, float w, float h, float x, float y, int _size) : ciUIWidget()
+ciUIRadio::ciUIRadio(const std::string &_name, const std::vector<std::string> &names, int _orientation, float w, float h, float x, float y, int _size) : ciUIWidget()
 {
     init(_name, names, _orientation, w, h, x, y, _size);
 }
 
-void ciUIRadio::init(string _name, vector<string> names, int _orientation, float w, float h, float x, float y, int _size)
+void ciUIRadio::init(const std::string &_name, const std::vector<std::string> &names, int _orientation, float w, float h, float x, float y, int _size)
 {
     initRect(x,y,w,h);
     name = string(_name);
@@ -48,7 +48,7 @@ void ciUIRadio::init(string _name, vector<string> names, int _orientation, float
     {
         for(unsigned int i = 0; i < names.size(); i++)
         {
-            string tname = names[i];
+            std::string tname = names[i];
             ciUIToggle *toggle = new ciUIToggle(tname, false, w, h, 0, 0, _size);
             addEmbeddedWidget(toggle);
             toggles.push_back(toggle);            
@@ -68,10 +68,10 @@ void ciUIRadio::setVisible(bool _visible)
     }
 }
 
-bool ciUIRadio::hasToggle(string _name)
+bool ciUIRadio::hasToggle(const std::string &_name)
 {
-	vector<ciUIToggle *>::iterator it = toggles.begin();
-	vector<ciUIToggle *>::iterator eit = toggles.end();
+	std::vector<ciUIToggle *>::iterator it = toggles.begin();
+    std::vector<ciUIToggle *>::iterator eit = toggles.end();
     for(; it != eit; ++it)
     {
         ciUIToggle *t = (*it);
@@ -83,7 +83,7 @@ bool ciUIRadio::hasToggle(string _name)
     return false;
 }
 
-void ciUIRadio::activateToggle(string _name)
+void ciUIRadio::activateToggle(const std::string &_name)
 {
     for(unsigned int i = 0; i < toggles.size(); i++)
     {
@@ -103,9 +103,9 @@ void ciUIRadio::activateToggle(string _name)
 
 void ciUIRadio::triggerSelf()
 {
-    if(parent != NULL)
+    if(parent != nullptr)
     {
-        if(active != NULL)
+        if(active != nullptr)
         {
             parent->triggerEvent(active);
         }

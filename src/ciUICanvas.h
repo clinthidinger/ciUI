@@ -31,11 +31,12 @@
 #include "ciUISlider.h"
 #include <vector>
 #include <map>
+#include <string>
 
 class ciUICanvas : public ciUIWidget, public ciUIAppCBGlue
 {
 public:
-    ~ciUICanvas();
+    virtual ~ciUICanvas();
     //Default Constructor:
     ciUICanvas(float defaultWidthSize = CI_UI_GLOBAL_CANVAS_WIDTH, float defaultHeightSize = CI_UI_GLOBAL_CANVAS_WIDTH);
     ciUICanvas(const ciUICanvas &other);              // Mitchell Nordine 2/2/14
@@ -50,12 +51,12 @@ public:
     void init(int x, int y, int w, int h, ciUICanvas *sharedResources = NULL);
     void copyCanvasStyle(ciUICanvas *styler);
     void copyCanvasProperties(ciUICanvas *styler);
-#ifndef CI_UI_NO_XML
-    virtual void saveSettings(string fileName);
-    virtual void loadSettings(string fileName);
-    void setTriggerWidgetsUponLoad(bool _bTriggerWidgetsUponLoad);
-    bool getTriggerWidgetsUponLoad();
-#endif
+//#ifndef CI_UI_NO_XML
+//    virtual void saveSettings(string fileName);
+//    virtual void loadSettings(string fileName);
+//    void setTriggerWidgetsUponLoad(bool _bTriggerWidgetsUponLoad);
+//    bool getTriggerWidgetsUponLoad();
+//#endif
     ciUIFont *getFontLarge();
     ciUIFont *getFontMedium();
     ciUIFont *getFontSmall();
@@ -135,141 +136,141 @@ public:
     
     ciUIFPS *addFPS(int size = CI_UI_FONT_MEDIUM);
     
-    ciUISlider* addSlider(string _name, float _min, float _max, float _value);
-    ciUISlider* addSlider(string _name, float _min, float _max, float _value, float w, float h, float x = 0, float y = 0);
-    ciUISlider* addSlider(string _name, float _min, float _max, float *_value);
-    ciUISlider* addSlider(string _name, float _min, float _max, float *_value, float w, float h, float x = 0, float y = 0);
+    ciUISlider* addSlider(const std::string &_name, float _min, float _max, float _value);
+    ciUISlider* addSlider(const std::string &_name, float _min, float _max, float _value, float w, float h, float x = 0, float y = 0);
+    ciUISlider* addSlider(const std::string &_name, float _min, float _max, float *_value);
+    ciUISlider* addSlider(const std::string &_name, float _min, float _max, float *_value, float w, float h, float x = 0, float y = 0);
     
-    ciUIIntSlider* addIntSlider(string _name, int _min, int _max, int _value);
-    ciUIIntSlider* addIntSlider(string _name, int _min, int _max, int _value, float w, float h, float x = 0, float y = 0);
-    ciUIIntSlider* addIntSlider(string _name, int _min, int _max, int *_value);
-    ciUIIntSlider* addIntSlider(string _name, int _min, int _max, int *_value, float w, float h, float x = 0, float y = 0);
+    ciUIIntSlider* addIntSlider(const std::string &_name, int _min, int _max, int _value);
+    ciUIIntSlider* addIntSlider(const std::string &_name, int _min, int _max, int _value, float w, float h, float x = 0, float y = 0);
+    ciUIIntSlider* addIntSlider(const std::string &_name, int _min, int _max, int *_value);
+    ciUIIntSlider* addIntSlider(const std::string &_name, int _min, int _max, int *_value, float w, float h, float x = 0, float y = 0);
 
-    ciUIDoubleSlider* addDoubleSlider(string _name, double _min, double _max, double _value);
-    ciUIDoubleSlider* addDoubleSlider(string _name, double _min, double _max, double _value, float w, float h, float x = 0, float y = 0);
-    ciUIDoubleSlider* addDoubleSlider(string _name, double _min, double _max, double *_value);
-    ciUIDoubleSlider* addDoubleSlider(string _name, double _min, double _max, double *_value, float w, float h, float x = 0, float y = 0);
+    ciUIDoubleSlider* addDoubleSlider(const std::string &_name, double _min, double _max, double _value);
+    ciUIDoubleSlider* addDoubleSlider(const std::string &_name, double _min, double _max, double _value, float w, float h, float x = 0, float y = 0);
+    ciUIDoubleSlider* addDoubleSlider(const std::string &_name, double _min, double _max, double *_value);
+    ciUIDoubleSlider* addDoubleSlider(const std::string &_name, double _min, double _max, double *_value, float w, float h, float x = 0, float y = 0);
     
-    ciUIRotarySlider* addRotarySlider(string _name, float _min, float _max, float _value, int _size = CI_UI_FONT_SMALL);
-    ciUIRotarySlider* addRotarySlider(string _name, float _min, float _max, float _value, float w, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    ciUIRotarySlider* addRotarySlider(string _name, float _min, float _max, float *_value, int _size = CI_UI_FONT_SMALL);
-    ciUIRotarySlider* addRotarySlider(string _name, float _min, float _max, float *_value, float w, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIRotarySlider* addRotarySlider(const std::string &_name, float _min, float _max, float _value, int _size = CI_UI_FONT_SMALL);
+    ciUIRotarySlider* addRotarySlider(const std::string &_name, float _min, float _max, float _value, float w, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIRotarySlider* addRotarySlider(const std::string &_name, float _min, float _max, float *_value, int _size = CI_UI_FONT_SMALL);
+    ciUIRotarySlider* addRotarySlider(const std::string &_name, float _min, float _max, float *_value, float w, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
     
-    ciUIImageSlider* addImageSlider(string _name, string _pathURL, float _min, float _max, float _value);
-    ciUIImageSlider* addImageSlider(string _name, string _pathURL, float _min, float _max, float _value, float w, float h, float x = 0, float y = 0);
-    ciUIImageSlider* addImageSlider(string _name, string _pathURL, float _min, float _max, float *_value);
-    ciUIImageSlider* addImageSlider(string _name, string _pathURL, float _min, float _max, float *_value, float w, float h, float x = 0, float y = 0);
+    ciUIImageSlider* addImageSlider(const std::string &_name, const std::string &_pathURL, float _min, float _max, float _value);
+    ciUIImageSlider* addImageSlider(const std::string &_name, const std::string &_pathURL, float _min, float _max, float _value, float w, float h, float x = 0, float y = 0);
+    ciUIImageSlider* addImageSlider(const std::string &_name, const std::string &_pathURL, float _min, float _max, float *_value);
+    ciUIImageSlider* addImageSlider(const std::string &_name, const std::string &_pathURL, float _min, float _max, float *_value, float w, float h, float x = 0, float y = 0);
     
-    ciUINumberDialer *addNumberDialer(string _name, float _min, float _max, float _value, int _precision);
-    ciUINumberDialer *addNumberDialer(string _name, float _min, float _max, float *_value, int _precision);
+    ciUINumberDialer *addNumberDialer(const std::string &_name, float _min, float _max, float _value, int _precision);
+    ciUINumberDialer *addNumberDialer(const std::string &_name, float _min, float _max, float *_value, int _precision);
     
-    ciUIMinimalSlider* addMinimalSlider(string _name, float _min, float _max, float _value, int size = CI_UI_FONT_SMALL);
-    ciUIMinimalSlider* addMinimalSlider(string _name, float _min, float _max, float _value, float w, float h, float x = 0, float y = 0, int size = CI_UI_FONT_SMALL);
-    ciUIMinimalSlider* addMinimalSlider(string _name, float _min, float _max, float *_value, int size = CI_UI_FONT_SMALL);
-    ciUIMinimalSlider* addMinimalSlider(string _name, float _min, float _max, float *_value, float w, float h, float x = 0, float y = 0, int size = CI_UI_FONT_SMALL);
+    ciUIMinimalSlider* addMinimalSlider(const std::string &_name, float _min, float _max, float _value, int size = CI_UI_FONT_SMALL);
+    ciUIMinimalSlider* addMinimalSlider(const std::string &_name, float _min, float _max, float _value, float w, float h, float x = 0, float y = 0, int size = CI_UI_FONT_SMALL);
+    ciUIMinimalSlider* addMinimalSlider(const std::string &_name, float _min, float _max, float *_value, int size = CI_UI_FONT_SMALL);
+    ciUIMinimalSlider* addMinimalSlider(const std::string &_name, float _min, float _max, float *_value, float w, float h, float x = 0, float y = 0, int size = CI_UI_FONT_SMALL);
 
-    ciUIRangeSlider* addRangeSlider(string _name, float _min, float _max, float _valuelow, float _valuehigh);
-    ciUIRangeSlider* addRangeSlider(string _name, float _min, float _max, float _valuelow, float _valuehigh, float w, float h, float x = 0, float y = 0);
-    ciUIRangeSlider* addRangeSlider(string _name, float _min, float _max, float *_valuelow, float *_valuehigh);
-    ciUIRangeSlider* addRangeSlider(string _name, float _min, float _max, float *_valuelow, float *_valuehigh, float w, float h, float x = 0, float y = 0);
+    ciUIRangeSlider* addRangeSlider(const std::string &_name, float _min, float _max, float _valuelow, float _valuehigh);
+    ciUIRangeSlider* addRangeSlider(const std::string &_name, float _min, float _max, float _valuelow, float _valuehigh, float w, float h, float x = 0, float y = 0);
+    ciUIRangeSlider* addRangeSlider(const std::string &_name, float _min, float _max, float *_valuelow, float *_valuehigh);
+    ciUIRangeSlider* addRangeSlider(const std::string &_name, float _min, float _max, float *_valuelow, float *_valuehigh, float w, float h, float x = 0, float y = 0);
     
-    ciUIFPSSlider* addFPSSlider(string _name, float _max = 400);
-    ciUIFPSSlider* addFPSSlider(string _name, float w, float h, float _max = 400, float x = 0, float y = 0);
+    ciUIFPSSlider* addFPSSlider(const std::string &_name, float _max = 400);
+    ciUIFPSSlider* addFPSSlider(const std::string &_name, float w, float h, float _max = 400, float x = 0, float y = 0);
     
-    ciUIRadio* addRadio(string _name, vector<string> names, int _orientation = CI_UI_ORIENTATION_VERTICAL, int _size = CI_UI_FONT_SMALL);
-    ciUIRadio* addRadio(string _name, vector<string> names, int _orientation, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIRadio* addRadio(const std::string &_name, vector<string> names, int _orientation = CI_UI_ORIENTATION_VERTICAL, int _size = CI_UI_FONT_SMALL);
+    ciUIRadio* addRadio(const std::string &_name, vector<string> names, int _orientation, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
     
-    ciUIButton* addButton(string _name, bool _value);
-    ciUIButton* addButton(string _name, bool _value, float w, float h, float x = 0, float y = 0);
-    ciUIButton* addButton(string _name, bool *_value);
-    ciUIButton* addButton(string _name, bool *_value, float w, float h, float x = 0, float y = 0);
+    ciUIButton* addButton(const std::string &_name, bool _value);
+    ciUIButton* addButton(const std::string &_name, bool _value, float w, float h, float x = 0, float y = 0);
+    ciUIButton* addButton(const std::string &_name, bool *_value);
+    ciUIButton* addButton(const std::string &_name, bool *_value, float w, float h, float x = 0, float y = 0);
     
-    ciUIToggle* addToggle(string _name, bool _value);
-    ciUIToggle* addToggle(string _name, bool _value, float w, float h, float x = 0, float y = 0);
-    ciUIToggle* addToggle(string _name, bool *_value);
-    ciUIToggle* addToggle(string _name, bool *_value, float w, float h, float x = 0, float y = 0);
+    ciUIToggle* addToggle(const std::string &_name, bool _value);
+    ciUIToggle* addToggle(const std::string &_name, bool _value, float w, float h, float x = 0, float y = 0);
+    ciUIToggle* addToggle(const std::string &_name, bool *_value);
+    ciUIToggle* addToggle(const std::string &_name, bool *_value, float w, float h, float x = 0, float y = 0);
     
-    ciUIToggleMatrix* addToggleMatrix(string _name, int _rows, int _cols);
-    ciUIToggleMatrix* addToggleMatrix(string _name, int _rows, int _cols, float w, float h);
+    ciUIToggleMatrix* addToggleMatrix(const std::string &_name, int _rows, int _cols);
+    ciUIToggleMatrix* addToggleMatrix(const std::string &_name, int _rows, int _cols, float w, float h);
 
-    ciUI2DPad* add2DPad(string _name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f _value);
-    ciUI2DPad* add2DPad(string _name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f _value, float w, float h, float x = 0, float y = 0);
-    ciUI2DPad* add2DPad(string _name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f *_value);
-    ciUI2DPad* add2DPad(string _name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f *_value, float w, float h, float x = 0, float y = 0);
+    ciUI2DPad* add2DPad(const std::string &_name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f _value);
+    ciUI2DPad* add2DPad(const std::string &_name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f _value, float w, float h, float x = 0, float y = 0);
+    ciUI2DPad* add2DPad(const std::string &_name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f *_value);
+    ciUI2DPad* add2DPad(const std::string &_name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f *_value, float w, float h, float x = 0, float y = 0);
         
-    ciUITextInput* addTextInput(string _name, string _textstring, int _size = -1);
-    ciUITextInput* addTextInput(string _name, string _textstring, float w, float h = 0, float x = 0, float y = 0, int _size = -1);
+    ciUITextInput* addTextInput(const std::string &_name, string _textstring, int _size = -1);
+    ciUITextInput* addTextInput(const std::string &_name, string _textstring, float w, float h = 0, float x = 0, float y = 0, int _size = -1);
     
-    ciUILabelToggle* addLabelToggle(string _name, bool _value, bool _justifyLeft = false);
-    ciUILabelToggle* addLabelToggle(string _name, bool _value, float w, float h = 0, float x = 0, float y = 0, bool _justifyLeft = false);
-    ciUILabelToggle* addLabelToggle(string _name, bool *_value, bool _justifyLeft = false);
-    ciUILabelToggle* addLabelToggle(string _name, bool *_value, float w, float h = 0, float x = 0, float y = 0, bool _justifyLeft = false);
+    ciUILabelToggle* addLabelToggle(const std::string &_name, bool _value, bool _justifyLeft = false);
+    ciUILabelToggle* addLabelToggle(const std::string &_name, bool _value, float w, float h = 0, float x = 0, float y = 0, bool _justifyLeft = false);
+    ciUILabelToggle* addLabelToggle(const std::string &_name, bool *_value, bool _justifyLeft = false);
+    ciUILabelToggle* addLabelToggle(const std::string &_name, bool *_value, float w, float h = 0, float x = 0, float y = 0, bool _justifyLeft = false);
 
-    ciUILabelButton* addLabelButton(string _name, bool _value, bool _justifyLeft = false);
-    ciUILabelButton* addLabelButton(string _name, bool _value, float w, float h = 0, float x = 0, float y = 0, bool _justifyLeft = false);
-    ciUILabelButton* addLabelButton(string _name, bool *_value, bool _justifyLeft = false);
-    ciUILabelButton* addLabelButton(string _name, bool *_value, float w, float h = 0, float x = 0, float y = 0, bool _justifyLeft = false);
+    ciUILabelButton* addLabelButton(const std::string &_name, bool _value, bool _justifyLeft = false);
+    ciUILabelButton* addLabelButton(const std::string &_name, bool _value, float w, float h = 0, float x = 0, float y = 0, bool _justifyLeft = false);
+    ciUILabelButton* addLabelButton(const std::string &_name, bool *_value, bool _justifyLeft = false);
+    ciUILabelButton* addLabelButton(const std::string &_name, bool *_value, float w, float h = 0, float x = 0, float y = 0, bool _justifyLeft = false);
 
-    ciUIDropDownList* addDropDownList(string _name, vector<string> items);
-    ciUIDropDownList* addDropDownList(string _name, vector<string> items, float w, float x = 0, float y = 0);
+    ciUIDropDownList* addDropDownList(const std::string &_name, vector<string> items);
+    ciUIDropDownList* addDropDownList(const std::string &_name, vector<string> items, float w, float x = 0, float y = 0);
 
-    ciUIWaveform* addWaveform(string _name, float *_buffer, int _bufferSize, float _min = -1.0, float _max = 1.0, float _h = -1);
-    ciUIWaveform* addWaveform(string _name, float *_buffer, int _bufferSize, float _min, float _max, float _w, float _h);
+    ciUIWaveform* addWaveform(const std::string &_name, float *_buffer, int _bufferSize, float _min = -1.0, float _max = 1.0, float _h = -1);
+    ciUIWaveform* addWaveform(const std::string &_name, float *_buffer, int _bufferSize, float _min, float _max, float _w, float _h);
     
-    ciUISpectrum* addSpectrum(string _name, float *_buffer, int _bufferSize, float _min = 0.0, float _max = 1.0, float _h = CI_UI_GLOBAL_GRAPH_HEIGHT);
-    ciUISpectrum* addSpectrum(string _name, float *_buffer, int _bufferSize, float _min, float _max, float _w, float _h);
+    ciUISpectrum* addSpectrum(const std::string &_name, float *_buffer, int _bufferSize, float _min = 0.0, float _max = 1.0, float _h = CI_UI_GLOBAL_GRAPH_HEIGHT);
+    ciUISpectrum* addSpectrum(const std::string &_name, float *_buffer, int _bufferSize, float _min, float _max, float _w, float _h);
     
-    ciUIMovingGraph* addMovingGraph(string _name, vector<float> _buffer, int _bufferSize, float _min, float _max, float _h = CI_UI_GLOBAL_GRAPH_HEIGHT);
-    ciUIMovingGraph* addMovingGraph(string _name, vector<float> _buffer, int _bufferSize, float _min, float _max, float _w, float _h);
+    ciUIMovingGraph* addMovingGraph(const std::string &_name, vector<float> _buffer, int _bufferSize, float _min, float _max, float _h = CI_UI_GLOBAL_GRAPH_HEIGHT);
+    ciUIMovingGraph* addMovingGraph(const std::string &_name, vector<float> _buffer, int _bufferSize, float _min, float _max, float _w, float _h);
 
-    ciUIImage *addImage(string _name, ofImage *_image, float _w, float _h, bool _showLabel = false);
-    ciUIImage *addImage(string _name, ofImage *_image, bool _showLabel = false);
+    ciUIImage *addImage(const std::string &_name, ofImage *_image, float _w, float _h, bool _showLabel = false);
+    ciUIImage *addImage(const std::string &_name, ofImage *_image, bool _showLabel = false);
 
-    ciUIBaseDraws *addBaseDraws(string _name, ofBaseDraws *_base, float _w, float _h, bool _showLabel = false);
-    ciUIBaseDraws *addBaseDraws(string _name, ofBaseDraws *_base, bool _showLabel = false);
+    ciUIBaseDraws *addBaseDraws(const std::string &_name, ofBaseDraws *_base, float _w, float _h, bool _showLabel = false);
+    ciUIBaseDraws *addBaseDraws(const std::string &_name, ofBaseDraws *_base, bool _showLabel = false);
 
-    ciUIImageSampler *addImageSampler(string _name, ofImage *_image, float _w, float _h);
-    ciUIImageSampler *addImageSampler(string _name, ofImage *_image);
+    ciUIImageSampler *addImageSampler(const std::string &_name, ofImage *_image, float _w, float _h);
+    ciUIImageSampler *addImageSampler(const std::string &_name, ofImage *_image);
     
-    ciUIBiLabelSlider *addBiLabelSlider(string _name, string _leftLabel, string _rightLabel, float _min, float _max, float _value, int _size = CI_UI_FONT_SMALL);
-    ciUIBiLabelSlider *addBiLabelSlider(string _name, string _leftLabel, string _rightLabel, float _min, float _max, float *_value, int _size = CI_UI_FONT_SMALL);
-    ciUIBiLabelSlider *addBiLabelSlider(string _name, string _leftLabel, string _rightLabel, float _min, float _max, float _value, float _w, float _h, int _size = CI_UI_FONT_SMALL);
-    ciUIBiLabelSlider *addBiLabelSlider(string _name, string _leftLabel, string _rightLabel, float _min, float _max, float *_value, float _w, float _h, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider *addBiLabelSlider(const std::string &_name, string _leftLabel, string _rightLabel, float _min, float _max, float _value, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider *addBiLabelSlider(const std::string &_name, string _leftLabel, string _rightLabel, float _min, float _max, float *_value, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider *addBiLabelSlider(const std::string &_name, string _leftLabel, string _rightLabel, float _min, float _max, float _value, float _w, float _h, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider *addBiLabelSlider(const std::string &_name, string _leftLabel, string _rightLabel, float _min, float _max, float *_value, float _w, float _h, int _size = CI_UI_FONT_SMALL);
     
-    ciUICircleSlider* addCircleSlider(string _name, float _min, float _max, float _value);
-    ciUICircleSlider* addCircleSlider(string _name, float _min, float _max, float _value, float w, float x = 0, float y = 0);
-    ciUICircleSlider* addCircleSlider(string _name, float _min, float _max, float *_value);
-    ciUICircleSlider* addCircleSlider(string _name, float _min, float _max, float *_value, float w, float x = 0, float y = 0);
+    ciUICircleSlider* addCircleSlider(const std::string &_name, float _min, float _max, float _value);
+    ciUICircleSlider* addCircleSlider(const std::string &_name, float _min, float _max, float _value, float w, float x = 0, float y = 0);
+    ciUICircleSlider* addCircleSlider(const std::string &_name, float _min, float _max, float *_value);
+    ciUICircleSlider* addCircleSlider(const std::string &_name, float _min, float _max, float *_value, float w, float x = 0, float y = 0);
 
-    ciUIValuePlotter* addValuePlotter(string _name, int _bufferSize, float _min, float _max, float *_value, float _h = CI_UI_GLOBAL_GRAPH_HEIGHT);
-    ciUIValuePlotter* addValuePlotter(string _name, int _bufferSize, float _min, float _max, float *_value, float _w, float _h);
+    ciUIValuePlotter* addValuePlotter(const std::string &_name, int _bufferSize, float _min, float _max, float *_value, float _h = CI_UI_GLOBAL_GRAPH_HEIGHT);
+    ciUIValuePlotter* addValuePlotter(const std::string &_name, int _bufferSize, float _min, float _max, float *_value, float _w, float _h);
     
-    ciUI2DGraph *add2DGraph(string _name, ciUIVec2f _rangeX, ciUIVec2f _rangeY, int _bufferSize, float * _xValues, float * _yValues);
-    ciUI2DGraph *add2DGraph(string _name, ciUIVec2f _rangeX, ciUIVec2f _rangeY, int _bufferSize, float * _xValues, float * _yValues, float _w, float _h, float _x = 0, float _y = 0);
+    ciUI2DGraph *add2DGraph(const std::string &_name, ciUIVec2f _rangeX, ciUIVec2f _rangeY, int _bufferSize, float * _xValues, float * _yValues);
+    ciUI2DGraph *add2DGraph(const std::string &_name, ciUIVec2f _rangeX, ciUIVec2f _rangeY, int _bufferSize, float * _xValues, float * _yValues, float _w, float _h, float _x = 0, float _y = 0);
 
-    ciUIImageToggle *addImageToggle(string _name, string _path, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    ciUIImageToggle *addImageToggle(string _name, string _path, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    ciUIImageToggle *addImageToggle(string _name, string _path, bool *_value, int _size = CI_UI_FONT_SMALL);
-    ciUIImageToggle *addImageToggle(string _name, string _path, bool _value, int _size = CI_UI_FONT_SMALL);
+    ciUIImageToggle *addImageToggle(const std::string &_name, const std::string &_path, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIImageToggle *addImageToggle(const std::string &_name, const std::string &_path, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIImageToggle *addImageToggle(const std::string &_name, const std::string &_path, bool *_value, int _size = CI_UI_FONT_SMALL);
+    ciUIImageToggle *addImageToggle(const std::string &_name, const std::string &_path, bool _value, int _size = CI_UI_FONT_SMALL);
 
-    ciUIImageButton *addImageButton(string _name, string _path, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    ciUIImageButton *addImageButton(string _name, string _path, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    ciUIImageButton *addImageButton(string _name, string _path, bool *_value, int _size = CI_UI_FONT_SMALL);
-    ciUIImageButton *addImageButton(string _name, string _path, bool _value, int _size = CI_UI_FONT_SMALL);
+    ciUIImageButton *addImageButton(const std::string &_name, const std::string &_path, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIImageButton *addImageButton(const std::string &_name, const std::string &_path, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIImageButton *addImageButton(const std::string &_name, const std::string &_path, bool *_value, int _size = CI_UI_FONT_SMALL);
+    ciUIImageButton *addImageButton(const std::string &_name, const std::string &_path, bool _value, int _size = CI_UI_FONT_SMALL);
     
-    ciUIMultiImageButton *addMultiImageButton(string _name, string _path, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    ciUIMultiImageButton *addMultiImageButton(string _name, string _path, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    ciUIMultiImageButton *addMultiImageButton(string _name, string _path, bool *_value, int _size = CI_UI_FONT_SMALL);
-    ciUIMultiImageButton *addMultiImageButton(string _name, string _path, bool _value, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageButton *addMultiImageButton(const std::string &_name, const std::string &_path, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageButton *addMultiImageButton(const std::string &_name, const std::string &_path, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageButton *addMultiImageButton(const std::string &_name, const std::string &_path, bool *_value, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageButton *addMultiImageButton(const std::string &_name, const std::string &_path, bool _value, int _size = CI_UI_FONT_SMALL);
     
-    ciUIMultiImageToggle *addMultiImageToggle(string _name, string _path, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    ciUIMultiImageToggle *addMultiImageToggle(string _name, string _path, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    ciUIMultiImageToggle *addMultiImageToggle(string _name, string _path, bool *_value, int _size = CI_UI_FONT_SMALL);
-    ciUIMultiImageToggle *addMultiImageToggle(string _name, string _path, bool _value, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageToggle *addMultiImageToggle(const std::string &_name, const std::string &_path, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageToggle *addMultiImageToggle(const std::string &_name, const std::string &_path, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageToggle *addMultiImageToggle(const std::string &_name, const std::string &_path, bool *_value, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageToggle *addMultiImageToggle(const std::string &_name, const std::string &_path, bool _value, int _size = CI_UI_FONT_SMALL);
     
-    ciUITextArea* addTextArea(string _name, string _textstring, int _size = CI_UI_FONT_MEDIUM);
+    ciUITextArea* addTextArea(const std::string &_name, string _textstring, int _size = CI_UI_FONT_MEDIUM);
     
-    ciUISortableList *addSortableList(string _name, vector<std::string> _items, int _size = -1, int _itemHeight = 30);
+    ciUISortableList *addSortableList(const std::string &_name, vector<std::string> _items, int _size = -1, int _itemHeight = 30);
     
     void resetPlacer();
     void setPlacer(ciUIWidget *referenceWidget);
@@ -303,8 +304,8 @@ public:
     void setWidgetDrawingProperties(ciUIWidget *widget);
     void setWidgetColor(ciUIWidget *widget);
 	void setWidgetColor(int _target, ciUIColor _color);
-    ciUIWidget *getWidget(string _name, int widgetID = -1);
-    void removeWidget(string _name);
+    ciUIWidget *getWidget(const std::string &_name, int widgetID = -1);
+    void removeWidget(const std::string &_name);
     virtual void setPosition(int x, int y);
     virtual void setHeight(float _height);
     virtual void setWidth(float _width);
@@ -315,8 +316,8 @@ public:
 	void setDrawPaddingOutline(bool _draw_padded_rect_outline);
     void setDrawWidgetPaddingOutline(bool _draw_padded_rect_outline);
     bool getDrawWidgetPaddingOutline();
-    vector<ciUIWidget*> getWidgets();
-    vector<ciUIWidget*> getWidgetsOfType(ciUIWidgetType type);
+    const std::vector<ciUIWidget*> &getWidgets() const;
+    const std::vector<ciUIWidget*> &getWidgetsOfType(ciUIWidgetType type) const;
 	ofEvent<ciUIEventArgs> newGUIEvent;
 
 protected:
@@ -333,11 +334,11 @@ protected:
     bool bInsideCanvas;
     bool hasSharedResources;
     
-    multimap<string, ciUIWidget*> widgets_map;
-	vector<ciUIWidget*> widgets;
-    map<string, ciUIWidget*> widgetsAreModal;
-	vector<ciUIWidget*> widgetsWithState;
-	vector<ciUIWidget*> lastAddeds; 
+    std::multimap<std::string, ciUIWidget*> widgets_map;
+	std::vector<ciUIWidget*> widgets;
+    std::map<std::string, ciUIWidget*> widgetsAreModal;
+	std::vector<ciUIWidget*> widgetsWithState;
+	std::vector<ciUIWidget*> lastAddeds;
 
 	bool enable_highlight_outline;
 	bool enable_highlight_fill;
@@ -353,7 +354,7 @@ protected:
     float globalButtonDimension;
     float globalSpacerHeight;
     
-    string fontName;
+    std::string fontName;
 
     ciUIWidgetPosition widgetPosition;
     ciUIWidgetAlignment widgetAlign;

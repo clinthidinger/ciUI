@@ -25,17 +25,17 @@
 #include "ciUIWaveform.h"
 #include "ciUI.h"
 
-ciUIWaveform::ciUIWaveform(float x, float y, float w, float h, float *_buffer, int _bufferSize, float _min, float _max, string _name) : ciUIWidget()
+ciUIWaveform::ciUIWaveform(float x, float y, float w, float h, float *_buffer, int _bufferSize, float _min, float _max, const std::string &_name) : ciUIWidget()
 {
     init(x, y, w, h, _buffer, _bufferSize, _min, _max, _name);
 }
 
-ciUIWaveform::ciUIWaveform(float w, float h, float *_buffer, int _bufferSize, float _min, float _max, string _name) : ciUIWidget()
+ciUIWaveform::ciUIWaveform(float w, float h, float *_buffer, int _bufferSize, float _min, float _max, const std::string &_name) : ciUIWidget()
 {
     init(0, 0, w, h, _buffer, _bufferSize, _min, _max, _name);
 }
 
-void ciUIWaveform::init(float x, float y, float w, float h, float *_buffer, int _bufferSize, float _min, float _max, string _name)
+void ciUIWaveform::init(float x, float y, float w, float h, float *_buffer, int _bufferSize, float _min, float _max, const std::string &_name)
 {
     initRect(x,y,w,h);
     name = string(_name);

@@ -30,8 +30,8 @@ class ciUIToggle : public ciUIButton
 {
 public:
     ciUIToggle();
-    ciUIToggle(string _name, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    ciUIToggle(string _name, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIToggle(const std::string &_name, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIToggle(const std::string &_name, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
 	virtual void setParent(ciUIWidget *_parent);
     virtual void setDrawPadding(bool _draw_padded_rect);
     virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline);
@@ -43,8 +43,8 @@ public:
     bool hasState(){ return true; };
     virtual void keyPressed(int key);
     virtual void keyReleased(int key);
-#ifndef CI_UI_NO_XML
-    virtual void saveState(ofxXmlSettings *XML);
-    virtual void loadState(ofxXmlSettings *XML);
-#endif
+//#ifndef CI_UI_NO_XML
+//    virtual void saveState(ofxXmlSettings *XML);
+//    virtual void loadState(ofxXmlSettings *XML);
+//#endif
 };

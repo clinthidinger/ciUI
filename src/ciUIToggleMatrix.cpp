@@ -25,17 +25,17 @@
 #include "ciUIToggleMatrix.h"
 #include "ciUI.h"
 
-ciUIToggleMatrix::ciUIToggleMatrix(float x, float y, float w, float h, int _rows, int _cols, string _name, int _size) : ciUIWidget()
+ciUIToggleMatrix::ciUIToggleMatrix(float x, float y, float w, float h, int _rows, int _cols, const std::string &_name, int _size) : ciUIWidget()
 {
     init(x, y, w, h, _rows, _cols, _name, _size);
 }
 
-ciUIToggleMatrix::ciUIToggleMatrix(float w, float h, int _rows, int _cols, string _name, int _size) : ciUIWidget()
+ciUIToggleMatrix::ciUIToggleMatrix(float w, float h, int _rows, int _cols, const std::string &_name, int _size) : ciUIWidget()
 {
     init(0, 0, w, h, _rows, _cols, _name, _size);
 }
 
-void ciUIToggleMatrix::init(float x, float y, float w, float h, int _rows, int _cols, string _name, int _size)
+void ciUIToggleMatrix::init(float x, float y, float w, float h, int _rows, int _cols, const std::string &_name, int _size)
 {
     initRect(x,y,w,h);
     name = string(_name);
@@ -71,7 +71,7 @@ void ciUIToggleMatrix::setVisible(bool _visible)
     }
 }
 
-void ciUIToggleMatrix::activateToggle(string _name)
+void ciUIToggleMatrix::activateToggle(const std::string &_name)
 {
     for(unsigned int i = 0; i < toggles.size(); i++)
     {
@@ -161,22 +161,22 @@ bool ciUIToggleMatrix::getState(int row, int col)
     return false;
 }
 
-int ciUIToggleMatrix::getColumnCount()
+int ciUIToggleMatrix::getColumnCount() const
 {
     return cols;
 }
 
-int ciUIToggleMatrix::getRowCount()
+int ciUIToggleMatrix::getRowCount() const
 {
     return rows;
 }
 
-vector<ciUIToggle *> ciUIToggleMatrix::getToggles()
+const std::vector<ciUIToggle *> &ciUIToggleMatrix::getToggles()
 {
     return toggles;
 }
 
-vector<ciUIToggle *> * ciUIToggleMatrix::getTogglesPtr()
+const std::vector<ciUIToggle *> * &ciUIToggleMatrix::getTogglesPtr()
 {
     return &toggles;
 }

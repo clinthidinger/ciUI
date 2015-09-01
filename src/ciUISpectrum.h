@@ -29,8 +29,8 @@
 class ciUISpectrum : public ciUIWaveform
 {
 public:
-    ciUISpectrum(float x, float y, float w, float h, float *_buffer, int _bufferSize, float _min, float _max, string _name);
-    ciUISpectrum(float w, float h, float *_buffer, int _bufferSize, float _min, float _max, string _name);
+    ciUISpectrum(float x, float y, float w, float h, float *_buffer, int _bufferSize, float _min, float _max, const std::string &_name);
+    ciUISpectrum(float w, float h, float *_buffer, int _bufferSize, float _min, float _max, const std::string &_name);
     virtual void drawBack();
     virtual void drawFill();
 protected:   

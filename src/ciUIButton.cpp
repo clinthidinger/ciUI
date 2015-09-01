@@ -30,13 +30,13 @@ ciUIButton::ciUIButton() : ciUIWidgetWithLabel()
     
 }
 
-ciUIButton::ciUIButton(string _name, bool _value, float w, float h, float x, float y, int _size) : ciUIWidgetWithLabel()
+ciUIButton::ciUIButton(const std::string &_name, bool _value, float w, float h, float x, float y, int _size) : ciUIWidgetWithLabel()
 {
     useReference = false;
     init(_name, &_value, w, h, x, y, _size);
 }
 
-ciUIButton::ciUIButton(string _name, bool *_value, float w, float h, float x, float y, int _size) : ciUIWidgetWithLabel()
+ciUIButton::ciUIButton(const std::string &_name, bool *_value, float w, float h, float x, float y, int _size) : ciUIWidgetWithLabel()
 {
     useReference = true;
     init(_name, _value, w, h, x, y, _size);
@@ -50,7 +50,7 @@ ciUIButton::~ciUIButton()
     }
 }
 
-void ciUIButton::init(string _name, bool *_value, float w, float h, float x, float y, int _size)
+void ciUIButton::init(const std::string &_name, bool *_value, float w, float h, float x, float y, int _size)
 {
     initRect(x,y,w,h);
     name = string(_name);

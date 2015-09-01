@@ -32,7 +32,7 @@ class ciUITabBar : public ciUICanvas
 {
 public:
     ciUITabBar();
-    ~ciUITabBar();
+    virtual ~ciUITabBar();
     ciUITabBar(float x, float y, float w, float h);
     void initTabBar();
     void addCanvas(ciUICanvas *_canvas);

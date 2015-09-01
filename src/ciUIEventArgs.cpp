@@ -90,12 +90,12 @@ int ciUIEventArgs::getInt()
     return getSlider()->getValue();
 }
 
-string ciUIEventArgs::getName()
+const std::string &ciUIEventArgs::getName()
 {
     return widget->getName();
 }
 
-string ciUIEventArgs::getParentName()
+std::string ciUIEventArgs::getParentName()
 {
     ciUIWidget *parent = widget->getParent();
     if(parent != NULL)
@@ -108,7 +108,7 @@ string ciUIEventArgs::getParentName()
     }
 }
 
-string ciUIEventArgs::getCanvasParentName()
+std::string ciUIEventArgs::getCanvasParentName()
 {
     ciUIWidget *parent = widget->getCanvasParent();
     if(parent != NULL)

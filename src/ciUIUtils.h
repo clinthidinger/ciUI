@@ -24,17 +24,20 @@
 
 #pragma once
 
+#include <string>
+#include <sstream>
+
 template <class T>
-string ciUIToString(const T& value){
-	ostringstream out;
+std::string ciUIToString(const T& value){
+    std::ostringstream out;
 	out << value;
 	return out.str();
 }
 
 template <class T>
-string ciUIToString(const T& value, int precision){
-	ostringstream out;
-	out << fixed << setprecision(precision) << value;
+std::string ciUIToString(const T& value, int precision){
+    std::ostringstream out;
+    out << std::fixed << std::setprecision(precision) << value;
 	return out.str();
 }
 

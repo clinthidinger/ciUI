@@ -30,7 +30,7 @@ ciUISpacer::ciUISpacer(float x, float y, float w, float h) : ciUIWidget()
     init(x, y, w, h);
 }
 
-ciUISpacer::ciUISpacer(float x, float y, float w, float h, string _name) : ciUIWidget()
+ciUISpacer::ciUISpacer(float x, float y, float w, float h, const std::string &_name) : ciUIWidget()
 {
     init(x, y, w, h);
     name = string(_name);
@@ -41,7 +41,7 @@ ciUISpacer::ciUISpacer(float w, float h) : ciUIWidget()
     init(0, 0, w, h);
 }
 
-ciUISpacer::ciUISpacer(float w, float h, string _name) : ciUIWidget()
+ciUISpacer::ciUISpacer(float w, float h, const std::string &_name) : ciUIWidget()
 {
     init(0, 0, w, h);
     name = string(_name);

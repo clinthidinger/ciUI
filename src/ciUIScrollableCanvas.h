@@ -29,7 +29,7 @@
 class ciUIScrollableCanvas : public ciUICanvas
 {    
 public:    
-    ~ciUIScrollableCanvas();
+    virtual ~ciUIScrollableCanvas();
     ciUIScrollableCanvas(float x, float y, float w, float h);
     ciUIScrollableCanvas(float x, float y, float w, float h, ciUICanvas *sharedResources);
     ciUIScrollableCanvas();
@@ -83,10 +83,10 @@ protected:
     bool scrollX, scrollY; 
     bool nearTop, nearBot, nearRight, nearLeft;
     bool hitWidget; 
-    ofPoint pos; 
-    ofPoint ppos; 
-    ofPoint vel; 
-    ofPoint acc; 
+    ci::vec2 pos;
+    ci::vec2 ppos;
+    ci::vec2 vel;
+    ci::vec2 acc;
     float damping;
     float stickyDistance;     
 };

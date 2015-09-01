@@ -25,19 +25,19 @@
 #include "ciUIFPSSlider.h"
 #include "ciUI.h"
 
-ciUIFPSSlider::ciUIFPSSlider(string _name, float w, float h, float _max, float x, float y)
+ciUIFPSSlider::ciUIFPSSlider(const std::string &_name, float w, float h, float _max, float x, float y)
 : ciUISlider(_name, 0.0, _max, 0.0, w, h, x,y){}
 
-ciUIFPSSlider::ciUIFPSSlider(float x, float y, float w, float h, float _min, float _max, float _value, string _name)
+ciUIFPSSlider::ciUIFPSSlider(float x, float y, float w, float h, float _min, float _max, float _value, const std::string &_name)
 : ciUISlider(_name, _min, _max, _value, w, h, x,y){}
 
-ciUIFPSSlider::ciUIFPSSlider(float w, float h, float _min, float _max, float _value, string _name)
+ciUIFPSSlider::ciUIFPSSlider(float w, float h, float _min, float _max, float _value, const std::string &_name)
 : ciUISlider(_name, _min, _max, _value, w, h, 0.0,0.0){}
 
-ciUIFPSSlider::ciUIFPSSlider(float x, float y, float w, float h, float _min, float _max, float *_value, string _name)
+ciUIFPSSlider::ciUIFPSSlider(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_name)
 : ciUISlider(_name, _min, _max, _value, w, h, x,y){}
 
-ciUIFPSSlider::ciUIFPSSlider(float w, float h, float _min, float _max, float *_value, string _name)
+ciUIFPSSlider::ciUIFPSSlider(float w, float h, float _min, float _max, float *_value, const std::string &_name)
 : ciUISlider(_name, _min, _max, _value, w, h, 0.0,0.0){}
 
 void ciUIFPSSlider::update()

@@ -29,11 +29,12 @@
 class ciUIBaseDraws : public ciUIWidgetWithLabel
 {
 public:
-    ciUIBaseDraws(float x, float y, float w, float h, ofBaseDraws* _image, string _name);
-    ciUIBaseDraws(float x, float y, float w, float h, ofBaseDraws* _image, string _name, bool _showLabel);
-    ciUIBaseDraws(float w, float h, ofBaseDraws* _image, string _name);
-    ciUIBaseDraws(float w, float h, ofBaseDraws* _image, string _name, bool _showLabel);
-    void init(float x, float y, float w, float h, ofBaseDraws* _image, string _name);
+    ciUIBaseDraws(float x, float y, float w, float h, ofBaseDraws* _image, const std::string &_name);
+    ciUIBaseDraws(float x, float y, float w, float h, ofBaseDraws* _image, const std::string &_name, bool _showLabel);
+    ciUIBaseDraws(float w, float h, ofBaseDraws* _image, const std::string &_name);
+    ciUIBaseDraws(float w, float h, ofBaseDraws* _image, const std::string &_name, bool _showLabel);
+    virtual ~ciUIBaseDraws();
+    void init(float x, float y, float w, float h, ofBaseDraws* _image, const std::string &_name);
     virtual void setDrawPadding(bool _draw_padded_rect);
     virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline);
     virtual void drawFill();

@@ -25,12 +25,12 @@
 #include "ciUI2DGraph.h"
 #include "ciUI.h"
 
-ciUI2DGraph::ciUI2DGraph(string _name, ofPoint _rangeX, ofPoint _rangeY, int _bufferSize, float * _xValues, float * _yValues, float w, float h, float x, float y) : ciUIWidget()
+ciUI2DGraph::ciUI2DGraph(const std::string &_name, const ci::vec2 &_rangeX, const ci::vec2 &_rangeY, int _bufferSize, float * _xValues, float * _yValues, float w, float h, float x, float y) : ciUIWidget()
 {
     init(_name, _rangeX, _rangeY, _bufferSize, _xValues, _yValues, w, h, x, y);
 }
 
-void ciUI2DGraph::init(string _name, ofPoint _rangeX, ofPoint _rangeY, float _bufferSize, float * _xValues, float * _yValues, float w, float h, float x, float y)
+void ciUI2DGraph::init(const std::string &_name, ofPoint _rangeX, const ci::vec2 &_rangeY, float _bufferSize, float * _xValues, float * _yValues, float w, float h, float x, float y)
 {
     initRect(x, y, w, h);
     name = string(_name);
@@ -88,11 +88,11 @@ void ciUI2DGraph::drawFill()
         ofNoFill();
         if(draw_fill_highlight)
         {
-            ofSetColor(color_fill_highlight);
+            ci::color(color_fill_highlight);
         }
         else
         {
-            ofSetColor(color_fill);
+            ci::color(color_fill);
         }
         if(xValues != NULL && yValues != NULL)
         {

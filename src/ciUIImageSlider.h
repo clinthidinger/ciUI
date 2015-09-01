@@ -24,19 +24,21 @@
 
 #pragma once
 
+#include <string>
+#include "cinder/ImageIo.h"
 #include "ciUISlider.h"
 #include "ciUIRectangle.h"
 
 class ciUIImageSlider : public ciUISlider         ///** I need to simplify this widget to only use one image as the handle of the slider
 {
 public:    
-    ciUIImageSlider(float x, float y, float w, float h, float _min, float _max, float _value, string _pathURL, string _name);
-    ciUIImageSlider(float w, float h, float _min, float _max, float _value, string _pathURL, string _name);
-    ciUIImageSlider(float x, float y, float w, float h, float _min, float _max, float *_value, string _pathURL, string _name);
-    ciUIImageSlider(float w, float h, float _min, float _max, float *_value, string _pathURL, string _name);
+    ciUIImageSlider(float x, float y, float w, float h, float _min, float _max, float _value, const std::string &_pathURL, const std::string &_name);
+    ciUIImageSlider(float w, float h, float _min, float _max, float _value, const std::string &_pathURL, const std::string &_name);
+    ciUIImageSlider(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_pathURL, const std::string &_name);
+    ciUIImageSlider(float w, float h, float _min, float _max, float *_value, const std::string &_pathURL, const std::string &_name);
     ~ciUIImageSlider();
     
-    virtual void init(float x, float y, float w, float h, float _min, float _max, float *_value, string _pathURL, string _name);
+    virtual void init(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_pathURL, const std::string &_name);
     
     virtual void drawBack();
     virtual void drawOutline();
@@ -49,18 +51,18 @@ public:
 	virtual void updateLabel();
     
 protected:
-    ofImage *track;
-    ofImage *trackleft;
+    ci::Image *track;
+    ci::Image *trackleft;
     float tlaspect;
-    ofImage *trackright;
+    ci::Image *trackright;
     float traspect;
     float ratio; 
     
-    ofImage *progress;
-    ofImage *progressright;
-    ofImage *progressleft;
-    ofImage *handle;
-    ofImage *handleDown;
+    ci::Image *progress;
+    ci::Image *progressright;
+    ci::Image *progressleft;
+    ci::Image *handle;
+    ci::Image *handleDown;
     int handleHalfWidth; 
     int handleHalfHeight; 
     ciUIRectangle *imageRect;

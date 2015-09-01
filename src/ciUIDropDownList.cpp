@@ -25,24 +25,24 @@
 #include "ciUIDropDownList.h"
 #include "ciUI.h"
 
-ciUIDropDownList::ciUIDropDownList(string _name, vector<string> items, float w, float x, float y, int _size) : ciUIToggle()
+ciUIDropDownList::ciUIDropDownList(const std::string &_name, const std::vector<std::string> &items, float w, float x, float y, int _size) : ciUIToggle()
 {
     init(_name, items, w, x, y, _size);
 }
-ciUIDropDownList::ciUIDropDownList(float x, float y, float w, string _name, vector<string> items, int _size)
+ciUIDropDownList::ciUIDropDownList(float x, float y, float w, const std::string &_name, const std::vector<std::string> &items, int _size)
 {
     init(_name, items, w, x, y, _size);
 }
-ciUIDropDownList::ciUIDropDownList(float w, string _name, vector<string> items, int _size)
+ciUIDropDownList::ciUIDropDownList(float w, const std::string &_name, const std::vector<std::string> &items, int _size)
 {
     init(_name, items, w, _size);
 }
-ciUIDropDownList::ciUIDropDownList(float x, float y, string _name, vector<string> items, int _size)
+ciUIDropDownList::ciUIDropDownList(float x, float y, const std::string &_name, const std::vector<std::string> &items, int _size)
 {
     init(_name, items, 0, x, y, _size);
 }
 
-void ciUIDropDownList::init(string _name, vector<string> items, float w, float x, float y, int _size)
+void ciUIDropDownList::init(const std::string &_name, const std::vector<std::string> &items, float w, float x, float y, int _size)
 {
     initRect(x,y,w,0);
     autoSize = (w == 0) ? true : false;
@@ -83,7 +83,7 @@ void ciUIDropDownList::clearSelected()
     selectedIndeces.clear();
 }
 
-void ciUIDropDownList::addToggle(string toggleName)
+void ciUIDropDownList::addToggle(const std::string &toggleName)
 {
     float yt = rect->getHeight();
     

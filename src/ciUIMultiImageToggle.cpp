@@ -25,25 +25,25 @@
 #include "ciUIMultiImageToggle.h"
 #include "ciUI.h"
 
-ciUIMultiImageToggle::ciUIMultiImageToggle(float x, float y, float w, float h, bool _value, string _pathURL, string _name, int _size) : ciUIToggle()
+ciUIMultiImageToggle::ciUIMultiImageToggle(float x, float y, float w, float h, bool _value, const std::string &_pathURL, const std::string &_name, int _size) : ciUIToggle()
 {
     useReference = false;
     init(x, y, w, h, &_value, _pathURL, _name, _size);
 }
 
-ciUIMultiImageToggle::ciUIMultiImageToggle(float w, float h, bool _value, string _pathURL, string _name, int _size) : ciUIToggle()
+ciUIMultiImageToggle::ciUIMultiImageToggle(float w, float h, bool _value, const std::string &_pathURL, const std::string &_name, int _size) : ciUIToggle()
 {
     useReference = false;
     init(0, 0, w, h, &_value, _pathURL, _name, _size);
 }
 
-ciUIMultiImageToggle::ciUIMultiImageToggle(float x, float y, float w, float h, bool *_value, string _pathURL, string _name,  int _size) : ciUIToggle()
+ciUIMultiImageToggle::ciUIMultiImageToggle(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name,  int _size) : ciUIToggle()
 {
     useReference = true;
     init(x, y, w, h, _value, _pathURL, _name, _size);
 }
 
-ciUIMultiImageToggle::ciUIMultiImageToggle(float w, float h, bool *_value, string _pathURL, string _name, int _size) : ciUIToggle()
+ciUIMultiImageToggle::ciUIMultiImageToggle(float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size) : ciUIToggle()
 {
     useReference = true;
     init(0, 0, w, h, _value, _pathURL, _name, _size);
@@ -58,7 +58,7 @@ ciUIMultiImageToggle::~ciUIMultiImageToggle()
     delete on;
 }
 
-void ciUIMultiImageToggle::init(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size)
+void ciUIMultiImageToggle::init(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size)
 {
     initRect(x, y, w, h);
     name = string(_name);
@@ -82,22 +82,22 @@ void ciUIMultiImageToggle::init(float x, float y, float w, float h, bool *_value
     drawLabel = false;
     label->setVisible(drawLabel);
     
-    string coreURL = _pathURL;
-    string extension = "";
-    string period (".");
+    std::string coreURL = _pathURL;
+    std::string extension = "";
+    std::string period (".");
     size_t found;
     
     found=_pathURL.find(period);
-    if (found!=string::npos)
+    if (found != std::string::npos)
     {
         coreURL = _pathURL.substr(0,found);
         extension = _pathURL.substr(found);
     }
     
-    back = new ofImage(_pathURL);
-    down = new ofImage(coreURL+"down"+extension);
-    over = new ofImage(coreURL+"over"+extension);
-    on = new ofImage(coreURL+"on"+extension);
+    back = new ci::Image(_pathURL);
+    down = new ci::Image(coreURL+"down"+extension);
+    over = new ci::Image(coreURL+"over"+extension);
+    on = new ci::SImage(coreURL+"on"+extension);
 }
 
 void ciUIMultiImageToggle::drawBack()                     //NORMAL

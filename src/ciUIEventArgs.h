@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <string>
 #include "ciUIWrapper.h"
 #include "ciUISlider.h"
 #include "ciUIWidget.h"
@@ -43,7 +44,7 @@ public:
     ciUIToggle *getToggle();
     ciUISlider *getSlider();
 
-    bool isName(string _name);
+    bool isName(const std::string &_name);
     bool getBool();
     float getFloat();
     double getDouble();
@@ -52,9 +53,9 @@ public:
     ciUICanvas *getCanvasParent();
     ciUIWidget *getParent();
 
-    string getName();
-    string getParentName();
-    string getCanvasParentName();
+    std::string getName();
+    std::string getParentName();
+    std::string getCanvasParentName();
     
     int getKind();
     

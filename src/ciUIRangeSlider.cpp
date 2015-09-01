@@ -25,14 +25,14 @@
 #include "ciUIRangeSlider.h"
 #include "ciUI.h"
 
-ciUIRangeSlider::ciUIRangeSlider(string _name, float _min, float _max, float _valuelow, float _valuehigh, float w, float h,
+ciUIRangeSlider::ciUIRangeSlider(const std::string &_name, float _min, float _max, float _valuelow, float _valuehigh, float w, float h,
                  float x, float y, int _size) : ciUIWidgetWithLabel()
 {
     useReference = false;
     init(_name, _min, _max, &_valuelow, &_valuehigh, w, h, x, y, _size);
 }
 
-ciUIRangeSlider::ciUIRangeSlider(string _name, float _min, float _max, float *_valuelow, float *_valuehigh, float w, float h,
+ciUIRangeSlider::ciUIRangeSlider(const std::string &_name, float _min, float _max, float *_valuelow, float *_valuehigh, float w, float h,
                  float x, float y, int _size) : ciUIWidgetWithLabel()
 {
     useReference = true;
@@ -46,21 +46,21 @@ ciUIRangeSlider::ciUIRangeSlider(float x, float y, float w, float h, float _min,
     //        ofLogWarning("OFXUIRANGESLIDER: DON'T USE THIS CONSTRUCTOR. THIS WILL BE REMOVED ON FUTURE RELEASES.");
 }
 
-ciUIRangeSlider::ciUIRangeSlider(float w, float h, float _min, float _max, float _valuelow, float _valuehigh, string _name, int _size) : ciUIWidgetWithLabel()
+ciUIRangeSlider::ciUIRangeSlider(float w, float h, float _min, float _max, float _valuelow, float _valuehigh, const std::string &_name, int _size) : ciUIWidgetWithLabel()
 {
     useReference = false;
     init(_name, _min, _max, &_valuelow, &_valuehigh, w, h, 0, 0, _size);
     //        ofLogWarning("OFXUIRANGESLIDER: DON'T USE THIS CONSTRUCTOR. THIS WILL BE REMOVED ON FUTURE RELEASES.");
 }
 
-ciUIRangeSlider::ciUIRangeSlider(float x, float y, float w, float h, float _min, float _max, float *_valuelow, float *_valuehigh, string _name, int _size) : ciUIWidgetWithLabel()
+ciUIRangeSlider::ciUIRangeSlider(float x, float y, float w, float h, float _min, float _max, float *_valuelow, float *_valuehigh, const std::string &_name, int _size) : ciUIWidgetWithLabel()
 {
     useReference = true;
     init(_name, _min, _max, _valuelow, _valuehigh, w, h, x, y, _size);
     //        ofLogWarning("OFXUIRANGESLIDER: DON'T USE THIS CONSTRUCTOR. THIS WILL BE REMOVED ON FUTURE RELEASES.");
 }
 
-ciUIRangeSlider::ciUIRangeSlider(float w, float h, float _min, float _max, float *_valuelow, float *_valuehigh, string _name, int _size) : ciUIWidgetWithLabel()
+ciUIRangeSlider::ciUIRangeSlider(float w, float h, float _min, float _max, float *_valuelow, float *_valuehigh, const std::string &_name, int _size) : ciUIWidgetWithLabel()
 {
     useReference = true;
     init(_name, _min, _max, _valuelow, _valuehigh, w, h, 0, 0, _size);
@@ -76,7 +76,7 @@ ciUIRangeSlider::~ciUIRangeSlider()
     }
 }
 
-void ciUIRangeSlider::init(string _name, float _min, float _max, float *_valuelow, float *_valuehigh, float w, float h,
+void ciUIRangeSlider::init(const std::string &_name, float _min, float _max, float *_valuelow, float *_valuehigh, float w, float h,
           float x, float y, int _size)
 {
     initRect(x,y,w,h);

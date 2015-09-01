@@ -24,17 +24,18 @@
 
 #pragma once
 
+#include <string>
 #include "ciUISlider.h"
 #include "ciUIDefines.h"
 
 class ciUICircleSlider : public ciUISlider
 {
 public:
-    ciUICircleSlider(float x, float y, float w, float _min, float _max, float _value, string _name, int _size = CI_UI_FONT_SMALL);
-    ciUICircleSlider(float w, float _min, float _max, float _value, string _name, int _size = CI_UI_FONT_SMALL);
-    ciUICircleSlider(float x, float y, float w, float _min, float _max, float *_value, string _name, int _size = CI_UI_FONT_SMALL);
-    ciUICircleSlider(float w, float _min, float _max, float *_value, string _name, int _size = CI_UI_FONT_SMALL);
-    void init(float x, float y, float w, float h, float _min, float _max, float *_value, string _name, int _size);
+    ciUICircleSlider(float x, float y, float w, float _min, float _max, float _value, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    ciUICircleSlider(float w, float _min, float _max, float _value, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    ciUICircleSlider(float x, float y, float w, float _min, float _max, float *_value, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    ciUICircleSlider(float w, float _min, float _max, float *_value, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    void init(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_name, int _size);
     void drawBack();
     void drawOutline();
     virtual void drawFill();

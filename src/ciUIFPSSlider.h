@@ -24,16 +24,17 @@
 
 #pragma once
 
+#include <string>
 #include "ciUISlider.h"
 
 class ciUIFPSSlider : public ciUISlider
 {
 public:        
-    ciUIFPSSlider(string _name, float w, float h, float _max = 400.0, float x = 0, float y = 0);
-    ciUIFPSSlider(float x, float y, float w, float h, float _min, float _max, float _value, string _name);
-    ciUIFPSSlider(float w, float h, float _min, float _max, float _value, string _name);
-    ciUIFPSSlider(float x, float y, float w, float h, float _min, float _max, float *_value, string _name);
-    ciUIFPSSlider(float w, float h, float _min, float _max, float *_value, string _name);
+    ciUIFPSSlider(const std::string _name, float w, float h, float _max = 400.0, float x = 0, float y = 0);
+    ciUIFPSSlider(float x, float y, float w, float h, float _min, float _max, float _value, const std::string &_name);
+    ciUIFPSSlider(float w, float h, float _min, float _max, float _value, const std::string &_name);
+    ciUIFPSSlider(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_name);
+    ciUIFPSSlider(float w, float h, float _min, float _max, float *_value, const std::string &_name);
 	void update();
     bool hasState() { return false; };
 }; 

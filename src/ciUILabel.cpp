@@ -30,61 +30,61 @@ ciUILabel::ciUILabel() : ciUIWidget()
     
 }
 
-ciUILabel::ciUILabel(float x, float y, string _name, string _label, int _size) : ciUIWidget()
+ciUILabel::ciUILabel(float x, float y, const std::string &_name, const std::string &_label, int _size) : ciUIWidget()
 {
     init(x, y, 0, 0, _name, _label, _size);
     autoSize = true;
 }
 
-ciUILabel::ciUILabel(float x, float y, string _name, int _size) : ciUIWidget()
+ciUILabel::ciUILabel(float x, float y, const std::string &_name, int _size) : ciUIWidget()
 {
     init(x, y, 0, 0, _name, _name, _size);
     autoSize = true;
 }
 
-ciUILabel::ciUILabel(string _name, string _label, int _size) : ciUIWidget()
+ciUILabel::ciUILabel(const std::string &_name, const std::string &_label, int _size) : ciUIWidget()
 {
     init(0, 0, 0, 0, _name, _label, _size);
     autoSize = true;
 }
 
-ciUILabel::ciUILabel(string _name, int _size) : ciUIWidget()
+ciUILabel::ciUILabel(const std::string &_name, int _size) : ciUIWidget()
 {
     init(0, 0, 0, 0, _name, _name, _size);
     autoSize = true;
 }
 
-ciUILabel::ciUILabel(float x, float y, float w, string _name, string _label, int _size) : ciUIWidget()
+ciUILabel::ciUILabel(float x, float y, float w, const std::string &_name, const std::string &_label, int _size) : ciUIWidget()
 {
     init(x, y, w, 0, _name, _label, _size);
     autoSize = false;
 }
 
-ciUILabel::ciUILabel(float x, float y, float w, string _name, int _size) : ciUIWidget()
+ciUILabel::ciUILabel(float x, float y, float w, const std::string &_name, int _size) : ciUIWidget()
 {
     init(x, y, w, 0, _name, _name, _size);
     autoSize = false;
 }
 
-ciUILabel::ciUILabel(float w, string _name, string _label, int _size) : ciUIWidget()
+ciUILabel::ciUILabel(float w, const std::string &_name, const std::string &_label, int _size) : ciUIWidget()
 {
     init(0, 0, w, 0, _name, _label, _size);
     autoSize = false;
 }
 
-ciUILabel::ciUILabel(float w, string _name, int _size) : ciUIWidget()
+ciUILabel::ciUILabel(float w, const std::string &_name, int _size) : ciUIWidget()
 {
     init(0, 0, w, 0, _name, _name, _size);
     autoSize = false;
 }
 
-ciUILabel::ciUILabel(float w, string _name, int _size, float h) : ciUIWidget()
+ciUILabel::ciUILabel(float w, const std::string &_name, int _size, float h) : ciUIWidget()
 {
     init(0, 0, w, h, _name, _name, _size);
     autoSize = false;
 }
 
-void ciUILabel::init(float x, float y, float w, float h, string _name, string _label, int _size)
+void ciUILabel::init(float x, float y, float w, float h, const std::string &_name, const std::string &_label, int _size)
 {
     initRect(x,y,w,h);
     name = string(_name);
@@ -132,12 +132,12 @@ void ciUILabel::drawBackLabel()
     font->drawString(label, floor(rect->getX())+1+xOffset, floor(rect->getY()+rect->getHeight())+1+yOffset);
 }
 
-void ciUILabel::drawString(float x, float y, string _string)
+void ciUILabel::drawString(float x, float y, const std::string &_string)
 {
     font->drawString(_string, floor(x), floor(y));
 }
 
-void ciUILabel::drawStringShadow(float x, float y, string _string)
+void ciUILabel::drawStringShadow(float x, float y, const std::string &_string)
 {
     ciUIFill();
     ciUISetColor(color_back);

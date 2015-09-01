@@ -24,14 +24,15 @@
 
 #pragma once
 
+#include <string>
 #include "ciUIWidget.h"
 
 class ciUIWaveform : public ciUIWidget
 {
 public:    
-    ciUIWaveform(float x, float y, float w, float h, float *_buffer, int _bufferSize, float _min, float _max, string _name);
-    ciUIWaveform(float w, float h, float *_buffer, int _bufferSize, float _min, float _max, string _name);
-    virtual void init(float x, float y, float w, float h, float *_buffer, int _bufferSize, float _min, float _max, string _name);
+    ciUIWaveform(float x, float y, float w, float h, float *_buffer, int _bufferSize, float _min, float _max, const std::string &_name);
+    ciUIWaveform(float w, float h, float *_buffer, int _bufferSize, float _min, float _max, const std::string &_name);
+    virtual void init(float x, float y, float w, float h, float *_buffer, int _bufferSize, float _min, float _max, const std::string &_name);
     virtual void drawBack();
     virtual void drawFill();
     void setBuffer(float *_buffer);
@@ -40,7 +41,7 @@ public:
     float getMax();
     void setMin(float _min);
     float getMin();
-    ofVec2f getMaxAndMind();
+    ci::vec2 getMaxAndMind();
     void setMaxAndMin(float _max, float _min);
     
 protected:

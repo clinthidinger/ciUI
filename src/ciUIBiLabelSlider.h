@@ -24,21 +24,22 @@
 
 #pragma once
 
+#include <string>
 #include "ciUISlider.h"
 #include "ciUIDefines.h"
 
 class ciUIBiLabelSlider : public ciUISlider
 {
 public:
-    ciUIBiLabelSlider(float x, float y, float w, float h, float _min, float _max, float _value, string _name, string _leftLabel, string _rightLabel, int _size = CI_UI_FONT_SMALL);
-    ciUIBiLabelSlider(float w, float h, float _min, float _max, float _value, string _name, string _leftLabel, string _rightLabel, int _size = CI_UI_FONT_SMALL);
-    ciUIBiLabelSlider(float x, float y, float w, float _min, float _max, float _value, string _name, string _leftLabel, string _rightLabel, int _size = CI_UI_FONT_SMALL);
-    ciUIBiLabelSlider(float w, float _min, float _max, float _value, string _name, string _leftLabel, string _rightLabel, int _size = CI_UI_FONT_SMALL);
-    ciUIBiLabelSlider(float x, float y, float w, float h, float _min, float _max, float *_value, string _name, string _leftLabel, string _rightLabel, int _size = CI_UI_FONT_SMALL);
-    ciUIBiLabelSlider(float w, float h, float _min, float _max, float *_value, string _name, string _leftLabel, string _rightLabel, int _size = CI_UI_FONT_SMALL);
-    ciUIBiLabelSlider(float x, float y, float w, float _min, float _max, float *_value, string _name, string _leftLabel, string _rightLabel, int _size = CI_UI_FONT_SMALL);
-    ciUIBiLabelSlider(float w, float _min, float _max, float *_value, string _name, string _leftLabel, string _rightLabel, int _size = CI_UI_FONT_SMALL);
-    void init(float x, float y, float w, float h, float _min, float _max, float *_value, string _name, string _leftLabel, string _rightLabel, int _size);
+    ciUIBiLabelSlider(float x, float y, float w, float h, float _min, float _max, float _value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider(float w, float h, float _min, float _max, float _value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider(float x, float y, float w, float _min, float _max, float _value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider(float w, float _min, float _max, float _value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider(float w, float h, float _min, float _max, float *_value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider(float x, float y, float w, float _min, float _max, float *_value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider(float w, float _min, float _max, float *_value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size = CI_UI_FONT_SMALL);
+    void init(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size);
     virtual void setDrawPadding(bool _draw_padded_rect);
     virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline);
     virtual void drawFill();
@@ -50,6 +51,7 @@ public:
     
 protected:    
     bool autoSize;     
-    string leftLabel, rightLabel; 
+    std::string leftLabel;
+    std::string rightLabel;
     ciUILabel *rlabel; 
 }; 

@@ -24,19 +24,20 @@
 
 #pragma once
 
+#include <string>
 #include "ciUILabelButton.h"
 
 class ciUIDraggableLabelButton : public ciUILabelButton
 {
 public:
-    ciUIDraggableLabelButton(string _name, bool _value, float w = 0, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, bool _justifyLeft = false);
-    ciUIDraggableLabelButton(string _name, bool *_value, float w = 0, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, bool _justifyLeft = false);
-    void init(string _name, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, bool _justifyLeft = false);
+    ciUIDraggableLabelButton(const std::string &_name, bool _value, float w = 0, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, bool _justifyLeft = false);
+    ciUIDraggableLabelButton(const std::string &_name, bool *_value, float w = 0, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, bool _justifyLeft = false);
+    void init(const std::string &_name, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, bool _justifyLeft = false);
     bool isDraggable();
     void setPos(int x , int y);// TODO easing
     int getMidY();//TODO this method mainly exists for the ofxSortableList class, not sure it belongs here
-    void setSortID(string a_id);//TODO again, this is mainly for the ofxSortableList, maybe the ids should be modeled internally in ofxSortableList
-    string getSortID();
+    void setSortID(const std::string &a_id);//TODO again, this is mainly for the ofxSortableList, maybe the ids should be modeled internally in ofxSortableList
+    const std::string &getSortID();
     int getY();
     void mouseDragged(int x, int y, int button);
     void mousePressed(int x, int y, int button);
@@ -48,5 +49,5 @@ public:
     int posY;
     bool onPressed;
     bool isDraggedOut;
-    string id;
+    std::string id;
 };

@@ -30,9 +30,9 @@ class ciUISpacer : public ciUIWidget
 {
 public:            
     ciUISpacer(float x, float y, float w, float h);
-    ciUISpacer(float x, float y, float w, float h, string _name);
+    ciUISpacer(float x, float y, float w, float h, const std::string &_name);
     ciUISpacer(float w, float h);
-    ciUISpacer(float w, float h, string _name);
+    ciUISpacer(float w, float h, const std::string &_name);
     void init(float x, float y, float w, float h);
     void toggleColor();
     void setToggleColor(bool _value);

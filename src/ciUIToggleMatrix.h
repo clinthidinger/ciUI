@@ -31,11 +31,11 @@
 class ciUIToggleMatrix : public ciUIWidget
 {
 public:
-    ciUIToggleMatrix(float x, float y, float w, float h, int _rows, int _cols, string _name, int _size = CI_UI_FONT_SMALL);
-    ciUIToggleMatrix(float w, float h, int _rows, int _cols, string _name, int _size = CI_UI_FONT_SMALL);
-    void init(float x, float y, float w, float h, int _rows, int _cols, string _name, int _size = CI_UI_FONT_SMALL);
+    ciUIToggleMatrix(float x, float y, float w, float h, int _rows, int _cols, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    ciUIToggleMatrix(float w, float h, int _rows, int _cols, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    void init(float x, float y, float w, float h, int _rows, int _cols, const std::string &_name, int _size = CI_UI_FONT_SMALL);
     void setVisible(bool _visible);
-	void activateToggle(string _name);
+	void activateToggle(const std::string &_name);
 	void setParent(ciUIWidget *_parent);
     
     void setAllToggles(bool _value, bool _trigger = true);
@@ -43,18 +43,18 @@ public:
     ciUIToggle * getToggle(unsigned int row, unsigned int col);
     bool getState(int row, int col);
     
-    int getColumnCount();
-    int getRowCount();
+    int getColumnCount() const;
+    int getRowCount() const;
     
-	vector<ciUIToggle *> getToggles();
-	vector<ciUIToggle *> *getTogglesPtr();
+    const std::vector<ciUIToggle *> &getToggles() const;
+    const std::vector<ciUIToggle *> *getTogglesPtr() const;
 	void triggerEvent(ciUIWidget *child);
     void setAllowMultiple(bool _allowMultiple);
     virtual void mouseDragged(int x, int y, int button);
     virtual void mousePressed(int x, int y, int button);
     virtual void mouseReleased(int x, int y, int button);
 protected:
-	vector<ciUIToggle *> toggles; 		   
+    std::vector<ciUIToggle *> toggles;
     int rows, cols;
     float toggleWidth, toggleHeight; 
     bool allowMultiple;     

@@ -24,23 +24,24 @@
 
 #pragma once
 
+#include <string>
 #include "ciUIWidget.h"
 
 class ciUILabel : public ciUIWidget
 {
 public:
     ciUILabel();
-    ciUILabel(float x, float y, string _name, string _label, int _size);
-    ciUILabel(float x, float y, string _name, int _size);
-    ciUILabel(string _name, string _label, int _size);
-    ciUILabel(string _name, int _size);
-    ciUILabel(float x, float y, float w, string _name, string _label, int _size);
-    ciUILabel(float x, float y, float w, string _name, int _size);
-    ciUILabel(float w, string _name, string _label, int _size);
-    ciUILabel(float w, string _name, int _size);
-    ciUILabel(float w, string _name, int _size, float h);
+    ciUILabel(float x, float y, const std::string &_name, const std::string &_label, int _size);
+    ciUILabel(float x, float y, const std::string &_name, int _size);
+    ciUILabel(const std::string &_name, const std::string &_label, int _size);
+    ciUILabel(const std::string &_name, int _size);
+    ciUILabel(float x, float y, float w, const std::string &_name, const std::string &_label, int _size);
+    ciUILabel(float x, float y, float w, const std::string &_name, int _size);
+    ciUILabel(float w, const std::string &_name, const std::string &_label, int _size);
+    ciUILabel(float w, const std::string &_name, int _size);
+    ciUILabel(float w, const std::string &_name, int _size, float h);
     
-    void init(float x, float y, float w, float h, string _name, string _label, int _size);
+    void init(float x, float y, float w, float h, const std::string &_name, const std::string &_label, int _size);
     
     void drawBack();
     void drawFill();
@@ -48,17 +49,17 @@ public:
     void drawFillHighlight();
     void drawBackLabel();
 	
-    void drawString(float x, float y, string _string);
-    void drawStringShadow(float x, float y, string _string);
+    void drawString(float x, float y, const std::string &_string);
+    void drawStringShadow(float x, float y, const std::string &_string);
 	
-    float getStringWidth(string s);
-	float getStringHeight(string s);
+    float getStringWidth(const std::string &s);
+	float getStringHeight(const std::string &s);
 
     float getLineHeight();
     virtual ciUILabel* getLabelWidget();
 
-    void setLabel(string _label);
-    string& getLabel();
+    void setLabel(const std::string &_label);
+    const std::string &getLabel();
     
     bool getAutoSize();
     void setAutoSize(bool _autoSize);
@@ -75,7 +76,7 @@ public:
     
 protected:    
 	int size;
-	string label; 
+    std::string label;
     bool autoSize;
     int xOffset, yOffset; 
 }; 

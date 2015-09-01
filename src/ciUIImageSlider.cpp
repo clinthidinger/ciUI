@@ -25,34 +25,34 @@
 #include "ciUIImageSlider.h"
 #include "ciUI.h"
 
-ciUIImageSlider::ciUIImageSlider(float x, float y, float w, float h, float _min, float _max, float _value, string _pathURL, string _name) : ciUISlider()
+ciUIImageSlider::ciUIImageSlider(float x, float y, float w, float h, float _min, float _max, float _value, const std::string &_pathURL, const std::string &_name) : ciUISlider()
 {
     useReference = false;
     init(x, y, w, h, _min, _max, &_value, _pathURL, _name);
 }
 
-ciUIImageSlider::ciUIImageSlider(float w, float h, float _min, float _max, float _value, string _pathURL, string _name) : ciUISlider()
+ciUIImageSlider::ciUIImageSlider(float w, float h, float _min, float _max, float _value, const std::string &_pathURL, const std::string &_name) : ciUISlider()
 {
     useReference = false;
     init(0, 0, w, h, _min, _max, &_value, _pathURL, _name);
 }
 
-ciUIImageSlider::ciUIImageSlider(float x, float y, float w, float h, float _min, float _max, float *_value, string _pathURL, string _name) : ciUISlider()
+ciUIImageSlider::ciUIImageSlider(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_pathURL, const std::string &_name) : ciUISlider()
 {
     useReference = true;
     init(x, y, w, h, _min, _max, _value, _pathURL, _name);
 }
 
-ciUIImageSlider::ciUIImageSlider(float w, float h, float _min, float _max, float *_value, string _pathURL, string _name) : ciUISlider()
+ciUIImageSlider::ciUIImageSlider(float w, float h, float _min, float _max, float *_value, const std::string &_pathURL, const std::string &_name) : ciUISlider()
 {
     useReference = true;
     init(0, 0, w, h, _min, _max, _value, _pathURL, _name);
 }
 
-void ciUIImageSlider::init(float x, float y, float w, float h, float _min, float _max, float *_value, string _pathURL, string _name)
+void ciUIImageSlider::init(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_pathURL, const std::string &_name)
 {
     initRect(x, y, w, h);
-    name = string(_name);
+    name = std::string(_name);
     if(w > h)
     {
         kind = CI_UI_WIDGET_IMAGESLIDER_H;
@@ -114,23 +114,23 @@ void ciUIImageSlider::init(float x, float y, float w, float h, float _min, float
         extension = _pathURL.substr(found);
     }
     
-    track = new ofImage(coreURL+"track"+extension);         //back
+    track = new ci::Image(coreURL+"track"+extension);         //back
     
-    trackleft = new ofImage(coreURL+"trackleft"+extension);         //back
+    trackleft = new ci::Image(coreURL+"trackleft"+extension);         //back
     tlaspect = (float)trackleft->getWidth()/(float)trackleft->getHeight();
     
-    trackright = new ofImage(coreURL+"trackright"+extension);         //back
+    trackright = new ci::Image(coreURL+"trackright"+extension);         //back
     traspect = (float)trackright->getWidth()/(float)trackright->getHeight();
     
-    progress = new ofImage(coreURL+"progress"+extension);      //fill
+    progress = new ci::Image(coreURL+"progress"+extension);      //fill
     
-    progressright = new ofImage(coreURL+"progressright"+extension);      //fill
+    progressright = new ci::Image(coreURL+"progressright"+extension);      //fill
     
-    progressleft = new ofImage(coreURL+"progressleft"+extension);      //fill
+    progressleft = new ci::Image(coreURL+"progressleft"+extension);      //fill
     
-    handle = new ofImage(coreURL+"handle"+extension);        //handle
+    handle = new ci::Image(coreURL+"handle"+extension);        //handle
     
-    handleDown = new ofImage(coreURL+"handledown"+extension);    //handleOver State
+    handleDown = new ci::Image(coreURL+"handledown"+extension);    //handleOver State
     
     handleHalfWidth = handle->getWidth()*.5;
     handleHalfHeight = handle->getHeight()*.5;

@@ -24,26 +24,28 @@
 
 #pragma once
 
+#include <string>
+#include "cinder/ImageIo.h"
 #include "ciUIToggle.h"
 #include "ciUIDefines.h"
 
 class ciUIImageToggle : public ciUIToggle
 {
 public:
-    ciUIImageToggle(float x, float y, float w, float h, bool _value, string _pathURL, string _name, int _size = CI_UI_FONT_MEDIUM);
-    ciUIImageToggle(float w, float h, bool _value, string _pathURL, string _name, int _size = CI_UI_FONT_MEDIUM);
-    ciUIImageToggle(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size = CI_UI_FONT_MEDIUM);
-    ciUIImageToggle(float w, float h, bool *_value, string _pathURL, string _name, int _size = CI_UI_FONT_MEDIUM);
-    void init(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
+    ciUIImageToggle(float x, float y, float w, float h, bool _value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_MEDIUM);
+    ciUIImageToggle(float w, float h, bool _value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_MEDIUM);
+    ciUIImageToggle(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_MEDIUM);
+    ciUIImageToggle(float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_MEDIUM);
+    void init(float x, float y, float w, float h, bool *_value, const std::string _pathURL, const std::string &_name, int _size = CI_UI_FONT_SMALL);
     virtual ~ciUIImageToggle();
     virtual void drawBack();
     virtual void drawFill();
     virtual void drawFillHighlight();
     virtual void drawOutlineHighlight();
-    virtual ofImage *getImage();
-    virtual void setImage(ofImage *_img);
+    virtual ci::Image *getImage();
+    virtual void setImage(ci::Image *_img);
                      
 protected:
-    ofImage *img;
+    ci::Image *img;
     bool bChangedImage;
 }; 

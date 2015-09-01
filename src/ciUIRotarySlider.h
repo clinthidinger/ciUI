@@ -30,12 +30,12 @@
 class ciUIRotarySlider : public ciUIWidgetWithLabel
 {
 public:    
-    ciUIRotarySlider(float x, float y, float w, float _min, float _max, float _value, string _name, int _size = CI_UI_FONT_SMALL);
-    ciUIRotarySlider(float w, float _min, float _max, float _value, string _name, int _size = CI_UI_FONT_SMALL);
-    ciUIRotarySlider(float x, float y, float w, float _min, float _max, float *_value, string _name, int _size = CI_UI_FONT_SMALL);
-    ciUIRotarySlider(float w, float _min, float _max, float *_value, string _name, int _size = CI_UI_FONT_SMALL);
+    ciUIRotarySlider(float x, float y, float w, float _min, float _max, float _value, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    ciUIRotarySlider(float w, float _min, float _max, float _value, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    ciUIRotarySlider(float x, float y, float w, float _min, float _max, float *_value, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    ciUIRotarySlider(float w, float _min, float _max, float *_value, const std::string &_name, int _size = CI_UI_FONT_SMALL);
     ~ciUIRotarySlider();
-    void init(float x, float y, float w, float _min, float _max, float *_value, string _name, int _size = CI_UI_FONT_SMALL);
+    void init(float x, float y, float w, float _min, float _max, float *_value, const std::string &_name, int _size = CI_UI_FONT_SMALL);
     virtual void update();
     virtual void setDrawPadding(bool _draw_padded_rect);
     virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline);
@@ -65,14 +65,14 @@ public:
     float getMax();
     void setMin(float _min);
     float getMin();
-    ofVec2f getMaxAndMind();
+    ci::vec2 getMaxAndMind();
     void setMaxAndMin(float _max, float _min);
     virtual bool isHit(float x, float y);
     bool hasState(){ return true; };
-#ifndef CI_UI_NO_XML
-    virtual void saveState(ofxXmlSettings *XML);
-    virtual void loadState(ofxXmlSettings *XML);
-#endif    
+//#ifndef CI_UI_NO_XML
+//    virtual void saveState(ofxXmlSettings *XML);
+//    virtual void loadState(ofxXmlSettings *XML);
+//#endif    
     
 protected:    
 	float value, increment; 
@@ -83,7 +83,7 @@ protected:
     ciUIVec2f hitPoint; 
     ciUIVec2f homePoint; 
     float outerRadius, innerRadius;
-    string valueString; 
+    std::string valueString;
     
     
 }; 

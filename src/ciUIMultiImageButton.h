@@ -24,17 +24,18 @@
 
 #pragma once
 
+#include <string>
 #include "ciUIButton.h"
 
 class ciUIMultiImageButton : public ciUIButton
 {
 public:        
-    ciUIMultiImageButton(float x, float y, float w, float h, bool _value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
-    ciUIMultiImageButton(float w, float h, bool _value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
-    ciUIMultiImageButton(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
-    ciUIMultiImageButton(float w, float h, bool *_value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
-    ~ciUIMultiImageButton();
-    void init(float x, float y, float w, float h, bool *_value, string _pathURL, string _name, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageButton(float x, float y, float w, float h, bool _value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageButton(float w, float h, bool _value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageButton(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    ciUIMultiImageButton(float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    virtual ~ciUIMultiImageButton();
+    void init(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_SMALL);
     void drawBack();
     void drawOutlineHighlight();
     void drawFill();
@@ -43,7 +44,7 @@ public:
     virtual void setValue(bool _value);
 
 protected:
-    ofImage *back; 
-    ofImage *over; 
-    ofImage *on; 
+    ci::Image *back;
+    ci::Image *over;
+    ci::Image *on;
 }; 

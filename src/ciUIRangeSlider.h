@@ -24,20 +24,21 @@
 
 #pragma once
 
+#include <string>
 #include "ciUIWidgetWithLabel.h"
 #include "ciUIDefines.h"
 
 class ciUIRangeSlider : public ciUIWidgetWithLabel
 {
 public:
-    ciUIRangeSlider(string _name, float _min, float _max, float _valuelow, float _valuehigh, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    ciUIRangeSlider(string _name, float _min, float _max, float *_valuelow, float *_valuehigh, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    ciUIRangeSlider(float x, float y, float w, float h, float _min, float _max, float _valuelow, float _valuehigh, string _name, int _size = CI_UI_FONT_SMALL);
-    ciUIRangeSlider(float w, float h, float _min, float _max, float _valuelow, float _valuehigh, string _name, int _size = CI_UI_FONT_SMALL);
-    ciUIRangeSlider(float x, float y, float w, float h, float _min, float _max, float *_valuelow, float *_valuehigh, string _name, int _size = CI_UI_FONT_SMALL);
-    ciUIRangeSlider(float w, float h, float _min, float _max, float *_valuelow, float *_valuehigh, string _name, int _size = CI_UI_FONT_SMALL);
-    ~ciUIRangeSlider();
-    void init(string _name, float _min, float _max, float *_valuelow, float *_valuehigh, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIRangeSlider(const std::string &_name, float _min, float _max, float _valuelow, float _valuehigh, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIRangeSlider(const std::string &_name, float _min, float _max, float *_valuelow, float *_valuehigh, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIRangeSlider(float x, float y, float w, float h, float _min, float _max, float _valuelow, float _valuehigh, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    ciUIRangeSlider(float w, float h, float _min, float _max, float _valuelow, float _valuehigh, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    ciUIRangeSlider(float x, float y, float w, float h, float _min, float _max, float *_valuelow, float *_valuehigh, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    ciUIRangeSlider(float w, float h, float _min, float _max, float *_valuelow, float *_valuehigh, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    virtual ~ciUIRangeSlider();
+    void init(const std::string &_name, float _min, float _max, float *_valuelow, float *_valuehigh, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
     virtual void update();
     virtual void setDrawPadding(bool _draw_padded_rect);
     virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline);
@@ -74,10 +75,10 @@ public:
     float getMax();
     bool isDraggable();
     bool hasState(){ return true; };
-#ifndef CI_UI_NO_XML
-    virtual void saveState(ofxXmlSettings *XML);
-    virtual void loadState(ofxXmlSettings *XML);
-#endif
+//#ifndef CI_UI_NO_XML
+//    virtual void saveState(ofxXmlSettings *XML);
+//    virtual void loadState(ofxXmlSettings *XML);
+//#endif
     
 protected:    
 	float valuelow, valuehigh, increment; 
@@ -89,6 +90,6 @@ protected:
 	float hitPoint; 
 	float max, min; 
     int labelPrecision;
-    string valuelowString;
-    string valuehighString; 
+    std::string valuelowString;
+    std::string valuehighString;
 }; 

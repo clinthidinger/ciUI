@@ -24,19 +24,19 @@
 
 #include "ciUIDragableLabelButton.h"
 
-ciUIDraggableLabelButton::ciUIDraggableLabelButton(string _name, bool _value, float w, float h, float x, float y, int _size, bool _justifyLeft) : ciUILabelButton(_name, _value, w, h, x, y, _size, _justifyLeft)
+ciUIDraggableLabelButton::ciUIDraggableLabelButton(const std::string &_name, bool _value, float w, float h, float x, float y, int _size, bool _justifyLeft) : ciUILabelButton(_name, _value, w, h, x, y, _size, _justifyLeft)
 {
     useReference = false;
     init(_name, &_value, w, h, x, y, _size, _justifyLeft);
 }
 
-ciUIDraggableLabelButton::ciUIDraggableLabelButton(string _name, bool *_value, float w, float h, float x, float y, int _size, bool _justifyLeft) : ciUILabelButton(_name, *_value, w, h, x, y, _size, _justifyLeft)
+ciUIDraggableLabelButton::ciUIDraggableLabelButton(const std::string &_name, bool *_value, float w, float h, float x, float y, int _size, bool _justifyLeft) : ciUILabelButton(_name, *_value, w, h, x, y, _size, _justifyLeft)
 {
     useReference = true;
     init(_name, _value, w, h, x, y, _size, _justifyLeft);
 }
 
-void ciUIDraggableLabelButton::init(string _name, bool *_value, float w, float h, float x, float y, int _size, bool _justifyLeft)
+void ciUIDraggableLabelButton::init(const std::string &_name, bool *_value, float w, float h, float x, float y, int _size, bool _justifyLeft)
 {
     saveX = posX = x;
     saveY = posY = y;
@@ -75,7 +75,7 @@ int ciUIDraggableLabelButton::getMidY()//TODO this method mainly exists for the 
     return (posY + (int)(rect->getHeight()/2));
 }
 
-void ciUIDraggableLabelButton::setSortID(string a_id)//TODO again, this is mainly for the ofxSortableList, maybe the ids should be modeled internally in ofxSortableList
+void ciUIDraggableLabelButton::setSortID(const std::string &a_id)//TODO again, this is mainly for the ofxSortableList, maybe the ids should be modeled internally in ofxSortableList
 {
     id = a_id;
 }

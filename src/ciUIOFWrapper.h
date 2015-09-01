@@ -24,18 +24,23 @@
 
 #pragma once
 
-#include "ofMain.h"
-#include "ofPoint.h"
+//#include "ofMain.h"
+//#include "ofPoint.h"
+#include "cinder/Vector.h"
+#include "cinder/Color.h"
+#include "cinder/app/Event.h"
+#include "cinder/Font.h"
 
 #ifndef CI_UI_FONT_RENDERER
 #define CI_UI_FONT_RENDERER ofTrueTypeFont
 #endif
 
-typedef ofVec3f ciUIVec3f;
-typedef ofVec2f ciUIVec2f;
-typedef CI_UI_FONT_RENDERER ciUIFont;
-typedef ofColor ciUIColor;
+typedef ci::vec3 ciUIVec3f;
+typedef ci::vec2 ciUIVec2f;
+//typedef CI_UI_FONT_RENDERER ci::Font;//ciUIFont;
+typedef ci::Color ciUIColor;
 
+/*
 #if defined( TARGET_OF_IPHONE ) || defined( TARGET_OF_IOS ) || defined( TARGET_ANDROID )
     #define CI_UI_TARGET_TOUCH
 #endif
@@ -46,7 +51,7 @@ typedef ofColor ciUIColor;
 class ciUIAppCBGlue
 {
 public:        
-    ofBaseApp *app;
+    //ofBaseApp *app;
     
     void EnableCallbacks()
 	{
@@ -400,25 +405,26 @@ static void ciUISetRectMode(ofRectMode rectMode)
 
 static void ciUICircle(float x, float y, float radius)
 {
-    ofDrawCircle(x, y, radius);
+    ci::drawCircle(x, y, radius);
 }
 
 static void ciUIDrawRect(float x, float y, float w, float h)
 {
-    ofDrawRectangle(x,y,w,h);
+    ci::drawRectangle(x,y,w,h);
 }
 
 static void ciUIDrawLine(float x1, float y1, float x2, float y2)
 {
-    ofDrawLine(x1, y1, x2, y2);
+    ci::drawLine(x1, y1, x2, y2);
 }
 
 static int ciUIGetHeight()
 {
-    return ofGetHeight(); 
+    return ci::GetHeight();
 }
 
 static int ciUIGetWidth()
 {
-    return ofGetWidth();
+    return ci::GetWidth();
 }
+*/

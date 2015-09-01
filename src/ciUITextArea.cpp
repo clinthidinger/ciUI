@@ -25,12 +25,12 @@
 #include "ciUITextArea.h"
 #include "ciUI.h"
 
-ciUITextArea::ciUITextArea(string _name, string _textstring, float w, float h, float x, float y, int _size) : ciUIWidgetWithLabel()
+ciUITextArea::ciUITextArea(const std::string &_name, const std::string &_textstring, float w, float h, float x, float y, int _size) : ciUIWidgetWithLabel()
 {
     init(_name, _textstring, w, h, x, y, _size);
 }
 
-void ciUITextArea::init(string _name, string _textstring, float w, float h, float x, float y, int _size)
+void ciUITextArea::init(const std::string &_name, const std::string &_textstring, float w, float h, float x, float y, int _size)
 {
     initRect(x,y,w,h);
     setName(_name);

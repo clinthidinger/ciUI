@@ -55,7 +55,7 @@ public:
     float getMinY() const;
     float getMaxY() const;
     
-    bool inside(ofPoint p);
+    bool inside(const ci::vec2 &p);
     bool inside(float px, float py);
     bool insideChild(float px, float py);
     bool insideParent(float px, float py);

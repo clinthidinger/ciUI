@@ -31,12 +31,12 @@ class ciUISuperCanvas : public ciUICanvas
 {
 public:
     ciUISuperCanvas(const ciUISuperCanvas &other);
-    ciUISuperCanvas(string _label, ciUIRectangle r, int _size = CI_UI_FONT_MEDIUM);
-    ciUISuperCanvas(string _label, float x, float y, float w, float h, int _size = CI_UI_FONT_MEDIUM);
-    ciUISuperCanvas(string _label, float x, float y, float w, float h, ciUICanvas *sharedResources, int _size = CI_UI_FONT_MEDIUM);
-    ciUISuperCanvas(string _label, int _size = CI_UI_FONT_MEDIUM);
-    ciUISuperCanvas(string _label, ciUICanvas *sharedResources, int _size = CI_UI_FONT_MEDIUM);
-    void superInit(string _label, int _size);
+    ciUISuperCanvas(const std::string &_label, const std::ciUIRectangle &r, int _size = CI_UI_FONT_MEDIUM);
+    ciUISuperCanvas(const std::string &_label, float x, float y, float w, float h, int _size = CI_UI_FONT_MEDIUM);
+    ciUISuperCanvas(const std::string &_label, float x, float y, float w, float h, ciUICanvas *sharedResources, int _size = CI_UI_FONT_MEDIUM);
+    ciUISuperCanvas(const std::string &_label, int _size = CI_UI_FONT_MEDIUM);
+    ciUISuperCanvas(const std::string &_label, ciUICanvas *sharedResources, int _size = CI_UI_FONT_MEDIUM);
+    void superInit(const std::string &_label, int _size);
     void setDeltaTime(float _deltaTime);
     void setMinified(bool _bIsMinified);
     bool isMinified();
@@ -70,9 +70,9 @@ protected:
     void maximize();
     
     int size; 
-    string title; 
+    std::string title;
     ciUILabel *canvasTitle;
-    vector<ciUIWidget *> headerWidgets;
+    std::vector<ciUIWidget *> headerWidgets;
     
     ciUIVec2f hitPoint;
     ciUIVec2f lastPosition;
