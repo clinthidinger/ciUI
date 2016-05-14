@@ -57,7 +57,7 @@ ciUIImageButton::ciUIImageButton(float w, float h, bool *_value, const std::stri
 void ciUIImageButton::init(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size)
 {
     initRect(0,0,w,h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_IMAGEBUTTON;
     
     label = new ciUILabel(w+padding,0, (name+" LABEL"), name, _size);
@@ -135,10 +135,10 @@ ofImage *ciUIImageButton::getImage()
 
 void ciUIImageButton::setImage(ofImage *_img)
 {
-    if(img != NULL && !bChangedImage)
+    if(img != nullptr && !bChangedImage)
     {
         delete img;
-        img = NULL;
+        img = nullptr;
     }
     img = _img;
     bChangedImage = true;

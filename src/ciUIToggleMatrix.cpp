@@ -38,7 +38,7 @@ ciUIToggleMatrix::ciUIToggleMatrix(float w, float h, int _rows, int _cols, const
 void ciUIToggleMatrix::init(float x, float y, float w, float h, int _rows, int _cols, const std::string &_name, int _size)
 {
     initRect(x,y,w,h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_TOGGLEMATRIX;
     rows = _rows;
     cols = _cols;
@@ -133,7 +133,7 @@ void ciUIToggleMatrix::setAllToggles(bool _value, bool _trigger)
 void ciUIToggleMatrix::setToggle(unsigned int row, unsigned int col, bool _value, bool _trigger)
 {
     ciUIToggle *t = getToggle(row, col);
-    if(t != NULL)
+    if(t != nullptr)
     {
         t->setValue(_value);
         if(_trigger)
@@ -148,13 +148,13 @@ ciUIToggle * ciUIToggleMatrix::getToggle(unsigned int row, unsigned int col)
     {
         return toggles[col+row*cols];
     }
-    return NULL;
+    return nullptr;
 }
 
 bool ciUIToggleMatrix::getState(int row, int col)
 {
     ciUIToggle *t = getToggle(row, col);
-    if(t != NULL)
+    if(t != nullptr)
     {
         return t->getValue();
     }
@@ -187,7 +187,7 @@ void ciUIToggleMatrix::triggerEvent(ciUIWidget *child)
     {
         activateToggle(child->getName().c_str());
     }
-    if(parent != NULL)
+    if(parent != nullptr)
     {
         parent->triggerEvent(child);
     }

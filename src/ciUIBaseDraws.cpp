@@ -25,29 +25,29 @@
 #include "ciUIBaseDraws.h"
 #include "ciUI.h"
 
-ciUIBaseDraws::ciUIBaseDraws(float x, float y, float w, float h, ofBaseDraws* _image, const std::string &_name) : ciUIWidgetWithLabel()
+ciUIBaseDraws::ciUIBaseDraws(float x, float y, float w, float h, const ci::SurfaceRef &_image, const std::string &_name) : ciUIWidgetWithLabel()
 {
     init(x, y, w, h, _image, _name);
 }
 
-ciUIBaseDraws::ciUIBaseDraws(float x, float y, float w, float h, ofBaseDraws* _image, const std::string &_name, bool _showLabel) : ciUIWidgetWithLabel()
+ciUIBaseDraws::ciUIBaseDraws(float x, float y, float w, float h, const ci::SurfaceRef &_image, const std::string &_name, bool _showLabel) : ciUIWidgetWithLabel()
 {
     init(x, y, w, h, _image, _name);
     setLabelVisible(_showLabel);
 }
 
-ciUIBaseDraws::ciUIBaseDraws(float w, float h, ofBaseDraws* _image, const std::string &_name) : ciUIWidgetWithLabel()
+ciUIBaseDraws::ciUIBaseDraws(float w, float h, const ci::SurfaceRef &_image, const std::string &_name) : ciUIWidgetWithLabel()
 {
     init(0, 0, w, h, _image, _name);
 }
 
-ciUIBaseDraws::ciUIBaseDraws(float w, float h, ofBaseDraws* _image, const std::string &_name, bool _showLabel) : ciUIWidgetWithLabel()
+ciUIBaseDraws::ciUIBaseDraws(float w, float h, const ci::SurfaceRef &_image, const std::string &_name, bool _showLabel) : ciUIWidgetWithLabel()
 {
     init(0, 0, w, h, _image, _name);
     setLabelVisible(_showLabel);
 }
 
-void ciUIBaseDraws::init(float x, float y, float w, float h, ofBaseDraws* _image, const std::string &_name)
+void ciUIBaseDraws::init(float x, float y, float w, float h, const ci::SurfaceRef &_image, const std::string &_name)
 {
     initRect(x, y, w, h);
     name = _name;
@@ -79,7 +79,7 @@ void ciUIBaseDraws::drawFill()
     ofSetDepthTest(false);
     if(draw_fill)
     {
-        if(image != NULL)
+        if(image != nullptr)
         {
             ofFill();
             ofSetColor(255);

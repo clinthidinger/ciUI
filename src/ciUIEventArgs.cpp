@@ -27,7 +27,7 @@
 
 ciUIEventArgs::ciUIEventArgs()
 {
-    widget = NULL;
+    widget = nullptr;
 }
 
 ciUIEventArgs::ciUIEventArgs(ciUIWidget *_widget)
@@ -65,7 +65,7 @@ ciUIWidget *ciUIEventArgs::getParent()
     return widget->getParent();
 }
 
-bool ciUIEventArgs::isName(string _name)
+bool ciUIEventArgs::isName(const std::string & _name)
 {
     return (getName() == _name) ? true : false; 
 }
@@ -98,7 +98,7 @@ const std::string &ciUIEventArgs::getName()
 std::string ciUIEventArgs::getParentName()
 {
     ciUIWidget *parent = widget->getParent();
-    if(parent != NULL)
+    if(parent != nullptr)
     {
         return parent->getName();
     }
@@ -111,7 +111,7 @@ std::string ciUIEventArgs::getParentName()
 std::string ciUIEventArgs::getCanvasParentName()
 {
     ciUIWidget *parent = widget->getCanvasParent();
-    if(parent != NULL)
+    if(parent != nullptr)
     {
         return parent->getName();
     }

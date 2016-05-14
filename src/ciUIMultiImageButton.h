@@ -44,7 +44,7 @@ public:
     virtual void setValue(bool _value);
 
 protected:
-    ci::Image *back;
-    ci::Image *over;
-    ci::Image *on;
+    ci::SurfaceRef back;
+    ci::SurfaceRef over;
+    ci::SurfaceRef on;
 }; 

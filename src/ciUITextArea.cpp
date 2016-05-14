@@ -93,7 +93,7 @@ string ciUITextArea::getTextString()
 }
 
 
-void ciUITextArea::setTextString(string s)
+void ciUITextArea::setTextString(const std::string & s)
 {
     textLines.clear();
     textstring = s;

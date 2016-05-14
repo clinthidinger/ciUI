@@ -44,8 +44,8 @@ void ciUITabBar::initTabBar()
 {
     kind = CI_UI_WIDGET_TABBAR;
     autoSizeToFitWidgets();
-    ofAddListener(newGUIEvent, this, &ciUITabBar::mainUiEvent);
-    active = NULL;
+    newGUIEvent.connect( std::bind( &ciUITabBar::mainUiEvent, this, std::placeholders::_1 ) );
+    active = nullptr;
 }
 
 void ciUITabBar::addCanvas(ciUICanvas *_canvas)
@@ -64,16 +64,16 @@ void ciUITabBar::addCanvas(ciUIScrollableCanvas *_canvas)
     autoSizeToFitWidgets();
 }
 
-void ciUITabBar::mainUiEvent(ciUIEventArgs &event)
+void ciUITabBar::mainUiEvent(const ciUIEventArgs &event)
 {
     string name = event.getName();
     for (map<ciUIToggle*, ciUICanvas*>::iterator it=canvases.begin(); it!=canvases.end(); ++it)
     {
-        if(active != NULL && active->getName() == name)
+        if(active != nullptr && active->getName() == name)
         {
             it->first->setValue(false);
             it->second->disable();
-            active = NULL;
+            active = nullptr;
         }
         else if(it->second->getName() == name && event.getToggle()->getValue())
         {
@@ -94,7 +94,7 @@ void ciUITabBar::enable()
 {
     ciUICanvas::enable();
     
-    if (active != NULL) {
+    if (active != nullptr) {
         active->enable();
     }
 }
@@ -103,7 +103,7 @@ void ciUITabBar::disable()
 {
     ciUICanvas::disable();
     
-    if (active != NULL) {
+    if (active != nullptr) {
         active->disable();
     }
 }
@@ -112,7 +112,7 @@ void ciUITabBar::toggleVisible()
 {
     ciUICanvas::toggleVisible();
     
-    if (active != NULL) {
+    if (active != nullptr) {
         active->toggleVisible();
     }
 }
@@ -127,7 +127,7 @@ bool ciUITabBar::isHit(int x, int y)
     if (ciUICanvas::isHit(x, y)) {
         return true;
     } else {
-        if (active != NULL) {
+        if (active != nullptr) {
             return active->isHit(x, y);
         }
     }
@@ -135,14 +135,14 @@ bool ciUITabBar::isHit(int x, int y)
     return false;
 }
 
-void ciUITabBar::saveSettings(string pathToSaveTo, string fileNamePrefix)
+void ciUITabBar::saveSettings(const std::string & pathToSaveTo, string fileNamePrefix)
 {
     for (map<ciUIToggle*, ciUICanvas*>::iterator it=canvases.begin(); it!=canvases.end(); ++it) {
         it->second->saveSettings(pathToSaveTo + fileNamePrefix + it->second->getName() + ".xml");
     }
 }
 
-void ciUITabBar::loadSettings(string pathToLoadFrom, string fileNamePrefix)
+void ciUITabBar::loadSettings(const std::string & pathToLoadFrom, string fileNamePrefix)
 {
     for (map<ciUIToggle*, ciUICanvas*>::iterator it=canvases.begin(); it!=canvases.end(); ++it) {
         it->second->loadSettings(pathToLoadFrom + fileNamePrefix + it->second->getName() + ".xml");

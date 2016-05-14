@@ -29,6 +29,7 @@
 #include <map>
 #include "ciUIWrapper.h"
 #include "ciUIDefines.h"
+#include "cinder/gl/TextureFont.h"
 
 //#ifndef CI_UI_NO_XML
 //    #include "ofxXmlSettings.h"
@@ -117,7 +118,7 @@ public:
     
     virtual void setState(int _state);
     virtual int getState();
-    virtual void setFont(ci::UIFont *_font);
+    virtual void setFont(ci::gl::TextureFontRef _font);
 
     virtual void setPadding(float _padding);
     virtual float getPadding();
@@ -190,7 +191,7 @@ public:
 protected:
 	ciUIWidget *parent;
 	ciUIRectangle *rect;
-	ciUIFont *font;
+    ci::gl::TextureFontRef font;
 	
     std::string name;                    
 	ciUIWidgetType kind; 

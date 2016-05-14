@@ -24,6 +24,8 @@
 
 #pragma once
 
+#define CI_UI_NO_XML 1
+
 //#ifndef CI_UI_NO_XML
 //    #include "ofxXmlSettings.h"
 //#endif

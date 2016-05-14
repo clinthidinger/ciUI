@@ -31,7 +31,7 @@ class ciUISuperCanvas : public ciUICanvas
 {
 public:
     ciUISuperCanvas(const ciUISuperCanvas &other);
-    ciUISuperCanvas(const std::string &_label, const std::ciUIRectangle &r, int _size = CI_UI_FONT_MEDIUM);
+    ciUISuperCanvas(const std::string &_label, const ci::Rectf &r, int _size = CI_UI_FONT_MEDIUM);
     ciUISuperCanvas(const std::string &_label, float x, float y, float w, float h, int _size = CI_UI_FONT_MEDIUM);
     ciUISuperCanvas(const std::string &_label, float x, float y, float w, float h, ciUICanvas *sharedResources, int _size = CI_UI_FONT_MEDIUM);
     ciUISuperCanvas(const std::string &_label, int _size = CI_UI_FONT_MEDIUM);
@@ -55,13 +55,13 @@ public:
     virtual void touchDoubleTap(float x, float y, int id);
     virtual void touchCancelled(float x, float y, int id);
 #else
-    virtual void onMouseReleased(ofMouseEventArgs& data);
-    virtual void onMousePressed(ofMouseEventArgs& data);
-    virtual void onMouseDragged(ofMouseEventArgs& data);
+    virtual void onMouseReleased(ci::app::MouseEvent& data);
+    virtual void onMousePressed(ci::app::MouseEvent& data);
+    virtual void onMouseDragged(ci::app::MouseEvent& data);
 #endif
     
-    virtual void saveSettings(string fileName);
-    virtual void loadSettings(string fileName);
+    virtual void saveSettings(const std::string &fileName);
+    virtual void loadSettings(const std::string &fileName);
     void addWidgetToHeader(ciUIWidget *widget);
     void removeWidgets();
     

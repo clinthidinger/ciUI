@@ -33,5 +33,6 @@ public:
     ciUISpectrum(float w, float h, float *_buffer, int _bufferSize, float _min, float _max, const std::string &_name);
     virtual void drawBack();
     virtual void drawFill();
-protected:   
+protected:
+    ci::Shape2d shape;
 }; 

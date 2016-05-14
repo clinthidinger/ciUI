@@ -53,7 +53,7 @@ ciUIButton::~ciUIButton()
 void ciUIButton::init(const std::string &_name, bool *_value, float w, float h, float x, float y, int _size)
 {
     initRect(x,y,w,h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_BUTTON;
     label = new ciUILabel((name+" LABEL"),name,_size);
     addEmbeddedWidget(label);

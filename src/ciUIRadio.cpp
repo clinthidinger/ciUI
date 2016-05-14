@@ -32,7 +32,7 @@ ciUIRadio::ciUIRadio(const std::string &_name, const std::vector<std::string> &n
 void ciUIRadio::init(const std::string &_name, const std::vector<std::string> &names, int _orientation, float w, float h, float x, float y, int _size)
 {
     initRect(x,y,w,h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_RADIO;
     
     draw_back = false;
@@ -55,7 +55,7 @@ void ciUIRadio::init(const std::string &_name, const std::vector<std::string> &n
         }
     }
     
-    active = NULL;
+    active = nullptr;
 }
 
 void ciUIRadio::setVisible(bool _visible)
@@ -103,9 +103,9 @@ void ciUIRadio::activateToggle(const std::string &_name)
 
 void ciUIRadio::triggerSelf()
 {
-    if(parent != nullptr)
+    if(parent != nullptrptr)
     {
-        if(active != nullptr)
+        if(active != nullptrptr)
         {
             parent->triggerEvent(active);
         }
@@ -194,7 +194,7 @@ int ciUIRadio::getValue()
 
 string ciUIRadio::getActiveName()
 {
-    if(active != NULL)
+    if(active != nullptr)
     {
         return active->getName();
     }

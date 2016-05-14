@@ -64,7 +64,7 @@ public:
     bool getAutoSize();
     void setAutoSize(bool _autoSize);
 	
-    void setFont(ciUIFont *_font);
+    void setFont(ci::gl::TextureFontRef _font);
 	int getSize();
 	
     void focus();

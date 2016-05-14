@@ -52,16 +52,16 @@ ciUIMultiImageToggle::ciUIMultiImageToggle(float w, float h, bool *_value, const
 
 ciUIMultiImageToggle::~ciUIMultiImageToggle()
 {
-    delete down;
-    delete back;
-    delete over;
-    delete on;
+    //delete down;
+    //delete back;
+    //delete over;
+    //delete on;
 }
 
 void ciUIMultiImageToggle::init(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size)
 {
     initRect(x, y, w, h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_MULTIIMAGETOGGLE;
     
     label = new ciUILabel(w+padding*2.0,0, (name+" LABEL"), name, _size);
@@ -94,18 +94,19 @@ void ciUIMultiImageToggle::init(float x, float y, float w, float h, bool *_value
         extension = _pathURL.substr(found);
     }
     
-    back = new ci::Image(_pathURL);
-    down = new ci::Image(coreURL+"down"+extension);
-    over = new ci::Image(coreURL+"over"+extension);
-    on = new ci::SImage(coreURL+"on"+extension);
+    back = ci::gl::Texture2d::create(ci::loadImage(_pathURL)); // or ci::loadImage(ci::loadUrl()))???
+    down = ci::gl::Texture2d::create(ci::loadImage(coreURL+"down"+extension));
+    over = ci::gl::Texture2d::create(ci::loadImage(coreURL+"over"+extension));
+    on = ci::gl::Texture2d::create(ci::loadImage(coreURL+"on"+extension));
 }
 
 void ciUIMultiImageToggle::drawBack()                     //NORMAL
 {
     if(draw_back && !draw_fill)
     {
-        ciUISetColor(255);
-        back->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
+        ci::gl::color(ci::Color::white());
+        ci::gl::draw(back, ci::Rectf(rect->getX(), rect->getY(), rect->getX() + rect->getWidth(), rect->getY() + rect->getHeight()));
+        //back->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
     }
 }
 
@@ -113,8 +114,9 @@ void ciUIMultiImageToggle::drawOutlineHighlight()         //OVER
 {
     if(draw_outline_highlight)
     {
-        ciUISetColor(255);
-        over->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
+        ci::gl::color(ci::Color::white());
+        ci::gl::draw(over, ci::Rectf(rect->getX(), rect->getY(), rect->getX() + rect->getWidth(), rect->getY() + rect->getHeight()));
+        //over->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
     }
 }
 
@@ -122,8 +124,9 @@ void ciUIMultiImageToggle::drawFill()
 {
     if(draw_fill)
     {
-        ciUISetColor(255);
-        on->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
+        ci::gl::color(ci::Color::white());
+        ci::gl::draw(on, ci::Rectf(rect->getX(), rect->getY(), rect->getX() + rect->getWidth(), rect->getY() + rect->getHeight()));
+        //on->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
     }
 }
 
@@ -131,8 +134,9 @@ void ciUIMultiImageToggle::drawFillHighlight()            //DOWN/ON
 {
     if(draw_fill_highlight)
     {
-        ciUISetColor(255);
-        down->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
+        ci::gl::color(ci::Color::white());
+        ci::gl::draw(down, ci::Rectf(rect->getX(), rect->getY(), rect->getX() + rect->getWidth(), rect->getY() + rect->getHeight()));
+        //down->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
     }
 }
 

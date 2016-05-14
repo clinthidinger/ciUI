@@ -33,7 +33,7 @@
 #include <map>
 #include <string>
 
-class ciUICanvas : public ciUIWidget, public ciUIAppCBGlue
+class ciUICanvas : public ciUIWidget//, public ciUIAppCBGlue
 {
 public:
     virtual ~ciUICanvas();
@@ -46,21 +46,21 @@ public:
     ciUICanvas(float x, float y, float w, float h);
     ciUICanvas(float x, float y, float w, float h, ciUICanvas *sharedResources);
     ciUICanvas(ciUICanvas *sharedResources, float defaultWidthSize = CI_UI_GLOBAL_CANVAS_WIDTH, float defaultHeightSize = CI_UI_GLOBAL_CANVAS_WIDTH);
-    ciUICanvas(string title);
+    ciUICanvas(const std::string &title);
     
-    void init(int x, int y, int w, int h, ciUICanvas *sharedResources = NULL);
+    void init(int x, int y, int w, int h, ciUICanvas *sharedResources = nullptr);
     void copyCanvasStyle(ciUICanvas *styler);
     void copyCanvasProperties(ciUICanvas *styler);
 //#ifndef CI_UI_NO_XML
-//    virtual void saveSettings(string fileName);
-//    virtual void loadSettings(string fileName);
+//    virtual void saveSettings(const std::string & fileName);
+//    virtual void loadSettings(const std::string & fileName);
 //    void setTriggerWidgetsUponLoad(bool _bTriggerWidgetsUponLoad);
 //    bool getTriggerWidgetsUponLoad();
 //#endif
-    ciUIFont *getFontLarge();
-    ciUIFont *getFontMedium();
-    ciUIFont *getFontSmall();
-    bool setFont(string filename, bool _bAntiAliased=true, bool _bFullCharacterSet=true, bool makeContours=false, float simplifyAmt=0.0, int dpi=CI_UI_FONT_RESOLUTION);
+    ci::gl::TextureFontRef getFontLarge();
+    ci::gl::TextureFontRef getFontMedium();
+    ci::gl::TextureFontRef getFontSmall();
+    bool setFont(const std::string &filename, bool _bAntiAliased=true, bool _bFullCharacterSet=true, bool makeContours=false, float simplifyAmt=0.0, int dpi=CI_UI_FONT_RESOLUTION);
     void setFontSize(ciUIWidgetFontType _kind, int _size, int _resolution = CI_UI_FONT_RESOLUTION);
     void setWidgetSpacing(float _widgetSpacing);
     float getWidgetSpacing();
@@ -121,18 +121,18 @@ public:
 	ciUIWidget* addWidgetUp(ciUIWidget *widget, ciUIWidgetAlignment align = CI_UI_ALIGN_LEFT, bool reAdd = false);
 	ciUIWidget* addWidgetRight(ciUIWidget *widget, ciUIWidgetAlignment align = CI_UI_ALIGN_FREE, bool reAdd = false);
     ciUIWidget* addWidgetLeft(ciUIWidget *widget, ciUIWidgetAlignment align = CI_UI_ALIGN_FREE, bool reAdd = false);
-    ciUIWidget* addWidgetSouthOf(ciUIWidget *widget, string referenceName, bool reAdd = false);
-    ciUIWidget* addWidgetNorthOf(ciUIWidget *widget, string referenceName, bool reAdd = false);
-    ciUIWidget* addWidgetWestOf(ciUIWidget *widget, string referenceName, bool reAdd = false);
-    ciUIWidget* addWidgetEastOf(ciUIWidget *widget, string referenceName, bool reAdd = false);
+    ciUIWidget* addWidgetSouthOf(ciUIWidget *widget, const std::string &referenceName, bool reAdd = false);
+    ciUIWidget* addWidgetNorthOf(ciUIWidget *widget, const std::string &referenceName, bool reAdd = false);
+    ciUIWidget* addWidgetWestOf(ciUIWidget *widget, const std::string &referenceName, bool reAdd = false);
+    ciUIWidget* addWidgetEastOf(ciUIWidget *widget, const std::string &referenceName, bool reAdd = false);
 
     ciUISpacer* addSpacer(float h = CI_UI_GLOBAL_SPACING_HEIGHT);
-    ciUISpacer* addSpacer(string name, float h = CI_UI_GLOBAL_SPACING_HEIGHT);
+    ciUISpacer* addSpacer(const std::string &name, float h = CI_UI_GLOBAL_SPACING_HEIGHT);
     ciUISpacer* addSpacer(float w, float h);
-    ciUISpacer* addSpacer(float w, float h, string name);
+    ciUISpacer* addSpacer(float w, float h, const std::string &name);
     
-    ciUILabel *addLabel(string name, int size = CI_UI_FONT_MEDIUM);
-    ciUILabel *addLabel(string name, string label, int size = CI_UI_FONT_MEDIUM);
+    ciUILabel *addLabel(const std::string &name, int size = CI_UI_FONT_MEDIUM);
+    ciUILabel *addLabel(const std::string &name, const std::string &label, int size = CI_UI_FONT_MEDIUM);
     
     ciUIFPS *addFPS(int size = CI_UI_FONT_MEDIUM);
     
@@ -177,8 +177,8 @@ public:
     ciUIFPSSlider* addFPSSlider(const std::string &_name, float _max = 400);
     ciUIFPSSlider* addFPSSlider(const std::string &_name, float w, float h, float _max = 400, float x = 0, float y = 0);
     
-    ciUIRadio* addRadio(const std::string &_name, vector<string> names, int _orientation = CI_UI_ORIENTATION_VERTICAL, int _size = CI_UI_FONT_SMALL);
-    ciUIRadio* addRadio(const std::string &_name, vector<string> names, int _orientation, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
+    ciUIRadio* addRadio(const std::string &_name, const std::vector<std::string> &names, int _orientation = CI_UI_ORIENTATION_VERTICAL, int _size = CI_UI_FONT_SMALL);
+    ciUIRadio* addRadio(const std::string &_name, const std::vector<std::string> &names, int _orientation, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
     
     ciUIButton* addButton(const std::string &_name, bool _value);
     ciUIButton* addButton(const std::string &_name, bool _value, float w, float h, float x = 0, float y = 0);
@@ -198,8 +198,8 @@ public:
     ciUI2DPad* add2DPad(const std::string &_name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f *_value);
     ciUI2DPad* add2DPad(const std::string &_name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f *_value, float w, float h, float x = 0, float y = 0);
         
-    ciUITextInput* addTextInput(const std::string &_name, string _textstring, int _size = -1);
-    ciUITextInput* addTextInput(const std::string &_name, string _textstring, float w, float h = 0, float x = 0, float y = 0, int _size = -1);
+    ciUITextInput* addTextInput(const std::string &_name, const std::string &_textstring, int _size = -1);
+    ciUITextInput* addTextInput(const std::string &_name, const std::string &_textstring, float w, float h = 0, float x = 0, float y = 0, int _size = -1);
     
     ciUILabelToggle* addLabelToggle(const std::string &_name, bool _value, bool _justifyLeft = false);
     ciUILabelToggle* addLabelToggle(const std::string &_name, bool _value, float w, float h = 0, float x = 0, float y = 0, bool _justifyLeft = false);
@@ -211,8 +211,8 @@ public:
     ciUILabelButton* addLabelButton(const std::string &_name, bool *_value, bool _justifyLeft = false);
     ciUILabelButton* addLabelButton(const std::string &_name, bool *_value, float w, float h = 0, float x = 0, float y = 0, bool _justifyLeft = false);
 
-    ciUIDropDownList* addDropDownList(const std::string &_name, vector<string> items);
-    ciUIDropDownList* addDropDownList(const std::string &_name, vector<string> items, float w, float x = 0, float y = 0);
+    ciUIDropDownList* addDropDownList(const std::string &_name, const std::vector<std::string> &items);
+    ciUIDropDownList* addDropDownList(const std::string &_name, const std::vector<std::string> &items, float w, float x = 0, float y = 0);
 
     ciUIWaveform* addWaveform(const std::string &_name, float *_buffer, int _bufferSize, float _min = -1.0, float _max = 1.0, float _h = -1);
     ciUIWaveform* addWaveform(const std::string &_name, float *_buffer, int _bufferSize, float _min, float _max, float _w, float _h);
@@ -220,22 +220,22 @@ public:
     ciUISpectrum* addSpectrum(const std::string &_name, float *_buffer, int _bufferSize, float _min = 0.0, float _max = 1.0, float _h = CI_UI_GLOBAL_GRAPH_HEIGHT);
     ciUISpectrum* addSpectrum(const std::string &_name, float *_buffer, int _bufferSize, float _min, float _max, float _w, float _h);
     
-    ciUIMovingGraph* addMovingGraph(const std::string &_name, vector<float> _buffer, int _bufferSize, float _min, float _max, float _h = CI_UI_GLOBAL_GRAPH_HEIGHT);
-    ciUIMovingGraph* addMovingGraph(const std::string &_name, vector<float> _buffer, int _bufferSize, float _min, float _max, float _w, float _h);
+    ciUIMovingGraph* addMovingGraph(const std::string &_name, const std::vector<float> &_buffer, int _bufferSize, float _min, float _max, float _h = CI_UI_GLOBAL_GRAPH_HEIGHT);
+    ciUIMovingGraph* addMovingGraph(const std::string &_name, const std::vector<float> &_buffer, int _bufferSize, float _min, float _max, float _w, float _h);
 
-    ciUIImage *addImage(const std::string &_name, ofImage *_image, float _w, float _h, bool _showLabel = false);
-    ciUIImage *addImage(const std::string &_name, ofImage *_image, bool _showLabel = false);
+    ciUIImage *addImage(const std::string &_name, ci::SurfaceRef _image, float _w, float _h, bool _showLabel = false);
+    ciUIImage *addImage(const std::string &_name, ci::SurfaceRef _image, bool _showLabel = false);
 
-    ciUIBaseDraws *addBaseDraws(const std::string &_name, ofBaseDraws *_base, float _w, float _h, bool _showLabel = false);
-    ciUIBaseDraws *addBaseDraws(const std::string &_name, ofBaseDraws *_base, bool _showLabel = false);
+    ciUIBaseDraws *addBaseDraws(const std::string &_name, const ci::SurfaceRef &_base, float _w, float _h, bool _showLabel = false);
+    ciUIBaseDraws *addBaseDraws(const std::string &_name, const ci::SurfaceRef &_base, bool _showLabel = false);
 
-    ciUIImageSampler *addImageSampler(const std::string &_name, ofImage *_image, float _w, float _h);
-    ciUIImageSampler *addImageSampler(const std::string &_name, ofImage *_image);
+    ciUIImageSampler *addImageSampler(const std::string &_name, ci::SurfaceRef _image, float _w, float _h);
+    ciUIImageSampler *addImageSampler(const std::string &_name, ci::SurfaceRef _image);
     
-    ciUIBiLabelSlider *addBiLabelSlider(const std::string &_name, string _leftLabel, string _rightLabel, float _min, float _max, float _value, int _size = CI_UI_FONT_SMALL);
-    ciUIBiLabelSlider *addBiLabelSlider(const std::string &_name, string _leftLabel, string _rightLabel, float _min, float _max, float *_value, int _size = CI_UI_FONT_SMALL);
-    ciUIBiLabelSlider *addBiLabelSlider(const std::string &_name, string _leftLabel, string _rightLabel, float _min, float _max, float _value, float _w, float _h, int _size = CI_UI_FONT_SMALL);
-    ciUIBiLabelSlider *addBiLabelSlider(const std::string &_name, string _leftLabel, string _rightLabel, float _min, float _max, float *_value, float _w, float _h, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider *addBiLabelSlider(const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, float _min, float _max, float _value, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider *addBiLabelSlider(const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, float _min, float _max, float *_value, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider *addBiLabelSlider(const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, float _min, float _max, float _value, float _w, float _h, int _size = CI_UI_FONT_SMALL);
+    ciUIBiLabelSlider *addBiLabelSlider(const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, float _min, float _max, float *_value, float _w, float _h, int _size = CI_UI_FONT_SMALL);
     
     ciUICircleSlider* addCircleSlider(const std::string &_name, float _min, float _max, float _value);
     ciUICircleSlider* addCircleSlider(const std::string &_name, float _min, float _max, float _value, float w, float x = 0, float y = 0);
@@ -268,9 +268,9 @@ public:
     ciUIMultiImageToggle *addMultiImageToggle(const std::string &_name, const std::string &_path, bool *_value, int _size = CI_UI_FONT_SMALL);
     ciUIMultiImageToggle *addMultiImageToggle(const std::string &_name, const std::string &_path, bool _value, int _size = CI_UI_FONT_SMALL);
     
-    ciUITextArea* addTextArea(const std::string &_name, string _textstring, int _size = CI_UI_FONT_MEDIUM);
+    ciUITextArea* addTextArea(const std::string &_name, const std::string &_textstring, int _size = CI_UI_FONT_MEDIUM);
     
-    ciUISortableList *addSortableList(const std::string &_name, vector<std::string> _items, int _size = -1, int _itemHeight = 30);
+    ciUISortableList *addSortableList(const std::string &_name, const std::vector<std::string> &_items, int _size = -1, int _itemHeight = 30);
     
     void resetPlacer();
     void setPlacer(ciUIWidget *referenceWidget);
@@ -318,17 +318,19 @@ public:
     bool getDrawWidgetPaddingOutline();
     const std::vector<ciUIWidget*> &getWidgets() const;
     const std::vector<ciUIWidget*> &getWidgetsOfType(ciUIWidgetType type) const;
-	ofEvent<ciUIEventArgs> newGUIEvent;
+    
+    typedef ci::signals::Signal<void ( const ciUIEventArgs & )> NewGuiEventSignal_t;
+	NewGuiEventSignal_t newGUIEvent;
 
 protected:
     void pushbackWidget(ciUIWidget *widget, bool addWidgetToFront = false);
     //Easy Font setting contributed from Colin Duffy (colin@tomorrowevening.com)
-    bool updateFont(ciUIWidgetFontType _kind, string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours=false, float simplifyAmt=0.3, int dpi=0);
+    bool updateFont(ciUIWidgetFontType _kind, const std::string &filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours=false, float simplifyAmt=0.3, int dpi=0);
     void checkForKeyFocus(ciUIWidget *child);
 
-	ciUIFont *font_large;
-	ciUIFont *font_medium; 		
-	ciUIFont *font_small;
+	ci::gl::TextureFontRef font_large;
+	ci::gl::TextureFontRef font_medium; 		
+	ci::gl::TextureFontRef font_small;
     ciUIEventArgs *GUIevent;
 
     bool bInsideCanvas;

@@ -26,10 +26,10 @@
 #include "ciUIWidget.h"
 
 ciUIWidget::ciUIWidget()
-: parent(NULL),
-rect(NULL),
-paddedRect(NULL),
-font(NULL),
+: parent(nullptr),
+rect(nullptr),
+paddedRect(nullptr),
+font(nullptr),
 name("base"),
 kind(CI_UI_WIDGET_BASE),
 ID(-1),
@@ -63,11 +63,11 @@ triggerType(CI_UI_TRIGGER_ALL)
 
 ciUIWidget::~ciUIWidget()
 {
-    if(rect != NULL)
+    if(rect != nullptr)
     {
         delete rect;
     }
-    if(paddedRect != NULL)
+    if(paddedRect != nullptr)
     {
         delete paddedRect;
     }
@@ -76,10 +76,10 @@ ciUIWidget::~ciUIWidget()
 
 // Mitchell Nordine - custom copy constructor for heap allocation handling.
 ciUIWidget::ciUIWidget(const ciUIWidget &other)
-: parent(NULL),
-rect(NULL),
-paddedRect(NULL),
-//font(NULL),
+: parent(nullptr),
+rect(nullptr),
+paddedRect(nullptr),
+//font(nullptr),
 font(other.font),
 name(other.name),
 kind(other.kind),
@@ -153,7 +153,7 @@ ciUIWidget& ciUIWidget::operator=(const ciUIWidget &other)
 
 void ciUIWidget::initRect(float x, float y, float w, float h)
 {
-    if(rect != NULL)
+    if(rect != nullptr)
     {
         delete rect;
     }
@@ -163,7 +163,7 @@ void ciUIWidget::initRect(float x, float y, float w, float h)
 
 void ciUIWidget::initPaddingRect()
 {
-    if(paddedRect != NULL)
+    if(paddedRect != nullptr)
     {
         delete paddedRect;
     }
@@ -181,8 +181,8 @@ void ciUIWidget::calculatePaddingRect()
     for(; it != eit; ++it) {
         if((*it)->isVisible()) {
             ciUIRectangle *r = (*it)->getRect();
-            r->getMaxX() > xMax ? (xMax = r->getMaxX()) : NULL;
-            r->getMaxY() > yMax ? (yMax = r->getMaxY()) : NULL;
+            r->getMaxX() > xMax ? (xMax = r->getMaxX()) : nullptr;
+            r->getMaxY() > yMax ? (yMax = r->getMaxY()) : nullptr;
         }
     }
     paddedRect->set(-padding, -padding, xMax+padding*2.0, yMax+padding*2.0);
@@ -332,9 +332,9 @@ ciUIRectangle* ciUIWidget::getRect()
     return rect;
 }
 
-void ciUIWidget::setName(string _name)
+void ciUIWidget::setName(const std::string &_name)
 {
-    name = string(_name);
+    name = _name;
 }
 
 void ciUIWidget::setState(int _state)
@@ -475,7 +475,7 @@ ciUIWidgetType ciUIWidget::getKind() {
     return kind;
 }
 
-void ciUIWidget::setFont(ciUIFont *_font) {
+void ciUIWidget::setFont(ci::gl::TextureFontRef _font) {
     font = _font;
 }
 
@@ -505,13 +505,13 @@ string& ciUIWidget::getName() {
 }
 
 void ciUIWidget::triggerEvent(ciUIWidget *child) {
-    if(parent != NULL) {
+    if(parent != nullptr) {
         parent->triggerEvent(child);
     }
 }
 
 void ciUIWidget::triggerSelf() {
-    if(parent != NULL) {
+    if(parent != nullptr) {
         parent->triggerEvent(this);
     }
 }
@@ -606,7 +606,7 @@ bool ciUIWidget::isModal() {
 
 void ciUIWidget::setModal(bool _modal) {
     modal = _modal;
-    if(parent != NULL) {
+    if(parent != nullptr) {
         if(modal) {
             parent->addModalWidget(this);
         }
@@ -617,13 +617,13 @@ void ciUIWidget::setModal(bool _modal) {
 }
 
 void ciUIWidget::addModalWidget(ciUIWidget *widget) {
-    if(parent != NULL) {
+    if(parent != nullptr) {
         parent->addModalWidget(widget);
     }
 }
 
 void ciUIWidget::removeModalWidget(ciUIWidget *widget) {
-    if(parent != NULL) {
+    if(parent != nullptr) {
         parent->removeModalWidget(widget);
     }
 }
@@ -648,7 +648,7 @@ void ciUIWidget::clearEmbeddedWidgets() {
 ciUIWidget *ciUIWidget::getCanvasParent() {
     bool notFoundParentCanvas = true;
     ciUIWidget *parent = this->getParent();
-    if(parent != NULL) {
+    if(parent != nullptr) {
         while (notFoundParentCanvas) {
             int _kind = parent->getKind();
             if( _kind == CI_UI_WIDGET_CANVAS || _kind == CI_UI_WIDGET_SCROLLABLECANVAS || _kind == CI_UI_WIDGET_SUPERCANVAS || _kind  ==CI_UI_WIDGET_TABBAR) {
@@ -657,8 +657,8 @@ ciUIWidget *ciUIWidget::getCanvasParent() {
             }
             else {
                 parent = parent->getParent();
-                if(parent == NULL) {
-                    return NULL; 
+                if(parent == nullptr) {
+                    return nullptr; 
                 }
             }
         }
@@ -670,7 +670,7 @@ ciUIWidget *ciUIWidget::getCanvasParent() {
             return this;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 bool ciUIWidget::hasState()

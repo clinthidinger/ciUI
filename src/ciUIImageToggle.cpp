@@ -52,7 +52,7 @@ ciUIImageToggle::ciUIImageToggle(float w, float h, bool *_value, const std::stri
 void ciUIImageToggle::init(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size)
 {
     initRect(x, y, w, h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_IMAGETOGGLE;
     
     label = new ciUILabel(w+padding,0, (name+" LABEL"), name, _size);
@@ -131,10 +131,10 @@ ofImage *ciUIImageToggle::getImage()
 
 void ciUIImageToggle::setImage(ofImage *_img)
 {
-    if(img != NULL && !bChangedImage)
+    if(img != nullptr && !bChangedImage)
     {
         delete img;
-        img = NULL;
+        img = nullptr;
     }
     img = _img;
     bChangedImage = true;

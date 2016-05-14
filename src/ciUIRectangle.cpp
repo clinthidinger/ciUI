@@ -27,7 +27,7 @@
 ciUIRectangle::ciUIRectangle()
 {
     x = y = width = height = halfheight = halfwidth = 0.0f;
-    setParent(nullptr);
+    setParent(nullptrptr);
 }
 
 ciUIRectangle::ciUIRectangle(float _x, float _y, float _w, float _h)
@@ -38,7 +38,7 @@ ciUIRectangle::ciUIRectangle(float _x, float _y, float _w, float _h)
     halfwidth = width*.5;
     height = _h;
     halfheight = height*.5;
-    setParent(nullptr);
+    setParent(nullptrptr);
 }
 
 ciUIRectangle::ciUIRectangle(ciUIRectangle const & r)
@@ -49,7 +49,7 @@ ciUIRectangle::ciUIRectangle(ciUIRectangle const & r)
     halfwidth = width*.5;
     height = r.height;
     halfheight = height*.5;
-    setParent(nullptr);
+    setParent(nullptrptr);
 }
 
 void ciUIRectangle::set(float px, float py, float w, float h)
@@ -111,7 +111,7 @@ float ciUIRectangle::getMaxY() const
 
 bool ciUIRectangle::inside(ofPoint p)
 {
-    if(parent != nullptr)
+    if(parent != nullptrptr)
     {
         return insideParent(p.x, p.y);
     }
@@ -123,7 +123,7 @@ bool ciUIRectangle::inside(ofPoint p)
 
 bool ciUIRectangle::inside(float px, float py)
 {
-    if(parent != nullptr)
+    if(parent != nullptrptr)
     {
         return insideParent(px,py);
     }
@@ -153,7 +153,7 @@ bool ciUIRectangle::insideParent(float px, float py)
 
 ciUIVec2f ciUIRectangle::percentInside(float px, float py)				//Assumes your already inside rect
 {
-    if(parent != NULL)
+    if(parent != nullptr)
     {
         return percentInsideParent(px,py);
     }
@@ -175,7 +175,7 @@ ciUIVec2f ciUIRectangle::percentInsideParent(float px, float py)
 
 void ciUIRectangle::draw()
 {
-    if(parent != nullptr)
+    if(parent != nullptrptr)
     {
         ciUIDrawRect(parent->getX()+x, parent->getY()+y, width, height);
     }
@@ -187,7 +187,7 @@ void ciUIRectangle::draw()
 
 float ciUIRectangle::getX(bool recursive)
 {
-    if(parent != nullptr && recursive)
+    if(parent != nullptrptr && recursive)
     {
         return (x+parent->getX());
     }
@@ -199,7 +199,7 @@ float ciUIRectangle::getX(bool recursive)
 
 float ciUIRectangle::getY(bool recursive)
 {
-    if(parent != nullptr && recursive)
+    if(parent != nullptrptr && recursive)
     {
         return (y+parent->getY());
     }

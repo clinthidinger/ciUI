@@ -27,18 +27,19 @@
 
 // TODO easing
 
-ciUISortableList::ciUISortableList(const std::string _name, const std::vector<std::string> &items, float w, float h, float x, float y, int _size, int _itemHeight) : ciUIButton(_name, false, w, h, x, y, _size)
+
+ciUISortableList::ciUISortableList(const std::string &_name, const std::vector<std::string> &items, float w, float h, float x, float y, int _size, int _itemHeight) : ciUIButton(_name, false, w, h, x, y, _size)
 {
     init(_name, items, w, x, y, _size, _itemHeight);
 }
 
-void ciUISortableList::init(const std::string _name, const std::vector<std::string> &items, float w, float x, float y, int _size, int _itemHeight)
+void ciUISortableList::init(const std::string &_name, const std::vector<std::string> &items, float w, float x, float y, int _size, int _itemHeight)
 {
     itemHeight = _itemHeight;
     padding = 2;
     int height = items.size() * itemHeight + (padding*items.size() + padding);
     rect->setHeight(height);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_SORTABLELIST;
     autoSize = false;
     
@@ -51,12 +52,12 @@ void ciUISortableList::init(const std::string _name, const std::vector<std::stri
 }
 
 
-std::vector<ciUIDraggableLabelButton*> ciUISortableList::getListItems()
+const std::vector<ciUIDraggableLabelButton*> &ciUISortableList::getListItems()
 {
     return listItems;
 }
 
-void ciUISortableList::reshuffle(const std::std::vector<std::string> &ordering)// reshuffle based on saved ordering
+void ciUISortableList::reshuffle(const std::vector<std::string> &ordering)// reshuffle based on saved ordering
 {
     for (int i = 0; i < ordering.size(); i++)
     {
@@ -146,15 +147,15 @@ void ciUISortableList::mouseReleased(int x, int y, int button)
     activeWidget = 0;
 }
 
-void ciUISortableList::initDragableElements(vector<string> &items, int _size)// build draggable widgets for the sortable items
+void ciUISortableList::initDragableElements(const std::vector<std::string> &items, int _size)// build draggable widgets for the sortable items
 {
     float ty = padding;
     int width = rect->getWidth() - padding*2;
     for(int i = 0; i < items.size(); i++)
     {
-        stringstream index;
+        std::stringstream index;
         index << i;
-        string tname = items[i];
+        std::string tname = items[i];
         ciUIDraggableLabelButton* listItem;
         listItem = new ciUIDraggableLabelButton(tname, "", width, itemHeight, padding, ty, _size);
         listItem->setVisible(true);

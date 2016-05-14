@@ -38,7 +38,7 @@ ciUIMovingGraph::ciUIMovingGraph(float w, float h, const std::vector<float> &_bu
 void ciUIMovingGraph::init(float x, float y, float w, float h, const std::vector<float> &_buffer, int _bufferSize, float _min, float _max, const std::string &_name)
 {
     initRect(x,y,w,h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_MOVINGGRAPH;
     
     draw_fill = true;

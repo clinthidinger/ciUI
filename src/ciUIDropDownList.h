@@ -32,15 +32,15 @@
 class ciUIDropDownList : public ciUIToggle
 {
 public:    
-    ciUIDropDownList(const std::string &_name, const std::vector<std::string> items, float w = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM);
+    ciUIDropDownList(const std::string &_name, const std::vector<std::string> &items, float w = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM);
     ciUIDropDownList(float x, float y, float w, const std::string &_name, const std::vector<std::string> &items, int _size);
-    ciUIDropDownList(float w, const std::string &_name, const std::vector<std::string> *items, int _size);
+    ciUIDropDownList(float w, const std::string &_name, const std::vector<std::string> &items, int _size);
     ciUIDropDownList(float x, float y, const std::string &_name, const std::vector<std::string> &items, int _size);
     void init(const std::string &_name, const std::vector<std::string> &items, float w = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM);
     void clearToggles();
     void clearSelected();
     void addToggle(const std::string &toggleName);
-    void addToggles(std::vector<std::string> &toggleNames);
+    void addToggles(const std::vector<std::string> &toggleNames);
     void removeToggle(const std::string &toggleName);
     bool* getShowCurrentSelectedPtr();
     bool getShowCurrentSelected();

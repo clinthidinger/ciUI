@@ -60,8 +60,8 @@ void ciUIDraggableLabelButton::setPos(int x , int y)// TODO easing
     int parentHeight = parentRect->getHeight();
     int parentWidth = parentRect->getWidth();
     
-    int xClamped = ofClamp(x, padding, (parentWidth - padding - w));
-    int yClamped = ofClamp(y, padding, (parentHeight - padding - h));
+    int xClamped = glm::clamp<int>(x, padding, (parentWidth - padding - w));
+    int yClamped = glm::clamp<int>(y, padding, (parentHeight - padding - h));
     
     posX = xClamped;
     posY = yClamped;
@@ -80,7 +80,7 @@ void ciUIDraggableLabelButton::setSortID(const std::string &a_id)//TODO again, t
     id = a_id;
 }
 
-std::string ciUIDraggableLabelButton::getSortID()
+const std::string &ciUIDraggableLabelButton::getSortID()
 {
     return id;
 }

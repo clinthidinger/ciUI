@@ -87,12 +87,12 @@ ciUILabel::ciUILabel(float w, const std::string &_name, int _size, float h) : ci
 void ciUILabel::init(float x, float y, float w, float h, const std::string &_name, const std::string &_label, int _size)
 {
     initRect(x,y,w,h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_LABEL;
-    label = string(_label);
+    label = _label;
     size = _size;
     
-    font = NULL;
+    font = nullptr;
     draw_back = CI_UI_LABEL_DRAW_BACK;
     draw_fill = true;
 }
@@ -144,13 +144,13 @@ void ciUILabel::drawStringShadow(float x, float y, const std::string &_string)
     font->drawString(_string, floor(x)+1, floor(y)+1);
 }
 
-float ciUILabel::getStringWidth(string s)
+float ciUILabel::getStringWidth(const std::string & s)
 {
     replace(s.begin(), s.end(), ' ', '_');      //VIA: @gameoverhack
     return font->stringWidth(s);
 }
 
-float ciUILabel::getStringHeight(string s)
+float ciUILabel::getStringHeight(const std::string & s)
 {
     return font->stringHeight(s);
 }
@@ -165,9 +165,9 @@ ciUILabel* ciUILabel::getLabelWidget()
     return this;
 }
 
-void ciUILabel::setLabel(string _label)
+void ciUILabel::setLabel(const std::string & _label)
 {
-    label = string(_label);
+    label = _label;
     if(autoSize)
     {
         float w = font->stringWidth(label);
@@ -212,7 +212,7 @@ string& ciUILabel::getLabel()
     return label;
 }
 
-void ciUILabel::setFont(ciUIFont *_font)
+void ciUILabel::setFont(ci::gl::TextureFontRef _font)
 {
     font = _font;
     setLabel(label);
@@ -239,7 +239,7 @@ void ciUILabel::unfocus()
 void ciUILabel::setVisible(bool _visible)
 {
     visible = _visible;
-    if(parent != NULL)
+    if(parent != nullptr)
     {
         parent->calculatePaddingRect();
     }

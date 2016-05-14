@@ -51,11 +51,11 @@ public:
     void keyReleased(int key);
     void windowResized(int w, int h);
     void stateChange();
-	string getTextString();
-	void setTextString(string s);
+    const std::string &getTextString() const;
+    void setTextString(const std::string &s);
 	void setParent(ciUIWidget *_parent);
     bool isDraggable();
-    string numToString(float value, int precision, int width, char fill);
+    std::string numToString(float value, int precision, int width, char fill);
     bool hasState(){ return true; };
 //#ifndef CI_UI_NO_XML
 //    virtual void saveState(ofxXmlSettings *XML);

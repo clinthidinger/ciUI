@@ -38,7 +38,7 @@ ciUIValuePlotter::ciUIValuePlotter(float w, float h, int _bufferSize, float _min
 void ciUIValuePlotter::init(float x, float y, float w, float h, int _bufferSize, float _min, float _max, float *_value, const std::string &_name)
 {
     initRect(x,y,w,h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_VALUEPLOTTER;
     
     value = _value;                                               //the widget's value

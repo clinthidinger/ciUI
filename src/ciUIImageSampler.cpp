@@ -25,12 +25,12 @@
 #include "ciUIImageSampler.h"
 #include "ciUI.h"
 
-ciUIImageSampler::ciUIImageSampler(float x, float y, float w, float h, ci::Image *_image, const std::string &_name) : ciUIImage(x, y, w, h, _image, _name)
+ciUIImageSampler::ciUIImageSampler(float x, float y, float w, float h, ci::SurfaceRef _image, const std::string &_name) : ciUIImage(x, y, w, h, _image, _name)
 {
     initSampler();
 }
 
-ciUIImageSampler::ciUIImageSampler(float w, float h, ci::Image *_image, const std::string &_name) : ciUIImage(w, h, _image, _name)
+ciUIImageSampler::ciUIImageSampler(float w, float h, ci::SurfaceRef _image, const std::string &_name) : ciUIImage(w, h, _image, _name)
 {
     initSampler();
 }
@@ -54,10 +54,10 @@ void ciUIImageSampler::drawFill()
 {
     if(draw_fill)
     {
-        if(image != NULL)
+        if(image != nullptr)
         {
             ciUIFill();
-            ciUISetColor(255);
+            ci::gl::color(ci::Color::white());
             image->draw(rect->getX(), rect->getY(), rect->width, rect->height);
         }
         ciUISetColor(color_fill);
@@ -77,12 +77,12 @@ void ciUIImageSampler::drawFillHighlight()
 {
     if(draw_fill_highlight)
     {
-        ciUISetColor(color_fill_highlight);
+        ci::gl::color(color_fill_highlight);
         ciUIDrawLine(rect->getX()+value.x*rect->getWidth(),  rect->getY(), rect->getX()+value.x*rect->getWidth(),  rect->getY()+rect->getHeight());
         ciUIDrawLine(rect->getX(),  rect->getY()+value.y*rect->getHeight(), rect->getX()+rect->getWidth(),  rect->getY()+value.y*rect->getHeight());
         
         ciUIFill();
-        ciUISetColor(sampledColor);
+        ci::gl::color(sampledColor);
         ciUISetRectMode(CI_UI_RECTMODE_CENTER);
         ciUIDrawRect(rect->getX()+value.x*rect->getWidth(), rect->getY()+value.y*rect->getHeight(), squareSize, squareSize);
         ciUISetRectMode(CI_UI_RECTMODE_CORNER);

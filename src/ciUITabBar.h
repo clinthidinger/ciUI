@@ -43,10 +43,10 @@ public:
     void toggleVisible();
     ciUICanvas* getActiveCanvas();
     bool isHit(int x, int y);
-    void saveSettings(string pathToSaveTo, string fileNamePrefix);
-    void loadSettings(string pathToLoadFrom, string fileNamePrefix);
+    void saveSettings(const std::string &pathToSaveTo, const std::string &fileNamePrefix);
+    void loadSettings(const std::string &pathToLoadFrom, const std::string &fileNamePrefix);
     
 protected:
-    map<ciUIToggle*, ciUICanvas*> canvases;
+    std::map<ciUIToggle*, ciUICanvas*> canvases;
     ciUICanvas *active;
 };

@@ -52,7 +52,7 @@ ciUICircleSlider::ciUICircleSlider(float w, float _min, float _max, float *_valu
 void ciUICircleSlider::init(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_name, int _size)
 {
     initRect(x,y,w,h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_CIRCLESLIDER;
     
     draw_fill = true;

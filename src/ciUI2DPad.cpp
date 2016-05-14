@@ -48,7 +48,7 @@ ciUI2DPad::~ciUI2DPad()
 void ciUI2DPad::init(const std::string _name, const ciUIVec3f &_rangeX, const ciUIVec3f &_rangeY, ciUIVec3f *_value, float w, float h, float x, float y)
 {
     initRect(x, y, w, h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_2DPAD;
     draw_fill = true;
     draw_outline = true;

@@ -46,28 +46,27 @@ void ciUISpectrum::drawFill()
 {
     if(draw_fill)
     {
-        ciUIFill();
         if(draw_fill_highlight)
         {
-            ciUISetColor(color_fill_highlight);
+            ci::gl::color(color_fill_highlight);
         }
         else
         {
-            ciUISetColor(color_fill);
+            ci::gl::color(color_fill);
         }
-        if(buffer != NULL)
+        if(buffer != nullptr)
         {
-            ofPushMatrix();
-            ofTranslate(rect->getX(), rect->getY()+scale, 0);
-            ofBeginShape();
-            ofVertex(0, 0);
+            ci::gl::ScopedMatrices scopedMatrices;
+            ci::gl::translate(rect->getX(), rect->getY()+scale, 0);
+            shape.clear();
+            shape.moveTo(0.0f, 0.0f);
             for (int i = 0; i < bufferSize; i++)
             {
-                ofVertex(inc*(float)i, ciUIMap(buffer[i], min, max, 0, -scale, true));
+                shape.lineTo(inc*(float)i, ciUIMap(buffer[i], min, max, 0, -scale, true));
             }
-            ofVertex((bufferSize-1)*inc, 0);
-            ofEndShape(true);
-            ofPopMatrix();
+            shape.lineTo((bufferSize-1)*inc, 0);
+            shape.close();
+            ci::gl::drawSolid(shape);
         }
     }
 }

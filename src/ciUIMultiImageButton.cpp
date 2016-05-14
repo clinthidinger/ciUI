@@ -59,7 +59,7 @@ ciUIMultiImageButton::~ciUIMultiImageButton()
 void ciUIMultiImageButton::init(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size)
 {
     initRect(x,y,w,h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_MULTIIMAGEBUTTON;
     
     label = new ciUILabel(w,0, (name+" LABEL"), name, _size);

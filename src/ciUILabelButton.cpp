@@ -42,7 +42,7 @@ void ciUILabelButton::init(const std::string &_name, bool *_value, float w, floa
     initRect(x, y, w, h);
     justifyLeft = _justifyLeft;
     autoSize = w == 0 ? true : false;
-    name = string(_name);
+    name = _name;
     
     label = new ciUILabel(0,0,(name+" LABEL"), name, _size);
     addEmbeddedWidget(label);

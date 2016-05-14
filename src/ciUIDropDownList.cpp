@@ -46,7 +46,7 @@ void ciUIDropDownList::init(const std::string &_name, const std::vector<std::str
 {
     initRect(x,y,w,0);
     autoSize = (w == 0) ? true : false;
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_DROPDOWNLIST;
     
     size = _size;
@@ -61,7 +61,7 @@ void ciUIDropDownList::init(const std::string &_name, const std::vector<std::str
     allowMultiple = false;
     addToggles(items);
     autoClose = false;
-    singleSelected = NULL;
+    singleSelected = nullptr;
 }
 
 void ciUIDropDownList::clearToggles()
@@ -107,7 +107,7 @@ void ciUIDropDownList::addToggle(const std::string &toggleName)
     ltoggle->setVisible(*value);
     addEmbeddedWidget(ltoggle);
     toggles.push_back(ltoggle);
-    if(parent != NULL)
+    if(parent != nullptr)
     {
         parent->addWidget(ltoggle);
         
@@ -125,16 +125,16 @@ void ciUIDropDownList::addToggle(const std::string &toggleName)
     }
 }
 
-void ciUIDropDownList::addToggles(vector<string>& toggleNames)
+void ciUIDropDownList::addToggles(const std::vector<std::string> &toggleNames)
 {
     for(unsigned int i = 0; i < toggleNames.size(); i++){
         addToggle(toggleNames[i]);
     }
 }
 
-void ciUIDropDownList::removeToggle(string toggleName)
+void ciUIDropDownList::removeToggle(const std::string &toggleName)
 {
-    ciUILabelToggle *t = NULL;
+    ciUILabelToggle *t = nullptr;
     for(unsigned int i = 0; i < toggles.size(); i++)
     {
         ciUILabelToggle *other = (ciUILabelToggle *)toggles[i];
@@ -155,7 +155,7 @@ void ciUIDropDownList::removeToggle(string toggleName)
             break;
         }
     }
-    if(t != NULL)
+    if(t != nullptr)
     {
         parent->removeWidget(t);
         
@@ -190,9 +190,9 @@ void ciUIDropDownList::checkAndSetTitleLabel()
 {
     if(bShowCurrentSelected && selected.size() > 0)
     {
-        string title = "";
+        std::string title = "";
         int index = 0;
-        for(vector<ciUIWidget *>::iterator it = selected.begin(); it != selected.end(); it++)
+        for(std::vector<ciUIWidget *>::iterator it = selected.begin(); it != selected.end(); ++it)
         {
             if(index == 0)
             {
@@ -215,21 +215,21 @@ void ciUIDropDownList::checkAndSetTitleLabel()
     }
 }
 
-vector<ciUIWidget *> & ciUIDropDownList::getSelected()
+std::vector<ciUIWidget *> & ciUIDropDownList::getSelected()
 {
     return selected;
 }
 
-vector<int> & ciUIDropDownList::getSelectedIndeces()
+std::vector<int> & ciUIDropDownList::getSelectedIndeces()
 {
     return selectedIndeces;
 }
 
-vector<string> ciUIDropDownList::getSelectedNames()
+std::vector<std::string> ciUIDropDownList::getSelectedNames()
 {
-    vector<string> names;
+    std::vector<std::string> names;
     
-    for(vector<ciUIWidget *>::iterator it = selected.begin(); it != selected.end(); ++it)
+    for(std::vector<ciUIWidget *>::iterator it = selected.begin(); it != selected.end(); ++it)
     {
         ciUILabelToggle *lt = (ciUILabelToggle *) (*it);
         names.push_back(lt->getName());
@@ -237,7 +237,7 @@ vector<string> ciUIDropDownList::getSelectedNames()
     return names;
 }
 
-void ciUIDropDownList::setLabelText(string labeltext)
+void ciUIDropDownList::setLabelText(const std::string &labeltext)
 {
     label->setLabel(labeltext);
     if(!autoSize)
@@ -265,11 +265,11 @@ void ciUIDropDownList::setParent(ciUIWidget *_parent)
     {
         while(labelrect->getWidth()+padding*4.0 > rect->getWidth())
         {
-            string labelstring = label->getLabel();
-            string::iterator it;
+            std::string labelstring = label->getLabel();
+            std::string::iterator it;
             it=labelstring.end();
             it--;
-            labelstring.erase (it);
+            labelstring.erase(it);
             label->setLabel(labelstring);
         }
     }
@@ -351,14 +351,14 @@ void ciUIDropDownList::setToggleVisibility(bool _value)
     }
 }
 
-vector<ciUILabelToggle *> &ciUIDropDownList::getToggles()
+std::vector<ciUILabelToggle *> &ciUIDropDownList::getToggles()
 {
     return toggles;
 }
 
 void ciUIDropDownList::triggerSelf()
 {
-    if(parent != NULL)
+    if(parent != nullptr)
     {
         parent->triggerEvent(singleSelected);
     }
@@ -399,14 +399,14 @@ void ciUIDropDownList::triggerEvent(ciUIWidget *child)
     
     checkAndSetTitleLabel();
     
-    if(parent != NULL)
+    if(parent != nullptr)
     {
         parent->triggerEvent(this);
         parent->triggerEvent(child);
     }
 }
 
-void ciUIDropDownList::activateToggle(string _name)
+void ciUIDropDownList::activateToggle(const std::string &_name)
 {
     for(unsigned int i = 0; i < toggles.size(); i++)
     {
@@ -440,7 +440,7 @@ void ciUIDropDownList::setValue(bool _value)
 void ciUIDropDownList::setModal(bool _modal)      //allows for piping mouse/touch input to widgets that are outside of parent's rect/canvas
 {
     modal = _modal;
-    if(parent != NULL)
+    if(parent != nullptr)
     {
         if(modal)
         {
@@ -465,14 +465,15 @@ bool ciUIDropDownList::isOpen()
 
 void ciUIDropDownList::setSingleSelected(int index){
     
-    vector<ciUILabelToggle*> toggles = getToggles();
+    std::vector<ciUILabelToggle*> toggles = getToggles();
     if(index < toggles.size()){
         selected.clear();
         ciUILabelToggle *lt = toggles.at(index);
         selected.push_back(lt);
         setShowCurrentSelected(true);
-    }else{
-        ofLogWarning("index for ufxUIDropDownList::setSingleSelected is out of range");
+    }
+    else {
+        //CI_LOG_W("index for ufxUIDropDownList::setSingleSelected is out of range");
     }
     
 }
@@ -485,7 +486,7 @@ void ciUIDropDownList::saveState(ofxXmlSettings *XML)
     int index = XML->addTag("Selected");
     if(XML->pushTag("Selected", index)) {
         int cnt = 0;
-        for(vector<ciUIWidget *>::iterator it = selected.begin(); it != selected.end(); ++it) {
+        for(std::vector<ciUIWidget *>::iterator it = selected.begin(); it != selected.end(); ++it) {
             ciUILabelToggle *lt = (ciUILabelToggle *) (*it);
             XML->setValue("Name", lt->getName(), cnt++);
         }
@@ -504,8 +505,8 @@ void ciUIDropDownList::loadState(ofxXmlSettings *XML)
     XML->pushTag("Selected", 0);
     int widgetTags = XML->getNumTags("Name");
     for(int i = 0; i < widgetTags; ++i) {
-        string selName = XML->getValue("Name", "NULL", i);
-        if(selName != "NULL"){
+        std::string selName = XML->getValue("Name", "nullptr", i);
+        if(selName != "nullptr"){
             if(allowMultiple) {
                 for(unsigned int i = 0; i < toggles.size(); i++) {
                     ciUILabelToggle *t = toggles[i];

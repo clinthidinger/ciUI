@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <string>
 #include "ciUIWidgetWithLabel.h"
 #include "ciUIDefines.h"
 
@@ -35,7 +36,7 @@ public:
     virtual void drawBack();
     virtual void drawFill();
     const std::string &getTextString();
-	void setTextString(string s);
+    void setTextString(const std::string &s);
     void formatTextString();
 	void setParent(ciUIWidget *_parent);
     void setDrawShadow(bool _drawShadow);

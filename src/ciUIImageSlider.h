@@ -51,18 +51,18 @@ public:
 	virtual void updateLabel();
     
 protected:
-    ci::Image *track;
-    ci::Image *trackleft;
+    ci::SurfaceRef track;
+    ci::SurfaceRef trackleft;
     float tlaspect;
-    ci::Image *trackright;
+    ci::SurfaceRef trackright;
     float traspect;
     float ratio; 
     
-    ci::Image *progress;
-    ci::Image *progressright;
-    ci::Image *progressleft;
-    ci::Image *handle;
-    ci::Image *handleDown;
+    ci::SurfaceRef progress;
+    ci::SurfaceRef progressright;
+    ci::SurfaceRef progressleft;
+    ci::SurfaceRef handle;
+    ci::SurfaceRef handleDown;
     int handleHalfWidth; 
     int handleHalfHeight; 
     ciUIRectangle *imageRect;

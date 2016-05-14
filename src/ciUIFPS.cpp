@@ -38,7 +38,7 @@ ciUIFPS::ciUIFPS(int _size) : ciUIWidgetWithLabel()
 void ciUIFPS::init(float x, float y, const std::string &_name, const std::string &_label, int _size)
 {
     initRect(x, y, 0, 0);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_FPS;
     
     label = new ciUILabel(0,0,(name+" LABEL"), _label, _size);
@@ -52,7 +52,7 @@ void ciUIFPS::init(float x, float y, const std::string &_name, const std::string
 
 void ciUIFPS::update()
 {
-    label->setLabel(name + ": " + ciUIToString(ciUIGetFrameRate(), labelPrecision));
+    label->setLabel(name + ": " + ciUIToString(ci::app::getFrameRate(), labelPrecision));
 }
 
 void ciUIFPS::setLabelPrecision(int _precision) {

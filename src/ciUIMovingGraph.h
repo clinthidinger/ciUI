@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include <vector>
+#include <string>
 #include "ciUIWidget.h"
 #include "ciUIDefines.h"
 
@@ -36,8 +38,8 @@ public:
     virtual void drawFill();
 	void setParent(ciUIWidget *_parent);
     void addPoint(float _point);
-    vector<float> &getBuffer();
-    void setBuffer(vector<float> _buffer);
+    std::vector<float> &getBuffer();
+    void setBuffer(const std::vector<float> &_buffer);
     void setMax(float _max);
     float getMax();
     void setMin(float _min);

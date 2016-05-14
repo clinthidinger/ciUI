@@ -30,8 +30,8 @@
 class ciUIImageSampler : public ciUIImage
 {
 public:
-    ciUIImageSampler(float x, float y, float w, float h, ofImage *_image, const std::string &_name);
-    ciUIImageSampler(float w, float h, ofImage *_image, const std::string &_name);
+    ciUIImageSampler(float x, float y, float w, float h, ci::SurfaceRef _image, const std::string &_name);
+    ciUIImageSampler(float w, float h, ci::SurfaceRef _image, const std::string &_name);
     void initSampler();
     void setSquareSize(float _squareSize);
     void drawFill();

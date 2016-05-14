@@ -25,32 +25,32 @@
 #include "ciUIImage.h"
 #include "ciUI.h"
 
-ciUIImage::ciUIImage(float x, float y, float w, float h, ci::Image *_image, const std::string &_name) : ciUIWidgetWithLabel()
+ciUIImage::ciUIImage(float x, float y, float w, float h, ci::SurfaceRef _image, const std::string &_name) : ciUIWidgetWithLabel()
 {
     init(x, y, w, h, _image, _name);
 }
 
-ciUIImage::ciUIImage(float x, float y, float w, float h, ci::Image *_image, const std::string &_name, bool _showLabel) : ciUIWidgetWithLabel()
+ciUIImage::ciUIImage(float x, float y, float w, float h, ci::SurfaceRef _image, const std::string &_name, bool _showLabel) : ciUIWidgetWithLabel()
 {
     init(x, y, w, h, _image, _name);
     setLabelVisible(_showLabel);
 }
 
-ciUIImage::ciUIImage(float w, float h, ci::Image *_image, const std::string &_name) : ciUIWidgetWithLabel()
+ciUIImage::ciUIImage(float w, float h, ci::SurfaceRef _image, const std::string &_name) : ciUIWidgetWithLabel()
 {
     init(0, 0, w, h, _image, _name);
 }
 
-ciUIImage::ciUIImage(float w, float h, ci::Image *_image, const std::string &_name, bool _showLabel) : ciUIWidgetWithLabel()
+ciUIImage::ciUIImage(float w, float h, ci::SurfaceRef _image, const std::string &_name, bool _showLabel) : ciUIWidgetWithLabel()
 {
     init(0, 0, w, h, _image, _name);
     setLabelVisible(_showLabel);
 }
 
-void ciUIImage::init(float x, float y, float w, float h, ci::Image *_image, const std::string &_name)
+void ciUIImage::init(float x, float y, float w, float h, ci::SurfaceRef _image, const std::string &_name)
 {
     initRect(x,y,w,h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_IMAGE;
     
     draw_back = false;
@@ -79,7 +79,7 @@ void ciUIImage::drawFill()
 {
     if(draw_fill)
     {
-        if(image != NULL)
+        if(image != nullptr)
         {
             ciUIFill();
             ciUISetColor(255);
@@ -100,7 +100,7 @@ void ciUIImage::setCropImageToFitRect(bool _cropImageToFitRect)
     cropImageToFitRect = _cropImageToFitRect;
 }
 
-void ciUIImage::setImage(ofImage *_image)
+void ciUIImage::setImage(ci:SurfaceRef _image)
 {
     image = _image;
 }

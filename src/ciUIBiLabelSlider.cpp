@@ -77,7 +77,7 @@ void ciUIBiLabelSlider::init(float x, float y, float w, float h, float _min, flo
 {
     (h > 0) ? autoSize = false : autoSize = true;
     initRect(x,y,w,h);
-    name = std::string(_name);
+    name = _name;
     leftLabel = _leftLabel;
     rightLabel = _rightLabel;
     kind = CI_UI_WIDGET_BILABELSLIDER;

@@ -40,10 +40,10 @@ public:
     virtual void drawFill();
     virtual void drawFillHighlight();
     virtual void drawOutlineHighlight();
-    virtual ci::Image *getImage();
-    virtual void setImage(ci::Image *_img);
+    virtual ci::SurfaceRef getImage();
+    virtual void setImage(ci::SurfaceRef _img);
     
 protected:   
-    ci::Image *img;
+    ci::SurfaceRef img;
     bool bChangedImage;    
 }; 

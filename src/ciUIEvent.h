@@ -33,7 +33,7 @@ class ciUIEvent : public ci::app::Event
 public:
     ciUIEvent() : ci::app::Event() 
     {
-        widget = NULL; 
+        widget = nullptr; 
     }    
 
     ciUIEvent(ciUIWidget *_widget) : ci::app::Event()

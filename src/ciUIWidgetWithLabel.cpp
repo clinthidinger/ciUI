@@ -80,7 +80,7 @@ void ciUIWidgetWithLabel::setModal(bool _modal)
     modal = _modal;
     ciUIWidget *labelWidget = (ciUIWidget *) label;
     labelWidget->setModal(modal);
-    if(parent != NULL)
+    if(parent != nullptr)
     {
         if(modal)
         {

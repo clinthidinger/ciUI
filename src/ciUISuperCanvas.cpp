@@ -41,11 +41,11 @@ bTitleLabelHit(other.bTitleLabelHit)
         addWidgetPosition(canvasTitle, widgetPosition, widgetAlign);
     }
     else {
-        canvasTitle = NULL;
+        canvasTitle = nullptr;
     }
 }
 
-ciUISuperCanvas::ciUISuperCanvas(const std::string &_label, ciUIRectangle r, int _size) : ciUICanvas(r)
+ciUISuperCanvas::ciUISuperCanvas(const std::string &_label, const ci::Rectf &r, int _size) : ciUICanvas(r)
 {
     superInit(_label, _size);
 }
@@ -70,7 +70,7 @@ ciUISuperCanvas::ciUISuperCanvas(const std::string &_label, ciUICanvas *sharedRe
     superInit(_label, _size);
 }
 
-void ciUISuperCanvas::superInit(const std::&string _label, int _size)
+void ciUISuperCanvas::superInit(const std::string &_label, int _size)
 {
     size = _size;
     title = _label;
@@ -80,7 +80,7 @@ void ciUISuperCanvas::superInit(const std::&string _label, int _size)
     headerWidgets.push_back(canvasTitle);
     addWidgetPosition(canvasTitle, widgetPosition, widgetAlign);
     deltaTime = .35;
-    lastHitTime = ofGetElapsedTimef();
+    lastHitTime = ci::app::getElapsedSeconds();
     bIsMinified = false;
     lastHitTime = 0;
     bTitleLabelHit = false;
@@ -131,8 +131,8 @@ void ciUISuperCanvas::autoSizeToFitWidgets()
 
 bool ciUISuperCanvas::didHitHeaderWidgets(float x, float y)
 {
-    vector<ciUIWidget *>::iterator it = headerWidgets.begin();
-    vector<ciUIWidget *>::iterator eit = headerWidgets.end();
+    std::vector<ciUIWidget *>::iterator it = headerWidgets.begin();
+    std::vector<ciUIWidget *>::iterator eit = headerWidgets.end();
     for(; it != eit; ++it)
     {
         if((*it)->isHit(x, y))
@@ -150,8 +150,9 @@ void ciUISuperCanvas::keyPressed(int key)
         bKeyHit = true;
         lastPosition = ciUIVec2f(rect->getX(), rect->getY());
         setMinified(false);
-        rect->setX(ofGetMouseX());
-        rect->setY(ofGetMouseY()); 
+        ci::vec2 mousePos = ci::app::getMousePos();
+        rect->setX(mousePos.x);
+        rect->setY(mousePos.y);
         if(getTriggerType() & CI_UI_TRIGGER_BEGIN)
         {
             triggerEvent(this);
@@ -166,10 +167,11 @@ void ciUISuperCanvas::keyReleased(int key)
     if(getIsBindedToKey(key) && bKeyHit)
     {
         bKeyHit = false;
-        if((ofGetElapsedTimef() - lastHitTime) < deltaTime)
+        if((ci::app::getElapsedSeconds() - lastHitTime) < deltaTime)
         {
             setMinified(false);
-            lastPosition = ciUIVec2f(ofGetMouseX(), ofGetMouseY());
+             ci::vec2 mousePos = ci::app::getMousePos();
+            lastPosition = ciUIVec2f(mousePos.x, mousePos.y);
             if(getTriggerType() & CI_UI_TRIGGER_BEGIN)
             {
                 triggerEvent(this);
@@ -185,7 +187,7 @@ void ciUISuperCanvas::keyReleased(int key)
                 triggerEvent(this);
             }
         }
-        lastHitTime = ofGetElapsedTimef();
+        lastHitTime = ci::app::getElapsedSeconds();
     }
     ciUICanvas::keyReleased(key);
 }
@@ -268,20 +270,20 @@ void ciUISuperCanvas::touchCancelled(float x, float y, int id)
 
 #else
 
-void ciUISuperCanvas::onMouseReleased(ofMouseEventArgs& data)
+void ciUISuperCanvas::onMouseReleased(ci::app::MouseEvent& data)
 {
     bTitleLabelHit = false;
-    mouseReleased(data.x, data.y, data.button);
+    mouseReleased(data.getX(), data.getY(), data.button);
 }
 
-void ciUISuperCanvas::onMousePressed(ofMouseEventArgs& data)
+void ciUISuperCanvas::onMousePressed(ci::app::MouseEvent& data)
 {
-    if(rect->inside(data.x, data.y) && didHitHeaderWidgets(data.x, data.y))
+    if(rect->inside(data.getX(), data.getY()) && didHitHeaderWidgets(data.x, data.y))
     {
         bTitleLabelHit = true;
-        hitPoint.set(data.x - rect->getX(), data.y - rect->getY());
+        hitPoint.set(data.getX() - rect->getX(), data.getY() - rect->getY());
         
-        if((ofGetElapsedTimef() - lastHitTime) < deltaTime)
+        if((ci::app::getElapsedSeconds() - lastHitTime) < deltaTime)
         {
             if(isMinified())
             {
@@ -301,27 +303,27 @@ void ciUISuperCanvas::onMousePressed(ofMouseEventArgs& data)
             }
             return;
         }
-        lastHitTime = ofGetElapsedTimef();
+        lastHitTime = ci::app::getElapsedSeconds();
     }
-    mousePressed(data.x, data.y, data.button);
+    mousePressed(data.getX(), data.getY(), data.button);
 }
 
-void ciUISuperCanvas::onMouseDragged(ofMouseEventArgs& data)
+void ciUISuperCanvas::onMouseDragged(ci::app::MouseEvent& data)
 {
     if(bTitleLabelHit)
     {
-        rect->setX(data.x - hitPoint.x);
-        rect->setY(data.y - hitPoint.y);
+        rect->setX(data.getX() - hitPoint.x);
+        rect->setY(data.getY() - hitPoint.y);
         return;
     }
-    mouseDragged(data.x, data.y, data.button);
+    mouseDragged(data.getX(), data.getY(), data.button);
 }
 
 #endif
 
 #ifndef CI_UI_NO_XML
 
-void ciUISuperCanvas::saveSettings(string fileName)
+void ciUISuperCanvas::saveSettings(const std::string &fileName)
 {
     ofxXmlSettings *XML = new ofxXmlSettings();
     XML->addTag("Canvas");
@@ -347,7 +349,7 @@ void ciUISuperCanvas::saveSettings(string fileName)
     delete XML;
 }
 
-void ciUISuperCanvas::loadSettings(string fileName)
+void ciUISuperCanvas::loadSettings(const std::string & fileName)
 {
     ofxXmlSettings *XML = new ofxXmlSettings();
     XML->loadFile(fileName);
@@ -355,9 +357,9 @@ void ciUISuperCanvas::loadSettings(string fileName)
     for(int i = 0; i < widgetTags; i++)
     {
         XML->pushTag("Widget", i);
-        string name = XML->getValue("Name", "NULL", 0);
+        string name = XML->getValue("Name", "nullptr", 0);
         ciUIWidget *widget = getWidget(name);
-        if(widget != NULL && widget->hasState())
+        if(widget != nullptr && widget->hasState())
         {
             widget->loadState(XML);
             if(bTriggerWidgetsUponLoad)
@@ -381,7 +383,7 @@ void ciUISuperCanvas::loadSettings(string fileName)
 
 void ciUISuperCanvas::addWidgetToHeader(ciUIWidget *widget)
 {
-    if(canvasTitle != NULL)
+    if(canvasTitle != nullptr)
     {
         float y = widget->getRect()->getY();
         float h = widget->getRect()->getHeight();
@@ -405,18 +407,18 @@ void ciUISuperCanvas::removeWidgets()
 
 void ciUISuperCanvas::minify()
 {
-    for(vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it)
+    for(std::vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it)
     {
         ciUIWidget *w = (*it);
-        if(w != NULL)
+        if(w != nullptr)
         {
             w->setVisible(false);
         }
     }
-    for(vector<ciUIWidget *>::iterator it = headerWidgets.begin(); it != headerWidgets.end(); ++it)
+    for(std::vector<ciUIWidget *>::iterator it = headerWidgets.begin(); it != headerWidgets.end(); ++it)
     {
         ciUIWidget *w = (*it);
-        if(w != NULL)
+        if(w != nullptr)
         {
             w->setVisible(true);
         }
@@ -426,10 +428,10 @@ void ciUISuperCanvas::minify()
 
 void ciUISuperCanvas::maximize()
 {
-    for(vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it)
+    for(std::vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it)
     {
         ciUIWidget *w = (*it);
-        if(w != NULL)
+        if(w != nullptr)
         {
             w->setVisible(true);
         }

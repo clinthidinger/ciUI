@@ -53,9 +53,9 @@ public:
     ciUICanvas *getCanvasParent();
     ciUIWidget *getParent();
 
-    std::string getName();
-    std::string getParentName();
-    std::string getCanvasParentName();
+    const std::string &getName();
+    const std::string &getParentName();
+    const std::string &getCanvasParentName();
     
     int getKind();
     

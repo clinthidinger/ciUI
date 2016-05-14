@@ -49,7 +49,7 @@ void ciUIMinimalSlider::init(const std::string &_name, float _min, float _max, f
     }
     
     initRect(x,y,w,h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_MINIMALSLIDER;
     
     draw_fill = true;

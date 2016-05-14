@@ -52,7 +52,7 @@ ciUIImageSlider::ciUIImageSlider(float w, float h, float _min, float _max, float
 void ciUIImageSlider::init(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_pathURL, const std::string &_name)
 {
     initRect(x, y, w, h);
-    name = std::string(_name);
+    name = _name;
     if(w > h)
     {
         kind = CI_UI_WIDGET_IMAGESLIDER_H;

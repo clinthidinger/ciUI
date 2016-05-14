@@ -33,7 +33,7 @@ ciUI2DGraph::ciUI2DGraph(const std::string &_name, const ci::vec2 &_rangeX, cons
 void ciUI2DGraph::init(const std::string &_name, ofPoint _rangeX, const ci::vec2 &_rangeY, float _bufferSize, float * _xValues, float * _yValues, float w, float h, float x, float y)
 {
     initRect(x, y, w, h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_2DGRAPH;
     draw_fill = true;
     
@@ -94,7 +94,7 @@ void ciUI2DGraph::drawFill()
         {
             ci::color(color_fill);
         }
-        if(xValues != NULL && yValues != NULL)
+        if(xValues != nullptr && yValues != nullptr)
         {
             ofPushMatrix();
             ofTranslate(rect->getX(), rect->getY(), 0);

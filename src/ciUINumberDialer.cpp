@@ -61,7 +61,7 @@ ciUINumberDialer::~ciUINumberDialer()
 void ciUINumberDialer::init(float x, float y, float w, float h, float _min, float _max, float *_value, int _precision, const std::string &_name, int _size)
 {
     initRect(x, y, w, h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_NUMBERDIALER;
     
     if(useReference)
@@ -423,7 +423,7 @@ string ciUINumberDialer::getTextString()
     return textstring;
 }
 
-void ciUINumberDialer::setTextString(string s)
+void ciUINumberDialer::setTextString(const std::string & s)
 {
     if(*value > 0)
     {

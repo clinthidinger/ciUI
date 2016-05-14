@@ -38,18 +38,18 @@ ciUIWaveform::ciUIWaveform(float w, float h, float *_buffer, int _bufferSize, fl
 void ciUIWaveform::init(float x, float y, float w, float h, float *_buffer, int _bufferSize, float _min, float _max, const std::string &_name)
 {
     initRect(x,y,w,h);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_WAVEFORM;
     
     draw_fill = true;
     
-    if(_buffer != NULL)
+    if(_buffer != nullptr)
     {
         setBuffer(_buffer);
     }
     else
     {
-        setBuffer(NULL);
+        setBuffer(nullptr);
     }
     
     setBufferSize(_bufferSize);
@@ -77,25 +77,26 @@ void ciUIWaveform::drawFill()
         ofNoFill();
         if(draw_fill_highlight)
         {
-            ciUISetColor(color_fill_highlight);
+            ci::gl::color(color_fill_highlight);
         }
         else
         {
-            ciUISetColor(color_fill);
+            ci::gl::color(color_fill);
         }
-        if(buffer != NULL)
+        if(buffer != nullptr)
         {
-            ofPushMatrix();
-            ofTranslate(rect->getX(), rect->getY()+scale, 0);
-            ofSetLineWidth(1.5);
+            //ofPushMatrix();
+            ci::gl::ScopedMatrices scopedMatrices;
+            ci::gl::translate(rect->getX(), rect->getY()+scale, 0);
+            ci::gl::setLineWidth(1.5);
             ofBeginShape();
             for (int i = 0; i < bufferSize; i++)
             {
                 ofVertex(inc*(float)i, ciUIMap(buffer[i], min, max, scale, -scale, true));
             }
             ofEndShape();
-            ofSetLineWidth(1);
-            ofPopMatrix();
+            ci::gl::setLineWidth(1);
+            //ofPopMatrix();
         }
     }
 }
@@ -131,9 +132,9 @@ float ciUIWaveform::getMin()
     return min;
 }
 
-ofVec2f ciUIWaveform::getMaxAndMind()
+ci::vec2 ciUIWaveform::getMaxAndMind()
 {
-    return ofVec2f(max, min);
+    return ci::vec2f(max, min);
 }
 
 void ciUIWaveform::setMaxAndMin(float _max, float _min)

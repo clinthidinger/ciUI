@@ -58,7 +58,7 @@ template<typename T>
 void ciUISlider_<T>::init(const std::string &_name, T _min, T _max, T *_value, float w, float h, float x, float y)
 {
     initRect(x,y,w,h);
-    name = string(_name);
+    name = _name;
     setOrientation(w, h);
     setKind();
     

@@ -42,7 +42,7 @@ void ciUILabelToggle::init(const std::string &_name, bool *_value, float w, floa
     initRect(x,y,w,h);
     autoSize = (w == 0) ? true : false;
     justifyLeft = _justifyLeft;
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_LABELTOGGLE;
     
     label = new ciUILabel((name+" LABEL"), name, _size);
@@ -97,8 +97,8 @@ void ciUILabelToggle::setParent(ciUIWidget *_parent)
     {
         while(labelrect->getWidth()+padding*4.0 > rect->getWidth() && label->getLabel().size() > 0)
         {
-            string labelstring = label->getLabel();
-            string::iterator it;
+            std::string labelstring = label->getLabel();
+            std::string::iterator it;
             it=labelstring.end();
             it--;
             labelstring.erase (it);

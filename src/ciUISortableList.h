@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include <vector>
+#include <string>
 #include "ciUIButton.h"
 class ciUIDraggableLabelButton; 
 
@@ -33,13 +35,13 @@ public:
     ciUISortableList(const std::string &_name, const std::vector<std::string> &items, float w = 0, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, int _itemHeight = 30);
     void init(const std::string &_name, const std::vector<std::string> &items, float w = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM, int _itemHeight = 30);
     const std::vector<ciUIDraggableLabelButton*> &getListItems();
-    void reshuffle(const std::std::vector<std::string> &ordering);// reshuffle based on saved ordering
+    void reshuffle(const std::vector<std::string> &ordering);// reshuffle based on saved ordering
     void swapListItems(int swapA, int swapB);
     void mouseDragged(int x, int y, int button);
     void mousePressed(int x, int y, int button);
     void mouseReleased(int x, int y, int button);
 protected:
-    void initDragableElements(const std::vector<sdt::string> &items, int _size);// build draggable widgets for the sortable items
+    void initDragableElements(const std::vector<std::string> &items, int _size);// build draggable widgets for the sortable items
     bool isInSwapZone(ciUIDraggableLabelButton* swapCandidate);// the "swapZone" is the area that extends from adjacent elements, in which the active widget can be bumped up or down the list
     void goingUp();// what to do if the active widget is getting bumped up the list order
     void goingDown();// what to do if the active widget is getting bumped down the list order

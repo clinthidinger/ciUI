@@ -76,11 +76,10 @@ ciUIRangeSlider::~ciUIRangeSlider()
     }
 }
 
-void ciUIRangeSlider::init(const std::string &_name, float _min, float _max, float *_valuelow, float *_valuehigh, float w, float h,
-          float x, float y, int _size)
+void ciUIRangeSlider::init(const std::string &_name, float _min, float _max, float *_valuelow, float *_valuehigh, float w, float h, float x, float y, int _size)
 {
     initRect(x,y,w,h);
-    name = string(_name);
+    name = _name;
     if(w > h)
     {
         kind = CI_UI_WIDGET_RSLIDER_H;

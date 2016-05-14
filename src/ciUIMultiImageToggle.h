@@ -35,7 +35,7 @@ public:
     ciUIMultiImageToggle(float w, float h, bool _value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_SMALL);
     ciUIMultiImageToggle(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name,  int _size = CI_UI_FONT_SMALL);
     ciUIMultiImageToggle(float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_SMALL);
-    ~ciUIMultiImageToggle();
+    virtual ~ciUIMultiImageToggle();
     void init(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_SMALL);
     void drawBack();
     void drawOutlineHighlight();
@@ -45,8 +45,8 @@ public:
     virtual void setValue(bool _value);
     
 protected:    //inherited: ciUIRectangle *rect; ciUIWidget *parent; 
-    ci::Image *back;
-    ci::Image *over;
-    ci::Image *down;
-    ci::Image *on;
+    ci::gl::Texture2dRef back;
+    ci::gl::Texture2dRef over;
+    ci::gl::Texture2dRef down;
+    ci::gl::Texture2dRef on;
 }; 

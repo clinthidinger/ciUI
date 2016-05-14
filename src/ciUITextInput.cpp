@@ -34,11 +34,11 @@ ciUITextInput::ciUITextInput(const std::string &_name, const std::string &_texts
 void ciUITextInput::init(const std::string &_name, const std::string &_textstring, float w, float h, float x, float y, int _size)
 {
     initRect(x,y,w,h);
-    name = std::string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_TEXTINPUT;
-    textstring = string(_textstring);
-    defaultstring = string(_textstring);
-    displaystring = string(_textstring);
+    textstring = _textstring;
+    defaultstring = _textstring;
+    displaystring = _textstring;
     
     clicked = false;                                            //the widget's value
     autoclear = true;
@@ -503,13 +503,13 @@ void ciUITextInput::recalculateDisplayString()
     string stringBeforeLabel =  displaystring.substr(0, firstVisibleCharacterIndex);
     
     // if the cursoroffset - length of the (invisible) string before the label < 0, we have to shift our string to the left to get our cursor in the label
-    while(label->getStringWidth(stringBeforeCursor) - label->getStringWidth(stringBeforeLabel) < 0){
+    while(label->getStringWidth(const std::string &BeforeCursor) - label->getStringWidth(const std::string &BeforeLabel) < 0){
         firstVisibleCharacterIndex --;
         stringBeforeLabel =  displaystring.substr(0, firstVisibleCharacterIndex);
     }
     
     // if the cursoroffset - length of the (invisible) string before the label is > maximum width, we have to shift to the right
-    while(label->getStringWidth(stringBeforeCursor) - label->getStringWidth(stringBeforeLabel) > maxWidth){
+    while(label->getStringWidth(const std::string &BeforeCursor) - label->getStringWidth(const std::string &BeforeLabel) > maxWidth){
         firstVisibleCharacterIndex ++;
         stringBeforeLabel =  displaystring.substr(0, firstVisibleCharacterIndex);
     }

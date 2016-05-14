@@ -60,7 +60,7 @@ ciUIRotarySlider::~ciUIRotarySlider()
 void ciUIRotarySlider::init(float x, float y, float w, float _min, float _max, float *_value, const std::string &_name, int _size)
 {
     initRect(x,y,w,w);
-    name = string(_name);
+    name = _name;
     kind = CI_UI_WIDGET_ROTARYSLIDER;
     
     draw_fill = true;
