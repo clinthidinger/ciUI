@@ -2909,7 +2909,7 @@ ciUIWidget *ciUICanvas::getWidget(const std::string &_name, int widgetID) {
                 return wit->second;
             }
         }
-        std::multimaptimap<std::string, ciUIWidget *>::iterator wit = widgets_map.find(_name);
+        std::multimap<std::string, ciUIWidget *>::iterator wit = widgets_map.find(_name);
         if(wit != widgets_map.end()) {
             return wit->second;
         }
@@ -2974,13 +2974,13 @@ bool ciUICanvas::getDrawWidgetPaddingOutline() {
     return bDrawWidgetPaddingOutline;
 }
 
-std::vector<ciUIWidget*> ciUICanvas::getWidgets() {
+const std::vector<ciUIWidget*> &ciUICanvas::getWidgets() const {
     return widgets;
 }
 
-std::vector<ciUIWidget*> ciUICanvas::getWidgetsOfType(ciUIWidgetType type) {
+std::vector<ciUIWidget*> ciUICanvas::getWidgetsOfType(ciUIWidgetType type) const {
     std::vector<ciUIWidget*> widgetToReturn;
-    for(std::vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
+    for(std::vector<ciUIWidget *>::const_iterator it = widgets.begin(); it != widgets.end(); ++it) {
         if((*it)->getKind() == type) {
             widgetToReturn.push_back((*it));
         }
@@ -3000,11 +3000,11 @@ void ciUICanvas::pushbackWidget(ciUIWidget *widget, bool addWidgetToFront) {
     else {
         widgets.push_back(widget);
     }
-    widgets_map.insert(pair<string,ciUIWidget *>(widget->getName(), widget));
+    widgets_map.insert(std::pair<std::string,ciUIWidget *>(widget->getName(), widget));
 }
 
 bool ciUICanvas::updateFont(ciUIWidgetFontType _kind,
-                             string filename,
+                            const std::string &filename,
                              int fontsize,
                              bool _bAntiAliased,
                              bool _bFullCharacterSet,
@@ -3017,7 +3017,7 @@ bool ciUICanvas::updateFont(ciUIWidgetFontType _kind,
         case CI_UI_FONT_LARGE:
         {
             
-            font_large = ci::gl::TextureFont(ci::Font(filename, fontsize));
+            font_large = ci::gl::TextureFont::create(ci::Font(filename, fontsize));
             success = font_large != nullptr;
             //success = font_large->load(filename,fontsize,_bAntiAliased, _bFullCharacterSet, makeContours, simplifyAmt,dpi);
         }
@@ -3025,7 +3025,7 @@ bool ciUICanvas::updateFont(ciUIWidgetFontType _kind,
             
         case CI_UI_FONT_MEDIUM:
         {
-            font_medium = ci::gl::TextureFont(ci::Font(filename, fontsize));
+            font_medium = ci::gl::TextureFont::create(ci::Font(filename, fontsize));
             success = font_medium != nullptr;
             //success = font_medium->load(filename,fontsize,_bAntiAliased, _bFullCharacterSet, makeContours, simplifyAmt,dpi);
         }
@@ -3033,7 +3033,7 @@ bool ciUICanvas::updateFont(ciUIWidgetFontType _kind,
             
         case CI_UI_FONT_SMALL:
         {
-            font_small = ci::gl::TextureFont(ci::Font(filename, fontsize));
+            font_small = ci::gl::TextureFont::create(ci::Font(filename, fontsize));
             success = font_small != nullptr;
             //success = font_small->load(filename,fontsize,_bAntiAliased, _bFullCharacterSet, makeContours, simplifyAmt,dpi);
         }

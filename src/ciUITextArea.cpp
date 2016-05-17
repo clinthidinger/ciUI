@@ -179,7 +179,7 @@ void ciUITextArea::formatTextString()
     
     if(overheight)
     {
-        rect->setHeight(std::max(rect->getHeight(),(lineHeight+lineSpaceSize)*textLines.size()-lineSpaceSize));
+        rect->setHeight(std::max(rect->getHeight(), static_cast<float>(lineHeight+lineSpaceSize)*textLines.size()-lineSpaceSize));
     }
 }
 

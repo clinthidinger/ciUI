@@ -76,7 +76,7 @@ void ciUIBaseDraws::setDrawPaddingOutline(bool _draw_padded_rect_outline)
 
 void ciUIBaseDraws::drawFill()
 {
-    glSetDepthTest(false);
+    ci::gl::ScopedDepth scopedDepth(false);
     if(draw_fill)
     {
         if(image != nullptr)

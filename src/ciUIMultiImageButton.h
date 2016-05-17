@@ -44,7 +44,10 @@ public:
     virtual void setValue(bool _value);
 
 protected:
-    ci::SurfaceRef back;
-    ci::SurfaceRef over;
-    ci::SurfaceRef on;
+    ci::SurfaceRef backImage;
+    ci::SurfaceRef overImage;
+    ci::SurfaceRef onImage;
+    ci::gl::Texture2dRef backTex;
+    ci::gl::Texture2dRef overTex;
+    ci::gl::Texture2dRef onTex;
 }; 

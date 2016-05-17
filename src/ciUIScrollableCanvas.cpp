@@ -381,7 +381,7 @@ void ciUIScrollableCanvas::draw()
         }
     }
     
-    ciUIPopStyle();
+    //ciUIPopStyle();
 }
 
 void ciUIScrollableCanvas::setPosition(int x, int y)
@@ -394,8 +394,8 @@ void ciUIScrollableCanvas::setPosition(int x, int y)
 
 void ciUIScrollableCanvas::setDimensions(float _width, float _height)
 {
-    sRect->setWidth(std::min(_width, ofGetWidth() - sRect->getX()));
-    sRect->setHeight(std::min(_height, ofGetHeight() - sRect->getY()));
+    sRect->setWidth(std::min(_width, ci::app::getWindowWidth() - sRect->getX()));
+    sRect->setHeight(std::min(_height, ci::app::getWindowHeight() - sRect->getY()));
     rect->setWidth(_width);
     rect->setHeight(_height);
     paddedRect->width = rect->width+padding*2;
@@ -405,7 +405,7 @@ void ciUIScrollableCanvas::setDimensions(float _width, float _height)
 
 void ciUIScrollableCanvas::drawScrollableRect()
 {
-    sRect->draw();
+    sRect->draw(true);
 }
 
 #ifdef CI_UI_TARGET_TOUCH
@@ -500,7 +500,7 @@ void ciUIScrollableCanvas::touchCancelled(float x, float y, int id)
 
 void ciUIScrollableCanvas::mouseDragged(int x, int y, int button)
 {
-    for(vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it)
+    for(std::vectorector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it)
     {
         if((*it)->isVisible())	(*it)->mouseDragged(x, y, button);
     }
@@ -513,7 +513,7 @@ void ciUIScrollableCanvas::mouseDragged(int x, int y, int button)
             {
                 isScrolling = true;
                 ppos = ci::vec2(x,y);
-                vel.set(0,0);
+                vel = ci::vec2(0);
             }
             else
             {
@@ -532,7 +532,7 @@ void ciUIScrollableCanvas::mousePressed(int x, int y, int button)
     if(sRect->inside(x, y))
     {
         hit = true;
-        for(vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it)
+        for(std::vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it)
         {
             if((*it)->isVisible())
             {
@@ -549,12 +549,12 @@ void ciUIScrollableCanvas::mousePressed(int x, int y, int button)
     }
     
     isScrolling = false;
-    vel.set(0,0);
+    vel = ci::vec2(0);
 }
 
 void ciUIScrollableCanvas::mouseReleased(int x, int y, int button)
 {
-    for(vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it)
+    for(std::vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it)
     {
         if((*it)->isVisible()) (*it)->mouseReleased(x, y, button);
     }
@@ -582,7 +582,7 @@ bool ciUIScrollableCanvas::isHit(int x, int y)
     }
     else
     {
-        for (map<string, ciUIWidget*>::iterator it=widgetsAreModal.begin() ; it != widgetsAreModal.end(); it++ )
+        for (std::map<string, ciUIWidget*>::iterator it=widgetsAreModal.begin() ; it != widgetsAreModal.end(); it++ )
         {
             if((*it).second->isVisible() && (*it).second->isHit(x, y))
             {

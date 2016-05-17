@@ -89,23 +89,25 @@ void ciUITextInput::drawFill()
         
         //ciUIFill();
         {
-        ci::gl::ScopedColor scopedColor(label->getColorFillHighlight(), 255.0f*std::fabs(cos(theta)));
-        theta +=0.05;
-        
-        int displayCursorPosition = cursorPosition - firstVisibleCharacterIndex;
-        std::string displayStringBeforeCursor = displaystring.substr(0, displayCursorPosition);
-        spaceOffset = label->getStringWidth(displayStringBeforeCursor);
-        
-        float x = label->getRect()->getX()+spaceOffset;
-        float y = label->getRect()->getY()-padding;
-        float t = label->getRect()->getHeight()+padding*2.0;
-        ciUIDrawCorneredRect(x, y, cursorWidth, t, true);
+            ciUIColor color(label->getColorFillHighlight());
+            color.a = 255.0f * std::fabs(cos(theta));
+            ci::gl::ScopedColor scopedColor(color);
+            theta +=0.05;
+            
+            int displayCursorPosition = cursorPosition - firstVisibleCharacterIndex;
+            std::string displayStringBeforeCursor = displaystring.substr(0, displayCursorPosition);
+            spaceOffset = label->getStringWidth(displayStringBeforeCursor);
+            
+            float x = label->getRect()->getX()+spaceOffset;
+            float y = label->getRect()->getY()-padding;
+            float t = label->getRect()->getHeight()+padding*2.0;
+            ciUIDrawCorneredRect(x, y, cursorWidth, t, true);
         }
     }
     
     if(textstring.size() == 0 && !clicked)
     {
-        ciUIFill();
+        //ciUIFill();
         ci::gl::ScopedColor scopedColor(color_fill);
         label->drawString(rect->getX()+defaultX, rect->getY()+defaultY, defaultstring);
     }
@@ -212,7 +214,7 @@ void ciUITextInput::keyPressed(int key)
                 }
                 break;
                 
-            case ci::app::KeyEvent::KEY_DEL:
+            case ci::app::KeyEvent::KEY_DELETE:
                 if (textstring.size() > 0 && cursorPosition < textstring.length())
                 {
                     textstring.erase(cursorPosition, 1);
@@ -280,12 +282,13 @@ void ciUITextInput::keyPressed(int key)
             case ci::app::KeyEvent::KEY_F10:
             case ci::app::KeyEvent::KEY_F11:
             case ci::app::KeyEvent::KEY_F12:
-            case ci::app::KeyEvent::KEY_PAGE_UP:
-            case ci::app::KeyEvent::KEY_PAGE_DOWN:
+            //case ci::app::KeyEvent::KEY_PAGE_UP:
+            //case ci::app::KeyEvent::KEY_PAGE_DOWN:
             case ci::app::KeyEvent::KEY_HOME:
             case ci::app::KeyEvent::KEY_END:
             case ci::app::KeyEvent::KEY_INSERT:
-            case ci::app::KeyEvent::KEY_ALT:
+            case ci::app::KeyEvent::KEY_LALT:
+            case ci::app::KeyEvent::KEY_RALT:
             case ci::app::KeyEvent::KEY_LSHIFT:
             case ci::app::KeyEvent::KEY_RSHIFT:
                 break;
@@ -361,7 +364,7 @@ bool ciUITextInput::isClicked()
     return clicked;
 }
 
-string ciUITextInput::getTextString()
+const std::string &ciUITextInput::getTextString()
 {
     return textstring;
 }
@@ -371,7 +374,7 @@ int ciUITextInput::getIntValue()
     if (!onlyNumericInput)
         return  0;
         
-    return ofToInt(textstring);
+    return atoi(textstring.c_str());
 }
 
 float ciUITextInput::getFloatValue()
@@ -379,7 +382,7 @@ float ciUITextInput::getFloatValue()
     if (!onlyNumericInput)
         return  0;
     
-    return ofToFloat(textstring);
+    return atof(textstring.c_str());
 }
 
 void ciUITextInput::setInputTriggerType(int _triggerType)
@@ -395,7 +398,7 @@ int ciUITextInput::getInputTriggerType()
 void ciUITextInput::setTextString(const std::string &s)
 {
     textstring = "";
-    string temp = "";
+    std::string temp = "";
     
     int length = s.length();
     
@@ -442,7 +445,7 @@ void ciUITextInput::setParent(ciUIWidget *_parent)
     cursorWidth = label->getStringWidth(".");
     while(label->getStringWidth(textstring) > rect->getWidth()-padding*2.0)
     {
-        string::iterator it;
+        std::string::iterator it;
         it=textstring.begin();
         textstring.erase (it);
     }
@@ -503,23 +506,23 @@ void ciUITextInput::recalculateDisplayString()
     float maxWidth = rect->getWidth()-padding*2.0;
     
     displaystring = textstring;
-    string stringBeforeCursor = displaystring.substr(0, cursorPosition);
-    string stringBeforeLabel =  displaystring.substr(0, firstVisibleCharacterIndex);
+    std::string stringBeforeCursor = displaystring.substr(0, cursorPosition);
+    std::string stringBeforeLabel =  displaystring.substr(0, firstVisibleCharacterIndex);
     
     // if the cursoroffset - length of the (invisible) string before the label < 0, we have to shift our string to the left to get our cursor in the label
-    while(label->getStringWidth(const std::string &BeforeCursor) - label->getStringWidth(const std::string &BeforeLabel) < 0){
+    while(label->getStringWidth(stringBeforeCursor) - label->getStringWidth(stringBeforeLabel) < 0){
         firstVisibleCharacterIndex --;
         stringBeforeLabel =  displaystring.substr(0, firstVisibleCharacterIndex);
     }
     
     // if the cursoroffset - length of the (invisible) string before the label is > maximum width, we have to shift to the right
-    while(label->getStringWidth(const std::string &BeforeCursor) - label->getStringWidth(const std::string &BeforeLabel) > maxWidth){
+    while(label->getStringWidth(stringBeforeCursor) - label->getStringWidth(stringBeforeLabel) > maxWidth){
         firstVisibleCharacterIndex ++;
         stringBeforeLabel =  displaystring.substr(0, firstVisibleCharacterIndex);
     }
     
     // we now know how long the string before the label should be, so trim it off
-    displaystring = displaystring.substr(std::min(firstVisibleCharacterIndex, displaystring.length()));
+    displaystring = displaystring.substr(std::min<size_t>(firstVisibleCharacterIndex, displaystring.length()));
     
     // trim off the end of the string until it fits
     while(label->getStringWidth(displaystring) > maxWidth && displaystring.length() > 0)

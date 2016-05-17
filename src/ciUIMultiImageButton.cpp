@@ -51,9 +51,9 @@ ciUIMultiImageButton::ciUIMultiImageButton(float w, float h, bool *_value, const
 
 ciUIMultiImageButton::~ciUIMultiImageButton()
 {
-    delete back;
-    delete over;
-    delete on;
+    //delete back;
+    //delete over;
+    //delete on;
 }
 
 void ciUIMultiImageButton::init(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size)
@@ -92,9 +92,12 @@ void ciUIMultiImageButton::init(float x, float y, float w, float h, bool *_value
         extension = _pathURL.substr(found);
     }
     
-    back = new ci::Image(_pathURL);
-    over = new ci::Image(coreURL+"over"+extension);
-    on = new ci::Image(coreURL+"on"+extension);
+    backImage = ci::Surface::create(ci::loadImage(_pathURL));
+    overImage = ci::Surface::create(ci::loadImage(coreURL+"over"+extension));
+    onImage = ci::Surface::create(ci::loadImage(coreURL+"on"+extension));
+    backTex = ci::gl::Texture2d::create(*backImage);
+    overTex = ci::gl::Texture2d::create(*overImage);
+    onTex = ci::gl::Texture2d::create(*onImage);
 }
 
 void ciUIMultiImageButton::drawBack()                     //NORMAL
@@ -102,7 +105,7 @@ void ciUIMultiImageButton::drawBack()                     //NORMAL
     if(draw_back)
     {
         ci::gl::ScopedColor scopedColor(ci::Color::white());
-        back->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
+        ci::gl::draw(backTex, rect->getRectf());
     }
 }
 
@@ -111,7 +114,7 @@ void ciUIMultiImageButton::drawOutlineHighlight()         //OVER
     if(draw_outline_highlight)
     {
         ci::gl::ScopedColor scopedColor(ci::Color::white());
-        over->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
+        ci::gl::draw(overTex, rect->getRectf());
     }
 }
 
@@ -125,7 +128,7 @@ void ciUIMultiImageButton::drawFillHighlight()            //DOWN/ON
     if(draw_fill_highlight)
     {
         ci::gl::ScopedColor scopedColor(ci::Color::white());
-        on->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
+        ci::gl::draw(onTex,rect->getRectf());
     }
 }
 

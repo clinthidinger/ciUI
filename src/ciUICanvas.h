@@ -317,7 +317,7 @@ public:
     void setDrawWidgetPaddingOutline(bool _draw_padded_rect_outline);
     bool getDrawWidgetPaddingOutline();
     const std::vector<ciUIWidget*> &getWidgets() const;
-    const std::vector<ciUIWidget*> &getWidgetsOfType(ciUIWidgetType type) const;
+    std::vector<ciUIWidget*> getWidgetsOfType(ciUIWidgetType type) const;
     
     typedef ci::signals::Signal<void (ciUIEventArgs &)> NewGuiEventSignal_t;
 	NewGuiEventSignal_t newGUIEvent;
