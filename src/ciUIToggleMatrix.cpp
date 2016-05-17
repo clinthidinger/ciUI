@@ -43,6 +43,7 @@ void ciUIToggleMatrix::init(float x, float y, float w, float h, int _rows, int _
     rows = _rows;
     cols = _cols;
     draw_back = false;
+    isKeyPressed = false;
     
     toggleWidth = w;
     toggleHeight = h;
@@ -94,7 +95,7 @@ void ciUIToggleMatrix::setParent(ciUIWidget *_parent)
     float tWidth = cols*(toggles[0]->getRect()->getWidth())+(cols-1)*padding;
     float tHeight = rows*(toggles[0]->getRect()->getHeight())+(rows-1)*padding;
     
-    ofPoint pos = ofPoint(0,0);
+    ci::vec2 pos = ci::vec2(0,0);
     for(int j = 0; j < rows; j++)
     {
         for(int i = 0; i < cols; i++)
@@ -171,12 +172,12 @@ int ciUIToggleMatrix::getRowCount() const
     return rows;
 }
 
-const std::vector<ciUIToggle *> &ciUIToggleMatrix::getToggles()
+const std::vector<ciUIToggle *> &ciUIToggleMatrix::getToggles() const
 {
     return toggles;
 }
 
-const std::vector<ciUIToggle *> * &ciUIToggleMatrix::getTogglesPtr()
+const std::vector<ciUIToggle *> *ciUIToggleMatrix::getTogglesPtr() const
 {
     return &toggles;
 }
@@ -203,12 +204,12 @@ void ciUIToggleMatrix::mouseDragged(int x, int y, int button)
     if(hit)
     {
         bool tv = false;
-        if(ofGetKeyPressed())
+        if(isKeyPressed)
         {
             tv = true;
         }
         
-        for(vector<ciUIToggle *>::iterator it = toggles.begin(); it != toggles.end(); ++it)
+        for(std::vector<ciUIToggle *>::iterator it = toggles.begin(); it != toggles.end(); ++it)
         {
             if((*it)->isHit(x, y))
             {
@@ -238,4 +239,14 @@ void ciUIToggleMatrix::mouseReleased(int x, int y, int button)
     {
         hit = false;
     }
+}
+
+void ciUIToggleMatrix::keyPressed(int key)
+{
+    isKeyPressed = true;
+}
+
+void ciUIToggleMatrix::keyReleased(int key)
+{
+    isKeyPressed = false;
 }

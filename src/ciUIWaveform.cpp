@@ -62,9 +62,9 @@ void ciUIWaveform::drawBack()
 {
     if(draw_back)
     {
-        ciUIFill();
-        ciUISetColor(color_back);
-        rect->draw();
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_back);
+        rect->draw(true);
         
         ciUIDrawLine(rect->getX(), rect->getY()+rect->getHalfHeight(), rect->getX()+rect->getWidth(), rect->getY()+rect->getHalfHeight());
     }
@@ -74,28 +74,23 @@ void ciUIWaveform::drawFill()
 {
     if(draw_fill)
     {
-        ofNoFill();
-        if(draw_fill_highlight)
-        {
-            ci::gl::color(color_fill_highlight);
-        }
-        else
-        {
-            ci::gl::color(color_fill);
-        }
+        //ofNoFill();
+        ci::gl::ScopedColor scopedColor(draw_fill_highlight ? color_fill_highlight : color_fill);
         if(buffer != nullptr)
         {
             //ofPushMatrix();
             ci::gl::ScopedMatrices scopedMatrices;
+            ci::gl::ScopedLineWidth lineWidth(1.5f);
+            
             ci::gl::translate(rect->getX(), rect->getY()+scale, 0);
-            ci::gl::setLineWidth(1.5);
-            ofBeginShape();
+            polyLine.getPoints().clear();
+            polyLine.getPoints().reserve(bufferSize);
             for (int i = 0; i < bufferSize; i++)
             {
-                ofVertex(inc*(float)i, ciUIMap(buffer[i], min, max, scale, -scale, true));
+                polyLine.push_back(ci::vec2(inc*(float)i, ciUIMap(buffer[i], min, max, scale, -scale, true)));
             }
-            ofEndShape();
-            ci::gl::setLineWidth(1);
+            polyLine.setClosed();
+            ci::gl::draw(polyLine);
             //ofPopMatrix();
         }
     }
@@ -117,7 +112,7 @@ void ciUIWaveform::setMax(float _max)
     max = _max;
 }
 
-float ciUIWaveform::getMax()
+float ciUIWaveform::getMax() const
 {
     return max;
 }
@@ -127,14 +122,14 @@ void ciUIWaveform::setMin(float _min)
     min = _min;
 }
 
-float ciUIWaveform::getMin()
+float ciUIWaveform::getMin() const
 {
     return min;
 }
 
-ci::vec2 ciUIWaveform::getMaxAndMind()
+ci::vec2 ciUIWaveform::getMaxAndMind() const
 {
-    return ci::vec2f(max, min);
+    return ci::vec2(max, min);
 }
 
 void ciUIWaveform::setMaxAndMin(float _max, float _min)

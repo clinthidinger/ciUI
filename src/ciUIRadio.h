@@ -40,7 +40,7 @@ public:
     void activateToggle(const std::string &_name);
     void triggerSelf();
 	void setParent(ciUIWidget *_parent);
-    std::vector<ciUIToggle *> getToggles();
+    const std::vector<ciUIToggle *> &getToggles() const;
 	ciUIToggle* getActive();
     std::string getActiveName();
     int getValue();

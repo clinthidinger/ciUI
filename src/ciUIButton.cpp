@@ -77,9 +77,9 @@ void ciUIButton::drawFill()
 {
     if(*value)
     {
-        ciUIFill();
-        ciUISetColor(color_fill);
-        rect->draw();
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill);
+        rect->draw(true);
     }
 }
 
@@ -210,7 +210,7 @@ void ciUIButton::setParent(ciUIWidget *_parent)
     setLabelPosition(labelPosition);
 }
 
-bool ciUIButton::getValue()
+bool ciUIButton::getValue() const
 {
     return *value;
 }

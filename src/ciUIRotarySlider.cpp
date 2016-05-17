@@ -24,6 +24,7 @@
 
 #include "ciUIRotarySlider.h"
 #include "ciUI.h"
+#include "glm/gtx/vector_angle.hpp"
 
 ciUIRotarySlider::ciUIRotarySlider(float x, float y, float w, float _min, float _max, float _value, const std::string &_name, int _size) : ciUIWidgetWithLabel()
 {
@@ -91,7 +92,7 @@ void ciUIRotarySlider::init(float x, float y, float w, float _min, float _max, f
     outerRadius = rect->getWidth()*.5;
     innerRadius = rect->getWidth()*.25;
     
-    value = ciUIMap(value, min, max, 0.0, 1.0, true);
+    value = ciUIMap<float>(value, min, max, 0.0f, 1.0f, true);
     valueString = ciUIToString(getValue(),2);
     label = new ciUILabel(0,w+padding,(name+" LABEL"), (name + ": " + valueString), _size);
     addEmbeddedWidget(label);
@@ -102,7 +103,7 @@ void ciUIRotarySlider::update()
 {
     if(useReference)
     {
-        value = ciUIMap(*valueRef, min, max, 0.0, 1.0, true);
+        value = ciUIMap<float>(*valueRef, min, max, 0.0f, 1.0f, true);
         updateLabel();
     }
 }
@@ -123,9 +124,9 @@ void ciUIRotarySlider::drawBack()
 {
     if(draw_back)
     {
-        ciUIFill();
-        ciUISetColor(color_back);
-        drawArcStrip(1.0);
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_back);
+        drawArcStrip(1.0, true);
     }
 }
 
@@ -133,9 +134,9 @@ void ciUIRotarySlider::drawFill()
 {
     if(draw_fill)
     {
-        ciUIFill();
-        ciUISetColor(color_fill);
-        drawArcStrip(value);
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill);
+        drawArcStrip(value, true);
     }
 }
 
@@ -143,9 +144,9 @@ void ciUIRotarySlider::drawFillHighlight()
 {
     if(draw_fill_highlight)
     {
-        ciUIFill();
-        ciUISetColor(color_fill_highlight);
-        drawArcStrip(value);
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill_highlight);
+        drawArcStrip(value, true);
     }
 }
 
@@ -153,22 +154,20 @@ void ciUIRotarySlider::drawOutline()
 {
     if(draw_outline)
     {
-        ofNoFill();
-        ciUISetColor(color_outline);
-        ofSetLineWidth(2.0);
-        drawArcStrip(1.0);
-        ofSetLineWidth(1.0);
+        //ofNoFill();
+        ci::gl::ScopedColor scopedColor(color_outline);
+        ci::gl::ScopedLineWidth scopedLineWidth(2.0);
+        drawArcStrip(1.0, true);
     }
 }
 void ciUIRotarySlider::drawOutlineHighlight()
 {
     if(draw_outline_highlight)
     {
-        ofNoFill();
-        ciUISetColor(color_outline_highlight);
-        ofSetLineWidth(2.0);
-        drawArcStrip(1.0);
-        ofSetLineWidth(1.0);
+        //ofNoFill();
+        ci::gl::ScopedColor scopedColor(color_outline_highlight);
+        ci::gl::ScopedLineWidth scopedLineWidth(2.0);
+        drawArcStrip(1.0, true);
     }
 }
 
@@ -251,22 +250,22 @@ void ciUIRotarySlider::keyPressed(int key)
     {
         switch (key)
         {
-            case OF_KEY_RIGHT:
+            case ci::app::KeyEvent::KEY_RIGHT:
                 setValue(getScaledValue()+increment);
                 triggerEvent(this);
                 break;
                 
-            case OF_KEY_UP:
+            case ci::app::KeyEvent::KEY_UP:
                 setValue(getScaledValue()+increment);
                 triggerEvent(this);
                 break;
                 
-            case OF_KEY_LEFT:
+            case ci::app::KeyEvent::KEY_LEFT:
                 setValue(getScaledValue()-increment);
                 triggerEvent(this);
                 break;
                 
-            case OF_KEY_DOWN:
+            case ci::app::KeyEvent::KEY_DOWN:
                 setValue(getScaledValue()-increment);
                 triggerEvent(this);
                 break;
@@ -277,52 +276,95 @@ void ciUIRotarySlider::keyPressed(int key)
     }
 }
 
-void ciUIRotarySlider::drawArcStrip(float percent)
+void ciUIRotarySlider::drawArcStrip(float percent, bool doFill)
 {
-    float theta = ciUIMap(percent, 0, 1, 0, 360.0, true);
+    float theta = ciUIMap<float>(percent, 0.0f, 1.0f, 0.0f, 360.0f, true);
     
-    ofPushMatrix();
-    ofTranslate(rect->getX(),rect->getY());
-    
-    ofBeginShape();
-    
+    ci::gl::ScopedMatrices scopedMatrices;
+    ci::gl::translate(rect->getX(),rect->getY());
+ 
+    if(doFill)
     {
-        float x = sin(-ofDegToRad(0));
-        float y = cos(-ofDegToRad(0));
-        ofVertex(center.x+outerRadius*x,center.y+outerRadius*y);
-    }
-    
-    for(int i = 0; i <= theta; i+=10)
-    {
-        float x = sin(-ofDegToRad(i));
-        float y = cos(-ofDegToRad(i));
+        shape.clear();
+        {
+            float x = sin(-glm::radians(0.0f));
+            float y = cos(-glm::radians(0.0f));
+            shape.lineTo(ci::vec2(center.x+outerRadius*x,center.y+outerRadius*y));
+        }
         
-        ofVertex(center.x+outerRadius*x,center.y+outerRadius*y);
-    }
-    
-    {
-        float x = sin(-ofDegToRad(theta));
-        float y = cos(-ofDegToRad(theta));
-        ofVertex(center.x+outerRadius*x,center.y+outerRadius*y);
-        ofVertex(center.x+innerRadius*x,center.y+innerRadius*y);
-    }
-    
-    for(int i = theta; i >= 0; i-=10)
-    {
-        float x = sin(-ofDegToRad(i));
-        float y = cos(-ofDegToRad(i));
+        for(int i = 0; i <= theta; i+=10)
+        {
+            float x = sin(-glm::radians(static_cast<float>(i)));
+            float y = cos(-glm::radians(static_cast<float>(i)));
+            
+            shape.lineTo(ci::vec2(center.x+outerRadius*x,center.y+outerRadius*y));
+        }
         
-        ofVertex(center.x+innerRadius*x,center.y+innerRadius*y);
+        {
+            float x = sin(-glm::radians(theta));
+            float y = cos(-glm::radians(theta));
+            shape.lineTo(ci::vec2(center.x+outerRadius*x,center.y+outerRadius*y));
+            shape.lineTo(ci::vec2(center.x+innerRadius*x,center.y+innerRadius*y));
+        }
+        
+        for(int i = theta; i >= 0; i-=10)
+        {
+            float x = sin(-glm::radians(static_cast<float>(i)));
+            float y = cos(-glm::radians(static_cast<float>(i)));
+            
+            shape.lineTo(ci::vec2(center.x+innerRadius*x,center.y+innerRadius*y));
+        }
+        
+        {
+            float x = sin(-glm::radians(0.0f));
+            float y = cos(-glm::radians(0.0f));
+            shape.lineTo(ci::vec2(center.x+innerRadius*x,center.y+innerRadius*y));
+        }
+        shape.close();
+        ci::gl::draw(shape);
     }
-    
+    else
     {
-        float x = sin(-ofDegToRad(0));
-        float y = cos(-ofDegToRad(0));
-        ofVertex(center.x+innerRadius*x,center.y+innerRadius*y);
-    }
+        polyLine.getPoints().clear();
+        polyLine.getPoints().reserve(80);
+        {
+            float x = sin(-glm::radians(0.0f));
+            float y = cos(-glm::radians(0.0f));
+            polyLine.push_back(ci::vec2(center.x+outerRadius*x,center.y+outerRadius*y));
+        }
     
-    ofEndShape();
-    ofPopMatrix();
+        for(int i = 0; i <= theta; i+=10)
+        {
+            float x = sin(-glm::radians(static_cast<float>(i)));
+            float y = cos(-glm::radians(static_cast<float>(i)));
+            
+            polyLine.push_back(ci::vec2(center.x+outerRadius*x,center.y+outerRadius*y));
+        }
+        
+        {
+            float x = sin(-glm::radians(theta));
+            float y = cos(-glm::radians(theta));
+            polyLine.push_back(ci::vec2(center.x+outerRadius*x,center.y+outerRadius*y));
+            polyLine.push_back(ci::vec2(center.x+innerRadius*x,center.y+innerRadius*y));
+        }
+        
+        for(int i = theta; i >= 0; i-=10)
+        {
+            float x = sin(-glm::radians(static_cast<float>(i)));
+            float y = cos(-glm::radians(static_cast<float>(i)));
+            
+            polyLine.push_back(ci::vec2(center.x+innerRadius*x,center.y+innerRadius*y));
+        }
+        
+        {
+            float x = sin(-glm::radians(0.0f));
+            float y = cos(-glm::radians(0.0f));
+            polyLine.push_back(ci::vec2(center.x+innerRadius*x,center.y+innerRadius*y));
+        }
+        
+        polyLine.setClosed();
+        ci::gl::draw(polyLine);
+    }
 }
 
 void ciUIRotarySlider::setIncrement(float _increment)
@@ -333,13 +375,14 @@ void ciUIRotarySlider::setIncrement(float _increment)
 void ciUIRotarySlider::input(float x, float y)
 {
     hitPoint = ciUIVec2f(x,y);
-    ofVec2f mappedHitPoint = hitPoint;
-    mappedHitPoint -= ofVec2f(rect->getX()+center.x, rect->getY()+center.y);
+    ci::vec2 mappedHitPoint = hitPoint;
+    mappedHitPoint -= ci::vec2(rect->getX()+center.x, rect->getY()+center.y);
     
-    ofVec2f cVector = center-homePoint;
-    value = ciUIMap(cVector.angle(mappedHitPoint), -180, 180, 0, 1.0, true);
+    ci::vec2 cVector = center - homePoint;
+    float angle = glm::angle<float>(cVector, mappedHitPoint);
+    value = ciUIMap<float>(angle, -180.0f, 180.0f, 0.0f, 1.0f, true);
     
-    value = MIN(1.0, MAX(0.0, value));
+    value = std::min(1.0f, std::max(0.0f, value));
     updateValueRef();
     updateLabel();
 }
@@ -403,7 +446,7 @@ void ciUIRotarySlider::stateChange()
 
 void ciUIRotarySlider::setValue(float _value)
 {
-    value = ciUIMap(_value, min, max, 0.0, 1.0, true);
+    value = ciUIMap<float>(_value, min, max, 0.0f, 1.0f, true);
     updateValueRef();
     updateLabel();
 }
@@ -420,7 +463,7 @@ float ciUIRotarySlider::getNormalizedValue()
 
 float ciUIRotarySlider::getScaledValue()
 {
-    return ciUIMap(value, 0.0, 1.0, min, max, true);
+    return ciUIMap<float>(value, 0.0f, 1.0f, min, max, true);
 }
 
 void ciUIRotarySlider::setParent(ciUIWidget *_parent)
@@ -456,9 +499,9 @@ float ciUIRotarySlider::getMin()
     return min;
 }
 
-ofVec2f ciUIRotarySlider::getMaxAndMind()
+ci::vec2 ciUIRotarySlider::getMaxAndMind()
 {
-    return ofVec2f(max, min);
+    return ci::vec2(max, min);
 }
 
 void ciUIRotarySlider::setMaxAndMin(float _max, float _min)
@@ -466,8 +509,8 @@ void ciUIRotarySlider::setMaxAndMin(float _max, float _min)
     max = _max;
     min = _min;
     
-    value = ciUIMap(value, 0, 1.0, min, max, true);
-    value = ciUIMap(value, min, max, 0.0, 1.0, true);
+    value = ciUIMap<float>(value, 0.0f, 1.0f, min, max, true);
+    value = ciUIMap<float>(value, min, max, 0.0f, 1.0f, true);
     updateValueRef();
     updateLabel();
 }
@@ -475,7 +518,7 @@ void ciUIRotarySlider::setMaxAndMin(float _max, float _min)
 
 bool ciUIRotarySlider::isHit(float x, float y)
 {
-    float d = ofDist(x, y, rect->getX()+rect->getHalfWidth(), rect->getY()+rect->getHalfHeight());
+    float d = glm::distance(ci::vec2(x, y), ci::vec2(rect->getX()+rect->getHalfWidth(), rect->getY()+rect->getHalfHeight()));
     if(visible &&  d < outerRadius && d > innerRadius)
     {
         return true;

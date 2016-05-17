@@ -43,7 +43,7 @@ ciUIBiLabelSlider::ciUIBiLabelSlider(float x, float y, float w, float _min, floa
     init(x, y, w, 0, _min, _max, &_value, _name, _leftLabel, _rightLabel, _size);
 }
 
-ciUIBiLabelSlider::ciUIBiLabelSlider(float w, float _min, float _max, float _value, const std::string &_name, const std::const std::string &_leftLabel, const std::string &_rightLabel, int _size) : ciUISlider()
+ciUIBiLabelSlider::ciUIBiLabelSlider(float w, float _min, float _max, float _value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size) : ciUISlider()
 {
     useReference = false;
     init(0, 0, w, 0, _min, _max, &_value, _name, _leftLabel, _rightLabel, _size);
@@ -55,19 +55,19 @@ ciUIBiLabelSlider::ciUIBiLabelSlider(float x, float y, float w, float h, float _
     init(x, y, w, h, _min, _max, _value, _name, _leftLabel, _rightLabel, _size);
 }
 
-ciUIBiLabelSlider::ciUIBiLabelSlider(float w, float h, float _min, float _max, float *_value, const std::string _name, const std::string _leftLabel, const std::string &_rightLabel, int _size) : ciUISlider()
+ciUIBiLabelSlider::ciUIBiLabelSlider(float w, float h, float _min, float _max, float *_value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size) : ciUISlider()
 {
     useReference = true;
     init(0, 0, w, h, _min, _max, _value, _name, _leftLabel, _rightLabel, _size);
 }
 
-ciUIBiLabelSlider::ciUIBiLabelSlider(float x, float y, float w, float _min, float _max, float *_value, const std::string _name, const std::string &_leftLabel, const std::string &_rightLabel, int _size) : ciUISlider()
+ciUIBiLabelSlider::ciUIBiLabelSlider(float x, float y, float w, float _min, float _max, float *_value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size) : ciUISlider()
 {
     useReference = true;
     init(x, y, w, 0, _min, _max, _value, _name, _leftLabel, _rightLabel, _size);
 }
 
-ciUIBiLabelSlider::ciUIBiLabelSlider(float w, float _min, float _max, float *_value, const std::string _name, const std::string _leftLabel, const std::string &_rightLabel, int _size) : ciUISlider()
+ciUIBiLabelSlider::ciUIBiLabelSlider(float w, float _min, float _max, float *_value, const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, int _size) : ciUISlider()
 {
     useReference = true;
     init(0, 0, w, 0, _min, _max, _value, _name, _leftLabel, _rightLabel, _size);
@@ -107,7 +107,7 @@ void ciUIBiLabelSlider::init(float x, float y, float w, float h, float _min, flo
         value = min;
     }
     
-    value = ciUIMap(value, min, max, 0.0, 1.0, true);
+    value = ciUIMap<float>(value, min, max, 0.0f, 1.0f, true);
     increment = fabs(max - min) / 10.0;
     
     label = new ciUILabel(padding,h*.5,(name+" LABEL"), name, _size);
@@ -138,24 +138,24 @@ void ciUIBiLabelSlider::drawFill()
 {
     if(draw_fill)
     {
-        ciUIFill();
-        ciUISetColor(color_fill);
-        ciUIDrawRect(rect->getX(), rect->getY(), rect->getWidth()*value, rect->getHeight());
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill);
+        ciUIDrawCorneredRect(rect->getX(), rect->getY(), rect->getWidth()*value, rect->getHeight(), true);
     }
 }
 void ciUIBiLabelSlider::drawFillHighlight()
 {
     if(draw_fill_highlight)
     {
-        ciUIFill();
-        ciUISetColor(color_fill_highlight);
-        ciUIDrawRect(rect->getX(), rect->getY(), rect->getWidth()*value, rect->getHeight());
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill_highlight);
+        ciUIDrawCorneredRect(rect->getX(), rect->getY(), rect->getWidth()*value, rect->getHeight(), true);
     }
 }
 
 void ciUIBiLabelSlider::input(float x, float y)
 {    
-    value = MIN(1.0, MAX(0.0, rect->percentInside(x, y).x));
+    value = std::min(1.0f, std::max(0.0f, rect->percentInside(x, y).x));
     updateValueRef();
     updateLabel();
 }
@@ -180,10 +180,10 @@ void ciUIBiLabelSlider::setParent(ciUIWidget *_parent)
     float h = labelrect->getHeight();
     float ph = rect->getHeight();
     
-    labelrect->setY((int)(ph*.5 - h*.5));
+    labelrect->setY((int)(ph*0.5f - h*0.5f));
     
     rightlabelrect->setY(labelrect->getY(false));
-    rightlabelrect->setX(rect->getWidth()-rightlabelrect->getWidth()-padding*2.0);
+    rightlabelrect->setX(rect->getWidth()-rightlabelrect->getWidth()-padding*2.0f);
     labelrect->setX(padding);
     
     calculatePaddingRect();

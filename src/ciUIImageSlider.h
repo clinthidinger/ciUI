@@ -36,33 +36,33 @@ public:
     ciUIImageSlider(float w, float h, float _min, float _max, float _value, const std::string &_pathURL, const std::string &_name);
     ciUIImageSlider(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_pathURL, const std::string &_name);
     ciUIImageSlider(float w, float h, float _min, float _max, float *_value, const std::string &_pathURL, const std::string &_name);
-    ~ciUIImageSlider();
+    virtual ~ciUIImageSlider();
     
     virtual void init(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_pathURL, const std::string &_name);
     
-    virtual void drawBack();
-    virtual void drawOutline();
-    virtual void drawOutlineHighlight();
-    virtual void drawFill();
-    virtual void drawFillHighlight();
+    virtual void drawBack() override;
+    virtual void drawOutline() override;
+    virtual void drawOutlineHighlight() override;
+    virtual void drawFill() override;
+    virtual void drawFillHighlight() override;
     
-    virtual void stateChange();
-    virtual void input(float x, float y);
-	virtual void updateLabel();
+    virtual void stateChange() override;
+    virtual void input(float x, float y) override;
+	virtual void updateLabel() override;
     
 protected:
-    ci::SurfaceRef track;
-    ci::SurfaceRef trackleft;
+    ci::gl::Texture2dRef track;
+    ci::gl::Texture2dRef trackleft;
     float tlaspect;
-    ci::SurfaceRef trackright;
+    ci::gl::Texture2dRef trackright;
     float traspect;
     float ratio; 
     
-    ci::SurfaceRef progress;
-    ci::SurfaceRef progressright;
-    ci::SurfaceRef progressleft;
-    ci::SurfaceRef handle;
-    ci::SurfaceRef handleDown;
+    ci::gl::Texture2dRef progress;
+    ci::gl::Texture2dRef progressright;
+    ci::gl::Texture2dRef progressleft;
+    ci::gl::Texture2dRef handle;
+    ci::gl::Texture2dRef handleDown;
     int handleHalfWidth; 
     int handleHalfHeight; 
     ciUIRectangle *imageRect;

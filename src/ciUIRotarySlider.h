@@ -34,7 +34,7 @@ public:
     ciUIRotarySlider(float w, float _min, float _max, float _value, const std::string &_name, int _size = CI_UI_FONT_SMALL);
     ciUIRotarySlider(float x, float y, float w, float _min, float _max, float *_value, const std::string &_name, int _size = CI_UI_FONT_SMALL);
     ciUIRotarySlider(float w, float _min, float _max, float *_value, const std::string &_name, int _size = CI_UI_FONT_SMALL);
-    ~ciUIRotarySlider();
+    virtual ~ciUIRotarySlider();
     void init(float x, float y, float w, float _min, float _max, float *_value, const std::string &_name, int _size = CI_UI_FONT_SMALL);
     virtual void update();
     virtual void setDrawPadding(bool _draw_padded_rect);
@@ -49,7 +49,7 @@ public:
     void mousePressed(int x, int y, int button);
     void mouseReleased(int x, int y, int button);
     void keyPressed(int key);
-    void drawArcStrip(float percent);
+    void drawArcStrip(float percent, bool doFill);
     void setIncrement(float _increment);
 	void input(float x, float y);
     void updateValueRef();
@@ -84,6 +84,6 @@ protected:
     ciUIVec2f homePoint; 
     float outerRadius, innerRadius;
     std::string valueString;
-    
-    
-}; 
+    ci::PolyLine2 polyLine;
+    ci::Shape2d shape;
+};

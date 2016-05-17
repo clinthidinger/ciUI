@@ -46,14 +46,8 @@ void ciUISpectrum::drawFill()
 {
     if(draw_fill)
     {
-        if(draw_fill_highlight)
-        {
-            ci::gl::color(color_fill_highlight);
-        }
-        else
-        {
-            ci::gl::color(color_fill);
-        }
+        
+        ci::gl::ScopedColor scopedColor(draw_fill_highlight ? color_fill_highlight : color_fill);
         if(buffer != nullptr)
         {
             ci::gl::ScopedMatrices scopedMatrices;
@@ -62,7 +56,7 @@ void ciUISpectrum::drawFill()
             shape.moveTo(0.0f, 0.0f);
             for (int i = 0; i < bufferSize; i++)
             {
-                shape.lineTo(inc*(float)i, ciUIMap(buffer[i], min, max, 0, -scale, true));
+                shape.lineTo(inc*(float)i, ciUIMap<float>(buffer[i], min, max, 0, -scale, true));
             }
             shape.lineTo((bufferSize-1)*inc, 0);
             shape.close();

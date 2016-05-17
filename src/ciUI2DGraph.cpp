@@ -24,13 +24,14 @@
 
 #include "ciUI2DGraph.h"
 #include "ciUI.h"
+#include "cinder/CinderMath.h"
 
 ciUI2DGraph::ciUI2DGraph(const std::string &_name, const ci::vec2 &_rangeX, const ci::vec2 &_rangeY, int _bufferSize, float * _xValues, float * _yValues, float w, float h, float x, float y) : ciUIWidget()
 {
     init(_name, _rangeX, _rangeY, _bufferSize, _xValues, _yValues, w, h, x, y);
 }
 
-void ciUI2DGraph::init(const std::string &_name, ofPoint _rangeX, const ci::vec2 &_rangeY, float _bufferSize, float * _xValues, float * _yValues, float w, float h, float x, float y)
+void ciUI2DGraph::init(const std::string &_name, const ci::vec2 &_rangeX, const ci::vec2 &_rangeY, float _bufferSize, float * _xValues, float * _yValues, float w, float h, float x, float y)
 {
     initRect(x, y, w, h);
     name = _name;
@@ -44,19 +45,19 @@ void ciUI2DGraph::init(const std::string &_name, ofPoint _rangeX, const ci::vec2
     xValues = _xValues;
     yValues = _yValues;
     
-    inc = MAX(rect->getHalfHeight(), rect->getHalfWidth())/6.0;
+    inc = std::max(rect->getHalfHeight(), rect->getHalfWidth())/6.0;
 }
 
 void ciUI2DGraph::drawBack()
 {
     if(draw_back)
     {
-        ofFill();
-        ofSetColor(color_back);
-        rect->draw();
+        //ofFill();
+        ci::gl::ScopedColor scopedColor(color_back);
+        rect->draw(true);
     
-        ofPushMatrix();
-        ofTranslate(rect->getX(), rect->getY(), 0);
+        ci::gl::ScopedMatrices scopedMatrices;
+        ci::gl::translate(rect->getX(), rect->getY(), 0);
         
         for(int x = 0; x <= rect->getWidth(); x+=inc)
         {
@@ -68,15 +69,15 @@ void ciUI2DGraph::drawBack()
             ciUIDrawLine(0, y, rect->getWidth(), y);   //x
         }
         
-        ofSetLineWidth(2);
+        ci::gl::ScopedLineWidth scopedLineWidth(2.0f);
         ciUIDrawLine(rect->getHalfWidth(), 0, rect->getHalfWidth(), rect->getHeight());
         ciUIDrawLine(0, rect->getHalfHeight(), rect->getWidth(), rect->getHalfHeight());
-        ofPopMatrix();
-        ofNoFill();
-        rect->draw();
+        //ofPopMatrix();
+        //ofNoFill();
+        rect->draw(false);
         
-        ciUISetLineWidth(1);
-        ofFill();
+        //ciUISetLineWidth(1);
+        //ofFill();
     }
 }
 
@@ -85,28 +86,22 @@ void ciUI2DGraph::drawFill()
 {
     if(draw_fill)
     {
-        ofNoFill();
-        if(draw_fill_highlight)
-        {
-            ci::color(color_fill_highlight);
-        }
-        else
-        {
-            ci::color(color_fill);
-        }
+        ci::gl::ScopedColor scopedColor(draw_fill_highlight ? color_fill_highlight : color_fill);
         if(xValues != nullptr && yValues != nullptr)
         {
-            ofPushMatrix();
-            ofTranslate(rect->getX(), rect->getY(), 0);
-            ofSetLineWidth(1.5);
-            ofPolyline line;
+            ci::gl::ScopedMatrices scopedMatrices;
+            ci::gl::translate(rect->getX(), rect->getY(), 0);
+            ci::gl::ScopedLineWidth scopedLineWidth(1.5);
+            polyLine.getPoints().clear();
+            polyLine.getPoints().reserve(bufferSize);
+            
             for(int i =0; i < bufferSize; i++)
             {
-                line.addVertex(ofMap(xValues[i], rangeX.x, rangeX.y, 0.0, rect->getWidth(), true), ofMap(yValues[i], rangeY.x, rangeY.y, 0.0, rect->getHeight(), true));
+                float x = ci::math<float>::clamp(ci::lmap<float>(xValues[i], rangeX.x, rangeX.y, 0.0f, rect->getWidth()), 0.0f, rect->getWidth());
+                float y = ci::math<float>::clamp(ci::lmap<float>(yValues[i], rangeY.x, rangeY.y, 0.0f, rect->getHeight()),0.0f, rect->getHeight());
+                polyLine.push_back(ci::vec2(x, y));
             }
-            line.draw();
-            ofSetLineWidth(1);
-            ofPopMatrix();
+            ci::gl::draw(polyLine);
         }
     }
 }

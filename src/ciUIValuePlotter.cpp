@@ -25,7 +25,7 @@
 #include "ciUIValuePlotter.h"
 #include "ciUI.h"
 
-ciUIValuePlotter::ciUIValuePlotter(float x, float y, float w, float h, int _bufferSize, float _min, float _max, float *_value, string _name) : ciUIWidget()
+ciUIValuePlotter::ciUIValuePlotter(float x, float y, float w, float h, int _bufferSize, float _min, float _max, float *_value, const std::string &_name) : ciUIWidget()
 {
     init(x, y, w, h, _bufferSize, _min, _max, _value, _name);
 }
@@ -65,9 +65,9 @@ void ciUIValuePlotter::drawBack()
 {
     if(draw_back)
     {
-        ciUIFill();
-        ciUISetColor(color_back);
-        rect->draw();
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_back);
+        rect->draw(true);
         
         ciUIDrawLine(rect->getX(), rect->getY()+rect->getHalfHeight(), rect->getX()+rect->getWidth(), rect->getY()+rect->getHalfHeight());
     }
@@ -77,27 +77,30 @@ void ciUIValuePlotter::drawFill()
 {
     if(draw_fill)
     {
-        ofNoFill();
+        //ofNoFill();
         if(draw_fill_highlight)
         {
-            ciUISetColor(color_fill_highlight);
+            ci::gl::ScopedColor scopedColor(color_fill_highlight);
         }
         else
         {
-            ciUISetColor(color_fill);
+            ci::gl::ScopedColor scopedColor(color_fill);
         }
-        ofPushMatrix();
-        ofTranslate(rect->getX(), rect->getY()+scale, 0);
-        ofSetLineWidth(2.0);
-        ofBeginShape();
+        ci::gl::ScopedMatrices scopedMatrices;
+        //ofPushMatrix();
+        ci::gl::translate(rect->getX(), rect->getY()+scale, 0);
+        
+        ci::gl::ScopedLineWidth lineWidth(2.0);
+        //ofBeginShape();
+        polyLine.getPoints().clear();
+        polyLine.getPoints().reserve(bufferSize);
         for (unsigned int i = 0; i < bufferSize; i++)
         {
-            ofVertex(inc*(float)i, ciUIMap(buffer[i], min, max, scale, -scale, true));
+            polyLine.push_back(ci::vec2(inc*(float)i, ciUIMap(buffer[i], min, max, scale, -scale, true)));
         }
-        ofEndShape();
-        ofSetLineWidth(1);
-        ofPopMatrix();
-        
+        polyLine.setClosed();
+        ci::gl::draw(polyLine);
+        //ofPopMatrix();
     }
 }
 
@@ -111,12 +114,12 @@ void ciUIValuePlotter::addPoint(float _point)
     }
 }
 
-vector<float> &ciUIValuePlotter::getBuffer()
+const std::vector<float> &ciUIValuePlotter::getBuffer() const
 {
     return buffer;
 }
 
-void ciUIValuePlotter::setBuffer(vector<float> _buffer)
+void ciUIValuePlotter::setBuffer(const std::vector<float> &_buffer)
 {
     buffer = _buffer;
 }

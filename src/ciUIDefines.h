@@ -56,21 +56,21 @@
 #define CI_UI_GLOBAL_BUTTON_DIMENSION 16
 #define CI_UI_GLOBAL_SPACING_HEIGHT 1
 
-#define CI_UI_COLOR_BACK_ALPHA 100
-#define CI_UI_COLOR_OUTLINE_ALPHA 100
-#define CI_UI_COLOR_OUTLINE_HIGHLIGHT_ALPHA 200
-#define CI_UI_COLOR_FILL_ALPHA 200
-#define CI_UI_COLOR_FILL_HIGHLIGHT_ALPHA 255
-#define CI_UI_COLOR_PADDED_ALPHA 100
-#define CI_UI_COLOR_PADDED_OUTLINE_ALPHA 200
+#define CI_UI_COLOR_BACK_ALPHA (100.0f / 255.0f)
+#define CI_UI_COLOR_OUTLINE_ALPHA (100.0f / 255.0f)
+#define CI_UI_COLOR_OUTLINE_HIGHLIGHT_ALPHA (200.0f / 255.0f)
+#define CI_UI_COLOR_FILL_ALPHA (200.0f / 255.0f)
+#define CI_UI_COLOR_FILL_HIGHLIGHT_ALPHA 1.0f
+#define CI_UI_COLOR_PADDED_ALPHA (100.0f / 255.0f)
+#define CI_UI_COLOR_PADDED_OUTLINE_ALPHA (200.0f / 255.0f)
 
 #define CI_UI_COLOR_BACK ciUIColor(0, CI_UI_COLOR_BACK_ALPHA)                                        //rect's back color
-#define CI_UI_COLOR_OUTLINE ciUIColor(255, 255, 255, CI_UI_COLOR_OUTLINE_ALPHA)                      //rect's outline color
-#define CI_UI_COLOR_OUTLINE_HIGHLIGHT ciUIColor(255, 255, 255, CI_UI_COLOR_OUTLINE_HIGHLIGHT_ALPHA)  //rect's onMouseOver outline highlight color
-#define CI_UI_COLOR_FILL ciUIColor(255, 255, 255, CI_UI_COLOR_FILL_ALPHA)                            //rect's fill color
-#define CI_UI_COLOR_FILL_HIGHLIGHT ciUIColor(255, 255, 255, CI_UI_COLOR_FILL_HIGHLIGHT_ALPHA)        //rect's onMouseDown highlight color
+#define CI_UI_COLOR_OUTLINE ciUIColor(1.0f, 1.0f, 1.0f, CI_UI_COLOR_OUTLINE_ALPHA)                      //rect's outline color
+#define CI_UI_COLOR_OUTLINE_HIGHLIGHT ciUIColor(1.0f, 1.0f, 1.0f, CI_UI_COLOR_OUTLINE_HIGHLIGHT_ALPHA)  //rect's onMouseOver outline highlight color
+#define CI_UI_COLOR_FILL ciUIColor(1.0f, 1.0f, 1.0f, CI_UI_COLOR_FILL_ALPHA)                            //rect's fill color
+#define CI_UI_COLOR_FILL_HIGHLIGHT ciUIColor(1.0f, 1.0f, 1.0f, CI_UI_COLOR_FILL_HIGHLIGHT_ALPHA)        //rect's onMouseDown highlight color
 #define CI_UI_COLOR_PADDED ciUIColor(0, CI_UI_COLOR_PADDED_ALPHA)                                    //rect's padded color
-#define CI_UI_COLOR_PADDED_OUTLINE ciUIColor(255, CI_UI_COLOR_PADDED_OUTLINE_ALPHA)                  //rect's padded outline color
+#define CI_UI_COLOR_PADDED_OUTLINE ciUIColor(1.0f, 1.0f, 1.0f, CI_UI_COLOR_PADDED_OUTLINE_ALPHA)        //rect's padded outline color
 
 #define CI_UI_DRAW_PADDING false
 #define CI_UI_DRAW_PADDING_OUTLINE false

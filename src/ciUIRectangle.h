@@ -64,7 +64,7 @@ public:
 	ciUIVec2f percentInsideChild(float px, float py);
     ciUIVec2f percentInsideParent(float px, float py);
     
-    void draw();
+    void draw(bool doFill);
     
     float getHalfWidth();
 	float getHalfHeight();
@@ -78,6 +78,8 @@ public:
     bool rIntersects(const ciUIRectangle& rect);
     bool rInside(const ciUIRectangle& rect);
 
+    ci::Rectf getRectf() const;
+    
     float x;
     float y;
     float width;

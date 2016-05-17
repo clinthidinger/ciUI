@@ -97,8 +97,8 @@ void ciUILabelButton::setParent(ciUIWidget *_parent)
     {
         while(labelrect->getWidth() > rect->width)
         {
-            string labelstring = label->getLabel();
-            string::iterator it;
+            std::string labelstring = label->getLabel();
+            std::string::iterator it;
             it=labelstring.end();
             it--;
             labelstring.erase (it);

@@ -76,7 +76,7 @@ void ciUIImageButton::init(float x, float y, float w, float h, bool *_value, con
     
     setValue(*_value);
     
-    img = new ofImage(_pathURL);
+    img = ci::Surface::create(ci::loadImage(_pathURL));
     bChangedImage = false;
 }
 
@@ -84,7 +84,8 @@ ciUIImageButton::~ciUIImageButton()
 {
     if(!bChangedImage)
     {
-        delete img;
+        //delete img;
+        img.reset();
     }
 }
 
@@ -92,9 +93,10 @@ void ciUIImageButton::drawBack()
 {
     if(draw_back && !draw_fill)
     {
-        ciUIFill();
-        ciUISetColor(color_back);
-        img->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_back);
+        ci::gl::draw(tex, rect->getRectf());
+        //img->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
     }
 }
 
@@ -102,9 +104,10 @@ void ciUIImageButton::drawFill()
 {
     if(draw_fill)
     {
-        ciUIFill();
-        ciUISetColor(color_fill);
-        img->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill);
+        ci::gl::draw(tex, rect->getRectf());
+        //img->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
     }
 }
 
@@ -112,9 +115,10 @@ void ciUIImageButton::drawFillHighlight()
 {
     if(draw_fill_highlight)
     {
-        ciUIFill();
-        ciUISetColor(color_fill_highlight);
-        img->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill_highlight);
+        ci::gl::draw(tex, rect->getRectf());
+        //img->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
     }
 }
 
@@ -122,24 +126,27 @@ void ciUIImageButton::drawOutlineHighlight()
 {
     if(draw_outline_highlight)
     {
-        ofNoFill();
-        ciUISetColor(color_outline_highlight);
-        img->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
+        //ofNoFill();
+        ci::gl::ScopedColor scopedColor(color_outline_highlight);
+        ci::gl::draw(tex, rect->getRectf());
+        //img->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
     }
 }
 
-ofImage *ciUIImageButton::getImage()
+const ci::SurfaceRef &ciUIImageButton::getImage() const
 {
     return img;
 }
 
-void ciUIImageButton::setImage(ofImage *_img)
+void ciUIImageButton::setImage(const ci::SurfaceRef &_img)
 {
     if(img != nullptr && !bChangedImage)
     {
-        delete img;
-        img = nullptr;
+        //delete img;
+        //img = nullptr;
+        img.reset();
     }
     img = _img;
+    tex = ci::gl::Texture2d::create( *img );
     bChangedImage = true;
 }

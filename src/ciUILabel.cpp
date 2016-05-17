@@ -109,9 +109,9 @@ void ciUILabel::drawFill()
 {
     if(draw_fill)
     {
-        ciUIFill();
-        ciUISetColor(color_fill);
-        font->drawString(label, floor(rect->getX())+xOffset, floor(rect->getY()+rect->getHeight())+yOffset);
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill);
+        font->drawString(label, ci::vec2(floor(rect->getX())+xOffset, floor(rect->getY()+rect->getHeight())+yOffset));
     }
 }
 
@@ -119,45 +119,48 @@ void ciUILabel::drawFillHighlight()
 {
     if(draw_fill_highlight)
     {
-        ciUIFill();
-        ciUISetColor(color_fill_highlight);
-        font->drawString(label, floor(rect->getX())+xOffset, floor(rect->getY()+rect->getHeight())+yOffset);
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill_highlight);
+        font->drawString(label, ci::vec2(floor(rect->getX())+xOffset, floor(rect->getY()+rect->getHeight())+yOffset));
     }
 }
 
 void ciUILabel::drawBackLabel()
 {
-    ciUIFill();
-    ciUISetColor(color_back);
-    font->drawString(label, floor(rect->getX())+1+xOffset, floor(rect->getY()+rect->getHeight())+1+yOffset);
+    //ciUIFill();
+    ci::gl::ScopedColor scopedColor(color_back);
+    font->drawString(label, ci::vec2(floor(rect->getX())+1+xOffset, floor(rect->getY()+rect->getHeight())+1+yOffset));
 }
 
 void ciUILabel::drawString(float x, float y, const std::string &_string)
 {
-    font->drawString(_string, floor(x), floor(y));
+    font->drawString(_string, ci::vec2(floor(x), floor(y)));
 }
 
 void ciUILabel::drawStringShadow(float x, float y, const std::string &_string)
 {
-    ciUIFill();
-    ciUISetColor(color_back);
-    font->drawString(_string, floor(x)+1, floor(y)+1);
+    //ciUIFill();
+    ci::gl::ScopedColor scopedColor(color_back);
+    font->drawString(_string, ci::vec2(floor(x)+1, floor(y)+1));
 }
 
-float ciUILabel::getStringWidth(const std::string & s)
+float ciUILabel::getStringWidth(const std::string &s) const
 {
-    replace(s.begin(), s.end(), ' ', '_');      //VIA: @gameoverhack
-    return font->stringWidth(s);
+    std::string s2(s);
+    std::replace(s2.begin(), s2.end(), ' ', '_');      //VIA: @gameoverhack
+    ci::vec2 size = font->measureString(s2);
+    return size.x;
 }
 
-float ciUILabel::getStringHeight(const std::string & s)
+float ciUILabel::getStringHeight(const std::string & s) const
 {
-    return font->stringHeight(s);
+    ci::vec2 size = font->measureString(s);
+    return size.y;
 }
 
-float ciUILabel::getLineHeight()
+float ciUILabel::getLineHeight() const
 {
-    return font->getLineHeight();
+    return 1;//???font->getLineHeight();
 }
 
 ciUILabel* ciUILabel::getLabelWidget()
@@ -170,8 +173,8 @@ void ciUILabel::setLabel(const std::string & _label)
     label = _label;
     if(autoSize)
     {
-        float w = font->stringWidth(label);
-        float h = font->stringHeight("1");          //otherwise we get some funky non-uniform spacing :(
+        float w = font->measureString(label).x;
+        float h = font->measureString("1").y;          //otherwise we get some funky non-uniform spacing :(
         rect->setWidth(w);
         rect->setHeight(h);
         xOffset = 0;
@@ -183,7 +186,7 @@ void ciUILabel::setLabel(const std::string & _label)
         {
             label = label.substr(0, label.size()-1);
         }
-        float h = (int)font->stringHeight("1");     //otherwise we get some funky non-uniform spacing :(
+        float h = (int)font->measureString("1").y;     //otherwise we get some funky non-uniform spacing :(
         if(rect->getHeight() > 0)
         {
             yOffset = 0;
@@ -197,7 +200,7 @@ void ciUILabel::setLabel(const std::string & _label)
     }
 }
 
-bool ciUILabel::getAutoSize()
+bool ciUILabel::getAutoSize() const
 {
     return autoSize;
 }
@@ -207,7 +210,7 @@ void ciUILabel::setAutoSize(bool _autoSize)
     autoSize = _autoSize;
 }
 
-string& ciUILabel::getLabel()
+const std::string &ciUILabel::getLabel() const
 {
     return label;
 }
@@ -219,7 +222,7 @@ void ciUILabel::setFont(ci::gl::TextureFontRef _font)
     calculatePaddingRect();
 }
 
-int ciUILabel::getSize()
+int ciUILabel::getSize() const
 {
     return size;
 }
@@ -245,7 +248,7 @@ void ciUILabel::setVisible(bool _visible)
     }
 }
 
-bool ciUILabel::isVisible()
+bool ciUILabel::isVisible() const
 {
     return visible;
 }

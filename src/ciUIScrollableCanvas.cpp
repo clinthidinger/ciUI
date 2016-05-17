@@ -57,10 +57,10 @@ void ciUIScrollableCanvas::initScrollable()
     paddedRect->setParent(sRect);
     isScrolling = false;
     setShowOverflow(false); 
-    vel.set(0);
-    pos.set(0);
-    ppos.set(0);
-    acc.set(0);
+    vel = ci::vec2(0);
+    pos = ci::vec2(0);
+    ppos = ci::vec2(0);
+    acc = ci::vec2(0);
     damping = .75;
     scrollX = false;
     scrollY = true;
@@ -103,20 +103,20 @@ void ciUIScrollableCanvas::setScrollAreaToScreen()
 {
     sRect->x = 0;
     sRect->y = 0;
-    sRect->setWidth(ofGetWidth());
-    sRect->setHeight(ofGetHeight());
+    sRect->setWidth(ci::app::getWindowWidth());
+    sRect->setHeight(ci::app::getWindowHeight());
 }
 
 void ciUIScrollableCanvas::setScrollAreaToScreenWidth()
 {
     sRect->x = 0;
-    sRect->setWidth(ofGetWidth());
+    sRect->setWidth(ci::app::getWindowWidth());
 }
 
 void ciUIScrollableCanvas::setScrollAreaToScreenHeight()
 {
     sRect->y = 0;
-    sRect->setHeight(ofGetHeight());
+    sRect->setHeight(ci::app::getWindowHeight());
 }
 
 void ciUIScrollableCanvas::setScrollAreaHeight(float _height)
@@ -265,10 +265,10 @@ void ciUIScrollableCanvas::update()
         }
         
         vel *=damping;
-        acc.set(0);
+        acc = ci::vec2(0);
     }
     
-    for(vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it)
+    for(std::vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it)
     {
         (*it)->update();
     }
@@ -278,9 +278,9 @@ void ciUIScrollableCanvas::drawBack()
 {
     if(draw_back)
     {
-        ciUIFill();
-        ciUISetColor(color_back);
-        sRect->draw();
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_back);
+        sRect->draw(true);
     }
 }
 
@@ -288,9 +288,9 @@ void ciUIScrollableCanvas::drawOutline()
 {
     if(draw_outline)
     {
-        ofNoFill();
-        ciUISetColor(color_outline);
-        sRect->draw();
+        //ofNoFill();
+        ci::gl::ScopedColor scopedColor(color_outline);
+        sRect->draw(false);
     }
 }
 
@@ -298,9 +298,9 @@ void ciUIScrollableCanvas::drawOutlineHighlight()
 {
     if(draw_outline_highlight)
     {
-        ofNoFill();
-        ciUISetColor(color_outline_highlight);
-        sRect->draw();
+        //ofNoFill();
+        ci::gl::ScopedColor scopedColor(color_outline_highlight);
+        sRect->draw(false);
     }
 }
 
@@ -308,9 +308,9 @@ void ciUIScrollableCanvas::drawFill()
 {
     if(draw_fill)
     {
-        ciUIFill();
-        ciUISetColor(color_fill);
-        sRect->draw();
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill);
+        sRect->draw(true);
     }
 }
 
@@ -318,9 +318,9 @@ void ciUIScrollableCanvas::drawFillHighlight()
 {
     if(draw_fill_highlight)
     {
-        ciUIFill();
-        ciUISetColor(color_fill_highlight);
-        sRect->draw();
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill_highlight);
+        sRect->draw(true);
     }
 }
 
@@ -328,9 +328,9 @@ void ciUIScrollableCanvas::drawPadded()
 {
     if(draw_padded_rect && !embedded)
     {
-        ciUIFill();
-        ciUISetColor(color_padded_rect);
-        paddedRect->draw();
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_padded_rect);
+        paddedRect->draw(true);
     }
 }
 
@@ -338,21 +338,22 @@ void ciUIScrollableCanvas::drawPaddedOutline()
 {
     if(draw_padded_rect_outline && !embedded)
     {
-        ofNoFill();
-        ciUISetColor(color_padded_rect_outline);
-        paddedRect->draw();
+        //ofNoFill();
+        ci::gl::ScopedColor scopedColor(color_padded_rect_outline);
+        paddedRect->draw(false);
     }
 }
 
 void ciUIScrollableCanvas::draw()
 {
-    ciUIPushStyle();
+    //ciUIPushStyle();
     
+    // TODO Scoped !!!
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
-    ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-    ciUISetRectMode(CI_UI_RECTMODE_CORNER);
-    ofSetLineWidth(1.0);
+    glEnableBlendMode(OF_BLENDMODE_ALPHA);
+    //ciUISetRectMode(CI_UI_RECTMODE_CORNER);
+    ci::gl::ScopedLineWidth scopedLineWidth(1.0);
     
     drawPadded();
     
@@ -368,7 +369,7 @@ void ciUIScrollableCanvas::draw()
     
     drawOutlineHighlight();
     
-    for(vector<ciUIWidget *>::reverse_iterator it = widgets.rbegin(); it != widgets.rend(); ++it)
+    for(std::vector<ciUIWidget *>::reverse_iterator it = widgets.rbegin(); it != widgets.rend(); ++it)
     {
         if(bShowOverFlow) {
             if((*it)->isVisible() && (*it)->getRect()->rIntersects(*sRect)) {
@@ -393,8 +394,8 @@ void ciUIScrollableCanvas::setPosition(int x, int y)
 
 void ciUIScrollableCanvas::setDimensions(float _width, float _height)
 {
-    sRect->setWidth(MIN(_width, ofGetWidth() - sRect->getX()));
-    sRect->setHeight(MIN(_height, ofGetHeight() - sRect->getY()));
+    sRect->setWidth(std::min(_width, ofGetWidth() - sRect->getX()));
+    sRect->setHeight(std::min(_height, ofGetHeight() - sRect->getY()));
     rect->setWidth(_width);
     rect->setHeight(_height);
     paddedRect->width = rect->width+padding*2;
@@ -448,12 +449,12 @@ void ciUIScrollableCanvas::touchMoved(float x, float y, int id)
             if(isScrolling != true)
             {
                 isScrolling = true;
-                ppos = ofPoint(x, y);
+                ppos = ci::vec2(x, y);
                 vel.set(0);
             }
             else
             {
-                pos = ofPoint(x, y);
+                pos = ci::vec2(x, y);
                 vel = pos-ppos;
                 if(scrollX) rect->x +=vel.x;
                 if(scrollY) rect->y +=vel.y;
@@ -475,7 +476,7 @@ void ciUIScrollableCanvas::touchUp(float x, float y, int id)
     if(isScrolling)
     {
         isScrolling = false;
-        pos = ofPoint(x, y);
+        pos = ci::vec2(x, y);
     }
 }
 
@@ -491,7 +492,7 @@ void ciUIScrollableCanvas::touchCancelled(float x, float y, int id)
     if(isScrolling)
     {
         isScrolling = false;
-        pos = ofPoint(x, y);
+        pos = ci::vec2(x, y);
     }
 }
 
@@ -511,12 +512,12 @@ void ciUIScrollableCanvas::mouseDragged(int x, int y, int button)
             if(isScrolling != true)
             {
                 isScrolling = true;
-                ppos = ofPoint(x,y);
+                ppos = ci::vec2(x,y);
                 vel.set(0,0);
             }
             else
             {
-                pos = ofPoint(x, y);
+                pos = ci::vec2(x, y);
                 vel = pos-ppos;
                 if(scrollX) rect->x +=vel.x;
                 if(scrollY) rect->y +=vel.y;
@@ -563,7 +564,7 @@ void ciUIScrollableCanvas::mouseReleased(int x, int y, int button)
     if(isScrolling)
     {
         isScrolling = false;
-        pos = ofPoint(x,y);
+        pos = ci::vec2(x,y);
     }
 }
 

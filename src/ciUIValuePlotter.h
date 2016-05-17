@@ -38,7 +38,7 @@ public:
     virtual void drawBack();
     virtual void drawFill();
     void addPoint(float _point);
-    const std::vector<float> &getBuffer();
+    const std::vector<float> &getBuffer() const;
     void setBuffer(const std::vector<float> &_buffer);
     
 protected:   
@@ -46,4 +46,5 @@ protected:
     std::vector<float> buffer;
 	float max, min, scale, inc;
 	unsigned int bufferSize;
+    ci::PolyLine2 polyLine;
 };

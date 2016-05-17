@@ -27,7 +27,7 @@
 ciUIRectangle::ciUIRectangle()
 {
     x = y = width = height = halfheight = halfwidth = 0.0f;
-    setParent(nullptrptr);
+    setParent(nullptr);
 }
 
 ciUIRectangle::ciUIRectangle(float _x, float _y, float _w, float _h)
@@ -38,7 +38,7 @@ ciUIRectangle::ciUIRectangle(float _x, float _y, float _w, float _h)
     halfwidth = width*.5;
     height = _h;
     halfheight = height*.5;
-    setParent(nullptrptr);
+    setParent(nullptr);
 }
 
 ciUIRectangle::ciUIRectangle(ciUIRectangle const & r)
@@ -49,7 +49,7 @@ ciUIRectangle::ciUIRectangle(ciUIRectangle const & r)
     halfwidth = width*.5;
     height = r.height;
     halfheight = height*.5;
-    setParent(nullptrptr);
+    setParent(nullptr);
 }
 
 void ciUIRectangle::set(float px, float py, float w, float h)
@@ -91,27 +91,27 @@ void ciUIRectangle::setWidth(float _width)
 
 float ciUIRectangle::getMinX() const
 {
-    return MIN(x, x + width);  // - width
+    return std::min(x, x + width);  // - width
 }
 
 float ciUIRectangle::getMaxX() const
 {
-    return MAX(x, x + width);  // - width
+    return std::max(x, x + width);  // - width
 }
 
 float ciUIRectangle::getMinY() const
 {
-    return MIN(y, y + height);  // - height
+    return std::min(y, y + height);  // - height
 }
 
 float ciUIRectangle::getMaxY() const
 {
-    return MAX(y, y + height);  // - height
+    return std::max(y, y + height);  // - height
 }
 
-bool ciUIRectangle::inside(ofPoint p)
+bool ciUIRectangle::inside(const ci::vec2 &p)
 {
-    if(parent != nullptrptr)
+    if(parent != nullptr)
     {
         return insideParent(p.x, p.y);
     }
@@ -123,7 +123,7 @@ bool ciUIRectangle::inside(ofPoint p)
 
 bool ciUIRectangle::inside(float px, float py)
 {
-    if(parent != nullptrptr)
+    if(parent != nullptr)
     {
         return insideParent(px,py);
     }
@@ -173,21 +173,32 @@ ciUIVec2f ciUIRectangle::percentInsideParent(float px, float py)
     return ciUIVec2f((px-(x+parent->getX()))/(width), (py-(y+parent->getY()))/(height));
 }
 
-void ciUIRectangle::draw()
+void ciUIRectangle::draw(bool doFill)
 {
-    if(parent != nullptrptr)
+    ci::Rectf rect;
+    if(parent != nullptr)
     {
-        ciUIDrawRect(parent->getX()+x, parent->getY()+y, width, height);
+        float x1 = parent->getX() + x;
+        float y1 = parent->getY() + y;
+        rect.set(x1, y1, x1 + width, y1 + height);
     }
     else
     {
-        ciUIDrawRect(x,y,width,height);
+        rect.set(x, y, x + width, y + height);
+    }
+    if(doFill)
+    {
+        ci::gl::drawStrokedRect(rect);
+    }
+    else
+    {
+        ci::gl::drawSolidRect(rect);
     }
 }
 
 float ciUIRectangle::getX(bool recursive)
 {
-    if(parent != nullptrptr && recursive)
+    if(parent != nullptr && recursive)
     {
         return (x+parent->getX());
     }
@@ -199,7 +210,7 @@ float ciUIRectangle::getX(bool recursive)
 
 float ciUIRectangle::getY(bool recursive)
 {
-    if(parent != nullptrptr && recursive)
+    if(parent != nullptr && recursive)
     {
         return (y+parent->getY());
     }
@@ -231,22 +242,22 @@ float ciUIRectangle::getHalfHeight()
 
 float ciUIRectangle::getRelativeMinX()
 {
-    return MIN(getX(), getX() + getWidth());    // - width
+    return std::min(getX(), getX() + getWidth());    // - width
 }
 
 float ciUIRectangle::getRelativeMinY()
 {
-    return MIN(getY(), getY() + getHeight());   // - height
+    return std::min(getY(), getY() + getHeight());   // - height
 }
 
 float ciUIRectangle::getRelativeMaxX()
 {
-    return MAX(getX(), getX() + getWidth());    // - width
+    return std::max(getX(), getX() + getWidth());    // - width
 }
 
 float ciUIRectangle::getRelativeMaxY()
 {
-    return MAX(getY(), getY() + getHeight());   // - height
+    return std::max(getY(), getY() + getHeight());   // - height
 }
 
 bool ciUIRectangle::rIntersects(const ciUIRectangle& rect)
@@ -259,4 +270,9 @@ bool ciUIRectangle::rInside(const ciUIRectangle& rect)
 {
     return (getRelativeMinX() > rect.getMinX() && getRelativeMaxX() < rect.getMaxX() &&
             getRelativeMinY() > rect.getMinY() && getRelativeMaxY() < rect.getMaxY());
+}
+
+ci::Rectf ciUIRectangle::getRectf() const
+{
+    return ci::Rectf(x, y, x + width, y + height);
 }

@@ -39,7 +39,7 @@ ciUIRangeSlider::ciUIRangeSlider(const std::string &_name, float _min, float _ma
     init(_name, _min, _max, _valuelow, _valuehigh, w, h, x, y, _size);
 }
 
-ciUIRangeSlider::ciUIRangeSlider(float x, float y, float w, float h, float _min, float _max, float _valuelow, float _valuehigh, string _name, int _size) : ciUIWidgetWithLabel()
+ciUIRangeSlider::ciUIRangeSlider(float x, float y, float w, float h, float _min, float _max, float _valuelow, float _valuehigh, const std::string &_name, int _size) : ciUIWidgetWithLabel()
 {
     useReference = false;
     init(_name, _min, _max, &_valuelow, &_valuehigh, w, h, x, y, _size);
@@ -131,8 +131,8 @@ void ciUIRangeSlider::init(const std::string &_name, float _min, float _max, flo
         valuehigh = min;
     }
     
-    valuelow = ciUIMap(valuelow, min, max, 0.0, 1.0, true);
-    valuehigh = ciUIMap(valuehigh, min, max, 0.0, 1.0, true);
+    valuelow = ciUIMap<float>(valuelow, min, max, 0.0f, 1.0f, true);
+    valuehigh = ciUIMap<float>(valuehigh, min, max, 0.0f, 1.0f, true);
     labelPrecision = 2;
     
     valuelowString = ciUIToString(getScaledValueLow(),labelPrecision);
@@ -155,8 +155,8 @@ void ciUIRangeSlider::update()
 {
     if(useReference)
     {
-        valuelow = ciUIMap(*valuelowRef, min, max, 0.0, 1.0, true);
-        valuehigh = ciUIMap(*valuehighRef, min, max, 0.0, 1.0, true);
+        valuelow = ciUIMap<float>(*valuelowRef, min, max, 0.0f, 1.0f, true);
+        valuehigh = ciUIMap<float>(*valuehighRef, min, max, 0.0f, 1.0f, true);
     }
 }
 
@@ -176,15 +176,15 @@ void ciUIRangeSlider::drawFill()
 {
     if(draw_fill)
     {
-        ciUIFill();
-        ciUISetColor(color_fill);
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill);
         if(kind == CI_UI_WIDGET_RSLIDER_H)
         {
-            ciUIDrawRect(rect->getX()+rect->getWidth()*valuelow, rect->getY(), rect->getWidth()*(valuehigh-valuelow), rect->getHeight());
+            ciUIDrawCorneredRect(rect->getX()+rect->getWidth()*valuelow, rect->getY(), rect->getWidth()*(valuehigh-valuelow), rect->getHeight(), true);
         }
         else
         {
-            ciUIDrawRect(rect->getX(), rect->getY()+(1.0-valuehigh)*rect->getHeight(), rect->getWidth(), rect->getHeight()*(valuehigh-valuelow));
+            ciUIDrawCorneredRect(rect->getX(), rect->getY()+(1.0-valuehigh)*rect->getHeight(), rect->getWidth(), rect->getHeight()*(valuehigh-valuelow), true);
         }
     }
 }
@@ -193,15 +193,15 @@ void ciUIRangeSlider::drawFillHighlight()
 {
     if(draw_fill_highlight)
     {
-        ciUIFill();
-        ciUISetColor(color_fill_highlight);
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill_highlight);
         if(kind == CI_UI_WIDGET_RSLIDER_H)
         {
-            ciUIDrawRect(rect->getX()+rect->getWidth()*valuelow, rect->getY(), rect->getWidth()*(valuehigh-valuelow), rect->getHeight());
+            ciUIDrawCorneredRect(rect->getX()+rect->getWidth()*valuelow, rect->getY(), rect->getWidth()*(valuehigh-valuelow), rect->getHeight(), true);
         }
         else
         {
-            ciUIDrawRect(rect->getX(), rect->getY()+(1.0-valuehigh)*rect->getHeight(), rect->getWidth(), rect->getHeight()*(valuehigh-valuelow));
+            ciUIDrawCorneredRect(rect->getX(), rect->getY()+(1.0-valuehigh)*rect->getHeight(), rect->getWidth(), rect->getHeight()*(valuehigh-valuelow), true);
         }
         if(kind == CI_UI_WIDGET_RSLIDER_V)
         {
@@ -297,27 +297,27 @@ void ciUIRangeSlider::keyPressed(int key)
     {
         switch (key)
         {
-            case OF_KEY_RIGHT:
+            case ci::app::KeyEvent::KEY_RIGHT:
                 setValueHigh(getScaledValueHigh()+increment);
                 setValueLow(getScaledValueLow()+increment);
                 triggerEvent(this);
                 break;
                 
-            case OF_KEY_LEFT:
+            case ci::app::KeyEvent::KEY_LEFT:
                 setValueHigh(getScaledValueHigh()-increment);
                 setValueLow(getScaledValueLow()-increment);
                 triggerEvent(this);
                 break;
                 
                 
-            case OF_KEY_UP:
+            case ci::app::KeyEvent::KEY_UP:
                 setValueHigh(getScaledValueHigh()+increment);
                 setValueLow(getScaledValueLow()-increment);
                 triggerEvent(this);
                 break;
                 
                 
-            case OF_KEY_DOWN:
+            case ci::app::KeyEvent::KEY_DOWN:
                 setValueHigh(getScaledValueHigh()-increment);
                 setValueLow(getScaledValueLow()+increment);
                 triggerEvent(this);
@@ -405,8 +405,8 @@ void ciUIRangeSlider::input(float x, float y)
         hitLow = false;
     }
     
-    valuehigh = MIN(1.0, MAX(0.0, valuehigh));
-    valuelow = MIN(1.0, MAX(0.0, valuelow));
+    valuehigh = std::min(1.0f, std::max(0.0f, valuehigh));
+    valuelow = std::min(1.0f, std::max(0.0f, valuelow));
     updateValueRef();
     updateLabel();
 }
@@ -476,14 +476,14 @@ void ciUIRangeSlider::stateChange()
 
 void ciUIRangeSlider::setValueLow(float _value)
 {
-    valuelow = ciUIMap(_value, min, max, 0.0, 1.0, true);
+    valuelow = ciUIMap<float>(_value, min, max, 0.0f, 1.0f, true);
     updateValueRef();
     updateLabel();
 }
 
 void ciUIRangeSlider::setValueHigh(float _value)
 {
-    valuehigh = ciUIMap(_value, min, max, 0.0, 1.0, true);
+    valuehigh = ciUIMap<float>(_value, min, max, 0.0f, 1.0f, true);
     updateValueRef();
     updateLabel();
 }
@@ -520,12 +520,12 @@ float ciUIRangeSlider::getPercentValueHigh()
 
 float ciUIRangeSlider::getScaledValueLow()
 {
-    return ciUIMap(valuelow, 0.0, 1.0, min, max, true);
+    return ciUIMap<float>(valuelow, 0.0f, 1.0f, min, max, true);
 }
 
 float ciUIRangeSlider::getScaledValueHigh()
 {
-    return ciUIMap(valuehigh, 0.0, 1.0, min, max, true);
+    return ciUIMap<float>(valuehigh, 0.0f, 1.0f, min, max, true);
 }
 
 void ciUIRangeSlider::setLabelPrecision(int _precision)
@@ -556,11 +556,11 @@ void ciUIRangeSlider::setMaxAndMin(float _max, float _min)
     max = _max;
     min = _min;
     
-    valuelow= ciUIMap(valuelow, 0, 1.0, min, max, true);
-    valuelow = ciUIMap(valuelow, min, max, 0.0, 1.0, true);
+    valuelow= ciUIMap<float>(valuelow, 0.0f, 1.0f, min, max, true);
+    valuelow = ciUIMap<float>(valuelow, min, max, 0.0, 1.0, true);
     
-    valuehigh = ciUIMap(valuehigh, 0, 1.0, min, max, true);
-    valuehigh = ciUIMap(valuehigh, min, max, 0.0, 1.0, true);
+    valuehigh = ciUIMap<float>(valuehigh, 0.0f, 1.0f, min, max, true);
+    valuehigh = ciUIMap<float>(valuehigh, min, max, 0.0f, 1.0f, true);
     updateValueRef();
     updateLabel();
 }

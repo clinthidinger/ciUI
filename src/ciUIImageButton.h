@@ -40,10 +40,11 @@ public:
     virtual void drawFill();
     virtual void drawFillHighlight();
     virtual void drawOutlineHighlight();
-    virtual ci::SurfaceRef getImage();
-    virtual void setImage(ci::SurfaceRef _img);
+    virtual const ci::SurfaceRef &getImage() const;
+    virtual void setImage(const ci::SurfaceRef &_img);
     
 protected:   
     ci::SurfaceRef img;
-    bool bChangedImage;    
+    ci::gl::Texture2dRef tex;
+    bool bChangedImage;
 }; 

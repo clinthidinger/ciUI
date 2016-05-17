@@ -39,31 +39,31 @@ public:
     void setOrientation(float w, float h);
     virtual void init(const std::string &_name, T _min, T _max, T *_value, float w, float h, float x, float y);
     
-    virtual void update();
+    virtual void update() override;
     
-    virtual void setDrawPadding(bool _draw_padded_rect);
-    virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline);
-    virtual void drawBack();
-    virtual void drawOutline();
-    virtual void drawOutlineHighlight();
-    virtual void drawFill();
-    virtual void drawFillHighlight();
+    virtual void setDrawPadding(bool _draw_padded_rect) override;
+    virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline) override;
+    virtual void drawBack() override;
+    virtual void drawOutline() override;
+    virtual void drawOutlineHighlight() override;
+    virtual void drawFill() override;
+    virtual void drawFillHighlight() override;
     
-    void mouseMoved(int x, int y);
-    void mouseDragged(int x, int y, int button);
-    void mousePressed(int x, int y, int button);
-    void mouseReleased(int x, int y, int button);
+    void mouseMoved(int x, int y) override;
+    void mouseDragged(int x, int y, int button) override;
+    void mousePressed(int x, int y, int button) override;
+    void mouseReleased(int x, int y, int button) override;
     
-    void keyPressed(int key);
-    void keyReleased(int key);
-    void windowResized(int w, int h);
+    void keyPressed(int key) override;
+    void keyReleased(int key) override;
+    void windowResized(int w, int h) override;
     
     bool getSetClampValue();
     void setClampValue(bool _bClampValue);
     
     ciUISlider_<T>* enableSticky(bool _bSticky);
     ciUISlider_<T>* setStickyValue(double _stickyValue);
-    double getStickyValue();
+    double getStickyValue() const;
     
     T getIncrement();
     ciUISlider_<T>* setIncrement(T _increment);
@@ -71,18 +71,18 @@ public:
     virtual void input(float x, float y);
     void updateValueRef();
 	virtual void updateLabel();
-    virtual void stateChange();
+    virtual void stateChange() override;
 	
     void setValue(T _value);
-	T getValue();
-    T getNormalizedValue();
+	const T getValue() const;
+    T getNormalizedValue() const;
 	
-    float getPercentValue();
-	T getScaledValue();
+    float getPercentValue() const;
+	const T getScaledValue() const;
 
     void setLabelPrecision(int _precision);
     
-	virtual void setParent(ciUIWidget *_parent);
+	virtual void setParent(ciUIWidget *_parent) override;
     
     void setMax(T _max, bool bKeepValueTheSame = false);
     T getMax();
@@ -90,13 +90,13 @@ public:
     void setMin(T _min, bool bKeepValueTheSame = false);
     T getMin();
     
-    ciUIVec2f getMaxAndMin();
+    ciUIVec2f getMaxAndMin() const;
     void setMaxAndMin(T _max, T _min, bool bKeepValueTheSame = false);
     
     void setValueReference(T *_value); 
     
-    bool isDraggable();
-    virtual bool hasState(){ return true; };
+    bool isDraggable() override;
+    virtual bool hasState() override { return true; };
 //#ifndef CI_UI_NO_XML
 //    virtual void saveState(ofxXmlSettings *XML);
 //    virtual void loadState(ofxXmlSettings *XML);

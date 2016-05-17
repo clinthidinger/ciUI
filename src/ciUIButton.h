@@ -34,7 +34,7 @@ public:
     ciUIButton();    
     ciUIButton(const std::string &_name, bool _value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
     ciUIButton(const std::string &_name, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
-    ~ciUIButton();
+    virtual ~ciUIButton();
     virtual void init(const std::string &_name, bool *_value, float w, float h, float x = 0, float y = 0, int _size = CI_UI_FONT_SMALL);
     virtual void drawFill();
     virtual void mouseMoved(int x, int y);
@@ -43,7 +43,7 @@ public:
     virtual void mouseReleased(int x, int y, int button);
     virtual void stateChange();
 	virtual void setParent(ciUIWidget *_parent);
-	bool getValue();
+	bool getValue() const;
     virtual void setValue(bool _value);
     virtual void setValuePtr(bool *_value);
 	void toggleValue();

@@ -176,13 +176,17 @@ void ciUIWidget::calculatePaddingRect()
 {
     float xMax = rect->getWidth();
     float yMax = rect->getHeight();
-    vector<ciUIWidget *>::iterator it = embeddedWidgets.begin();
-    vector<ciUIWidget *>::iterator eit = embeddedWidgets.end();
+    std::vector<ciUIWidget *>::iterator it = embeddedWidgets.begin();
+    std::vector<ciUIWidget *>::iterator eit = embeddedWidgets.end();
     for(; it != eit; ++it) {
         if((*it)->isVisible()) {
             ciUIRectangle *r = (*it)->getRect();
-            r->getMaxX() > xMax ? (xMax = r->getMaxX()) : nullptr;
-            r->getMaxY() > yMax ? (yMax = r->getMaxY()) : nullptr;
+            if(r->getMaxX() > xMax) {
+                xMax = r->getMaxX();
+            }
+            if(r->getMaxY() > yMax) {
+                yMax = r->getMaxY();
+            }
         }
     }
     paddedRect->set(-padding, -padding, xMax+padding*2.0, yMax+padding*2.0);
@@ -214,59 +218,59 @@ void ciUIWidget::draw() {
 void ciUIWidget::drawBack()
 {
     if(draw_back) {
-        ciUIFill();
-        ciUISetColor(color_back);
-        rect->draw();
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_back);
+        rect->draw(true);
     }
 }
 
 void ciUIWidget::drawOutline()
 {
     if(draw_outline) {
-        ciUINoFill();
-        ciUISetColor(color_outline);
-        rect->draw();
+        //ciUINoFill();
+        ci::gl::ScopedColor scopedColor(color_outline);
+        rect->draw(false);
     }
 }
 
 void ciUIWidget::drawOutlineHighlight()
 {
     if(draw_outline_highlight) {
-        ciUINoFill();
-        ciUISetColor(color_outline_highlight);
-        rect->draw();
+        //ciUINoFill();
+        ci::gl::ScopedColor scopedColor(color_outline_highlight);
+        rect->draw(false);
     }
 }
 
 void ciUIWidget::drawFill() {
     if(draw_fill) {
-        ciUIFill();
-        ciUISetColor(color_fill);
-        rect->draw();
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill);
+        rect->draw(true);
     }
 }
 
 void ciUIWidget::drawFillHighlight() {
     if(draw_fill_highlight) {
-        ciUIFill();
-        ciUISetColor(color_fill_highlight);
-        rect->draw();
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill_highlight);
+        rect->draw(true);
     }
 }
 
 void ciUIWidget::drawPadded() {
     if(draw_padded_rect && !embedded) {
-        ciUIFill();
-        ciUISetColor(color_padded_rect);
-        paddedRect->draw();
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_padded_rect);
+        paddedRect->draw(true);
     }
 }
 
 void ciUIWidget::drawPaddedOutline() {
     if(draw_padded_rect_outline && !embedded) {
-        ciUINoFill();
-        ciUISetColor(color_padded_rect_outline);
-        paddedRect->draw();
+        //ciUINoFill();
+        ci::gl::ScopedColor scopedColor(color_padded_rect_outline);
+        paddedRect->draw(false);
     }
 }
 
@@ -500,7 +504,7 @@ bool ciUIWidget::isHit(float x, float y) {
     }
 }
 
-string& ciUIWidget::getName() {
+std::string& ciUIWidget::getName() {
     return name;
 }
 
@@ -680,7 +684,7 @@ bool ciUIWidget::hasState()
 
 bool ciUIWidget::getIsBindedToKey(int key)
 {
-    map<int,bool>::iterator it = keyBindings.find(key);
+    std::map<int,bool>::iterator it = keyBindings.find(key);
     if(it != keyBindings.end() && it->second)
     {
         return true;

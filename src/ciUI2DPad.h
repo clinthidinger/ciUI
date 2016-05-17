@@ -29,10 +29,10 @@
 class ciUI2DPad : public ciUIWidgetWithLabel
 {
 public:
-    ciUI2DPad(const std::string &_name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f _value, float w, float h, float x = 0, float y = 0);
-    ciUI2DPad(const std::string &_name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f *_value, float w, float h, float x = 0, float y = 0);
+    ciUI2DPad(const std::string &_name, const ciUIVec3f &_rangeX, const ciUIVec3f &_rangeY, const ciUIVec3f &_value, float w, float h, float x = 0, float y = 0);
+    ciUI2DPad(const std::string &_name, const ciUIVec3f &_rangeX, const ciUIVec3f &_rangeY, ciUIVec3f *_value, float w, float h, float x = 0, float y = 0);
     virtual ~ciUI2DPad();
-    void init(const std::string &_name, ciUIVec3f _rangeX, ciUIVec3f _rangeY, ciUIVec3f *_value, float w, float h, float x = 0, float y = 0);
+    void init(const std::string &_name, const ciUIVec3f &_rangeX, const ciUIVec3f &_rangeY, ciUIVec3f *_value, float w, float h, float x = 0, float y = 0);
     virtual void update();
     virtual void setDrawPadding(bool _draw_padded_rect);
     virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline);
@@ -49,10 +49,10 @@ public:
     void updateValueRef();
 	void updateLabel();
     void stateChange();
-	void setValue(ciUIVec3f _value);
-	ciUIVec3f getValue();
-	ciUIVec3f getPercentValue();
-	ciUIVec3f getScaledValue();
+	void setValue(const ciUIVec3f &_value);
+	const ciUIVec3f &getValue() const;
+	const ciUIVec3f &getPercentValue() const;
+	ciUIVec3f getScaledValue() const;
     bool isDraggable();
     void setLabelPrecision(int _precision);
     bool hasState(){ return true; };
@@ -61,9 +61,13 @@ public:
 //    virtual void loadState(ofxXmlSettings *XML);
 //#endif
 
+    ciUI2DPad(const ciUI2DPad &other) = delete;
+    ciUI2DPad &operator= (const ciUI2DPad &rhs) = delete;
+    ciUI2DPad(const ciUI2DPad &&other) = delete;
+    ciUI2DPad &operator= (const ciUI2DPad &&rhs) = delete;
 protected:
 	ciUIVec3f value;
-	ciUIVec3f *valueRef;     
+    ciUIVec3f *valueRef;
     float increment;
     int labelPrecision;     
     bool useReference; 

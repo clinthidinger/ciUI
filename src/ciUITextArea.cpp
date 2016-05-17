@@ -60,9 +60,8 @@ void ciUITextArea::drawBack()
 {
     if(draw_back)
     {
-        ofFill();
-        ofSetColor(color_back);
-        rect->draw();
+        ci::gl::ScopedColor scopedColor(color_back);
+        rect->draw(true);
     }
 }
 
@@ -72,14 +71,14 @@ void ciUITextArea::drawFill()
     {
         if(drawShadow)
         {
-            ofSetColor(color_back);
+            ci::gl::ScopedColor scopedColor(color_back);
             for(unsigned int i = 0; i < textLines.size(); i++)
             {
                 label->drawStringShadow(rect->getX(), rect->getY()+(lineHeight+lineSpaceSize)*(i+1)-lineSpaceSize, textLines[i]);
             }
         }
         
-        ofSetColor(color_fill);
+        ci::gl::ScopedColor scopedColor(color_fill);
         for(unsigned int i = 0; i < textLines.size(); i++)
         {
             label->drawString(rect->getX(), rect->getY()+(lineHeight+lineSpaceSize)*(i+1)-lineSpaceSize, textLines[i]);
@@ -87,7 +86,7 @@ void ciUITextArea::drawFill()
     }
 }
 
-string ciUITextArea::getTextString()
+const std::string &ciUITextArea::getTextString() const
 {
     return textstring;
 }
@@ -123,7 +122,7 @@ void ciUITextArea::formatTextString()
         float tempWidth;
         float tempHeight;
         textLines.clear();
-        string line = "";
+        std::string line = "";
         size_t i=0;
         
         while (i < textstring.size() && !overheight) //if not at the end of the string && not over the rect's height
@@ -180,7 +179,7 @@ void ciUITextArea::formatTextString()
     
     if(overheight)
     {
-        rect->setHeight(MAX(rect->getHeight(),(lineHeight+lineSpaceSize)*textLines.size()-lineSpaceSize));
+        rect->setHeight(std::max(rect->getHeight(),(lineHeight+lineSpaceSize)*textLines.size()-lineSpaceSize));
     }
 }
 

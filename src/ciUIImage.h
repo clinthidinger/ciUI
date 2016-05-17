@@ -30,19 +30,20 @@
 class ciUIImage : public ciUIWidgetWithLabel
 {
 public:
-    ciUIImage(float x, float y, float w, float h, ci::SurfaceRef _image, const std::string &_name);
-    ciUIImage(float x, float y, float w, float h, ci::SurfaceRef _image, const std::string &_name, bool _showLabel);
-    ciUIImage(float w, float h, ci::SurfaceRef _image, const std::string &_name);
-    ciUIImage(float w, float h, ci::SurfaceRef _image, const std::string &_name, bool _showLabel);
-    void init(float x, float y, float w, float h, ci::SurfaceRef _image, const std::string &_name);
+    ciUIImage(float x, float y, float w, float h, const ci::SurfaceRef &_image, const std::string &_name);
+    ciUIImage(float x, float y, float w, float h, const ci::SurfaceRef &_image, const std::string &_name, bool _showLabel);
+    ciUIImage(float w, float h, const ci::SurfaceRef &_image, const std::string &_name);
+    ciUIImage(float w, float h, const ci::SurfaceRef &_image, const std::string &_name, bool _showLabel);
+    void init(float x, float y, float w, float h, const ci::SurfaceRef &_image, const std::string &_name);
     virtual void setDrawPadding(bool _draw_padded_rect);
     virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline);
     virtual void drawFill();
     void setCropImageToFitRect(bool _cropImageToFitRect);
-    void setImage(ci::SurfaceRef _image);
+    void setImage(const ci::SurfaceRef &_image);
     virtual bool isDraggable();
     
 protected:  
     ci::SurfaceRef image;
+    ci::gl::Texture2dRef tex;
     bool cropImageToFitRect; 
 }; 

@@ -25,12 +25,12 @@
 #include "ciUIImageSampler.h"
 #include "ciUI.h"
 
-ciUIImageSampler::ciUIImageSampler(float x, float y, float w, float h, ci::SurfaceRef _image, const std::string &_name) : ciUIImage(x, y, w, h, _image, _name)
+ciUIImageSampler::ciUIImageSampler(float x, float y, float w, float h, const ci::SurfaceRef &_image, const std::string &_name) : ciUIImage(x, y, w, h, _image, _name)
 {
     initSampler();
 }
 
-ciUIImageSampler::ciUIImageSampler(float w, float h, ci::SurfaceRef _image, const std::string &_name) : ciUIImage(w, h, _image, _name)
+ciUIImageSampler::ciUIImageSampler(float w, float h, const ci::SurfaceRef &_image, const std::string &_name) : ciUIImage(w, h, _image, _name)
 {
     initSampler();
 }
@@ -56,19 +56,19 @@ void ciUIImageSampler::drawFill()
     {
         if(image != nullptr)
         {
-            ciUIFill();
-            ci::gl::color(ci::Color::white());
-            image->draw(rect->getX(), rect->getY(), rect->width, rect->height);
+            //ciUIFill();
+            ci::gl::ScopedColor scopedColor(ci::Color::white());
+            ciUIDrawCorneredTex(tex, rect->getX(), rect->getY(), rect->getX() + rect->width, rect->getY() + rect->height);
         }
-        ciUISetColor(color_fill);
+        ci::gl::ScopedColor scopedColor(color_fill);
+        // CHECK PARAMS!!!
         ciUIDrawLine(rect->getX()+value.x*rect->getWidth(),  rect->getY(), rect->getX()+value.x*rect->getWidth(),  rect->getY()+rect->getHeight());
         ciUIDrawLine(rect->getX(),  rect->getY()+value.y*rect->getHeight(), rect->getX()+rect->getWidth(),  rect->getY()+value.y*rect->getHeight());
-        
-        ciUIFill();
-        ciUISetColor(sampledColor);
-        ciUISetRectMode(CI_UI_RECTMODE_CENTER);
-        ciUIDrawRect(rect->getX()+value.x*rect->getWidth(), rect->getY()+value.y*rect->getHeight(), squareSize, squareSize);
-        ciUISetRectMode(CI_UI_RECTMODE_CORNER);
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor2(sampledColor);
+        //ciUISetRectMode(CI_UI_RECTMODE_CENTER);
+        ciUIDrawCenteredRect(rect->getX()+value.x*rect->getWidth(), rect->getY()+value.y*rect->getHeight(), squareSize, squareSize, true);
+        //ciUISetRectMode(CI_UI_RECTMODE_CORNER);
         
     }
 }
@@ -77,15 +77,12 @@ void ciUIImageSampler::drawFillHighlight()
 {
     if(draw_fill_highlight)
     {
-        ci::gl::color(color_fill_highlight);
+        ci::gl::ScopedColor scopedColor(color_fill_highlight);
         ciUIDrawLine(rect->getX()+value.x*rect->getWidth(),  rect->getY(), rect->getX()+value.x*rect->getWidth(),  rect->getY()+rect->getHeight());
         ciUIDrawLine(rect->getX(),  rect->getY()+value.y*rect->getHeight(), rect->getX()+rect->getWidth(),  rect->getY()+value.y*rect->getHeight());
         
-        ciUIFill();
-        ci::gl::color(sampledColor);
-        ciUISetRectMode(CI_UI_RECTMODE_CENTER);
-        ciUIDrawRect(rect->getX()+value.x*rect->getWidth(), rect->getY()+value.y*rect->getHeight(), squareSize, squareSize);
-        ciUISetRectMode(CI_UI_RECTMODE_CORNER);
+        ci::gl::ScopedColor scopedColor2(sampledColor);
+        ciUIDrawCenteredRect(rect->getX()+value.x*rect->getWidth(), rect->getY()+value.y*rect->getHeight(), squareSize, squareSize, true);
     }
 }
 
@@ -188,26 +185,26 @@ void ciUIImageSampler::input(int x, int y)
     setValue(_v);
 }
 
-ofColor& ciUIImageSampler::getColor()
+const ci::ColorA& ciUIImageSampler::getColor() const
 {
     return sampledColor;
 }
 
-void ciUIImageSampler::setColor(const ci::Color &_sampledColor)
+void ciUIImageSampler::setColor(const ci::ColorA &_sampledColor)
 {
     sampledColor = _sampledColor;
 }
 
-ofPoint ciUIImageSampler::getValue()
+const ci::vec2 &ciUIImageSampler::getValue() const
 {
     return value;
 }
 
 void ciUIImageSampler::setValue(const ci::vec2 &_value)
 {
-    value.x = MIN(1.0, MAX(0.0, _value.x));
-    value.y = MIN(1.0, MAX(0.0, _value.y));
-    sampledColor = image->getColor(value.x*(image->getWidth()-1), value.y*(image->getHeight()-1));
+    value.x = std::min(1.0f, std::max(0.0f, _value.x));
+    value.y = std::min(1.0f, std::max(0.0f, _value.y));
+    sampledColor = image->getPixel(ci::ivec2(value.x * (image->getWidth()-1), value.y * (image->getHeight() - 1)));
 }
 
 bool ciUIImageSampler::isDraggable()

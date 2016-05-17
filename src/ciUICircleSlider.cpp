@@ -84,7 +84,7 @@ void ciUICircleSlider::init(float x, float y, float w, float h, float _min, floa
         value = min;
     }
     
-    value = ciUIMap(value, min, max, 0.0, 1.0, true);
+    value = ciUIMap<float>(value, min, max, 0.0f, 1.0f, true);
     
     label = new ciUILabel(0,w+padding,(name+" LABEL"), name, _size);
     addEmbeddedWidget(label);
@@ -95,9 +95,9 @@ void ciUICircleSlider::drawBack()
 {
     if(draw_back)
     {
-        ciUIFill();
-        ciUISetColor(color_back);
-        ciUICircle(rect->getX()+rect->getHalfWidth(), rect->getY()+rect->getHalfHeight(), rect->getHalfWidth());
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_back);
+        ciUICircle(rect->getX()+rect->getHalfWidth(), rect->getY()+rect->getHalfHeight(), rect->getHalfWidth(), true);
     }
 }
 
@@ -105,9 +105,9 @@ void ciUICircleSlider::drawOutline()
 {
     if(draw_outline)
     {
-        ofNoFill();
-        ciUISetColor(color_outline);
-        ciUICircle(rect->getX()+rect->getHalfWidth(), rect->getY()+rect->getHalfHeight(), rect->getHalfWidth());
+        //ofNoFill();
+        ci::gl::ScopedColor scopedColor(color_outline);
+        ciUICircle(rect->getX()+rect->getHalfWidth(), rect->getY()+rect->getHalfHeight(), rect->getHalfWidth(), false);
     }
 }
 
@@ -115,9 +115,9 @@ void ciUICircleSlider::drawFill()
 {
     if(draw_fill)
     {
-        ciUIFill();
-        ciUISetColor(color_fill);
-        ciUICircle(rect->getX()+rect->getHalfWidth(), rect->getY()+rect->getHalfHeight(), value*rect->getHalfWidth());
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill);
+        ciUICircle(rect->getX()+rect->getHalfWidth(), rect->getY()+rect->getHalfHeight(), value*rect->getHalfWidth(), true);
     }
 }
 
@@ -125,11 +125,15 @@ void ciUICircleSlider::drawFillHighlight()
 {
     if(draw_fill_highlight)
     {
-        ciUIFill();
-        ciUISetColor(color_fill_highlight);
-        ciUICircle(rect->getX()+rect->getHalfWidth(), rect->getY()+rect->getHalfHeight(), value*rect->getHalfWidth());
-        ciUISetColor(label->getColorFillHighlight());
-        label->drawString(rect->getX()+rect->getWidth()+padding, label->getRect()->getHeight()/2.0+rect->getY()+rect->getHeight()-rect->getHeight()*.5, ciUIToString(getScaledValue(),labelPrecision));
+        //ciUIFill();
+        {
+            ci::gl::ScopedColor scopedColor(color_fill_highlight);
+            ciUICircle(rect->getX()+rect->getHalfWidth(), rect->getY()+rect->getHalfHeight(), value*rect->getHalfWidth(), true);
+        }
+        {
+            ci::gl::ScopedColor scopedColor(label->getColorFillHighlight());
+            label->drawString(rect->getX()+rect->getWidth()+padding, label->getRect()->getHeight()/2.0+rect->getY()+rect->getHeight()-rect->getHeight()*.5, ciUIToString(getScaledValue(),labelPrecision));
+        }
     }
 }
 
@@ -137,12 +141,12 @@ void ciUICircleSlider::drawOutlineHighlight()
 {
     if(draw_outline_highlight)
     {
-        ofNoFill();
-        ciUISetColor(color_outline_highlight);
-        ciUICircle(rect->getX()+rect->getHalfWidth(), rect->getY()+rect->getHalfHeight(), rect->getHalfWidth());
+        //ofNoFill();
+        ci::gl::ScopedColor scopedColor(color_outline_highlight);
+        ciUICircle(rect->getX()+rect->getHalfWidth(), rect->getY()+rect->getHalfHeight(), rect->getHalfWidth(), false);
         if(!draw_fill_highlight)
         {
-            ciUISetColor(label->getColorFill());
+            ci::gl::ScopedColor scopedColor(label->getColorFill());
             label->drawString(rect->getX()+rect->getWidth()+padding, label->getRect()->getHeight()/2.0+rect->getY()+rect->getHeight()-rect->getHeight()*.5, ciUIToString(getScaledValue(),labelPrecision));
         }
     }
@@ -230,7 +234,7 @@ void ciUICircleSlider::mouseReleased(int x, int y, int button)
 
 void ciUICircleSlider::valueClamp()
 {
-    value = MIN(1.0, MAX(0.0, value));
+    value = std::min(1.0f, std::max(0.0f, static_cast<float>(value)));
 }
 
 void ciUICircleSlider::setInputDirection(ciUIWidgetInputDirection _inputDirection)
@@ -249,8 +253,8 @@ void ciUICircleSlider::setParent(ciUIWidget *_parent)
     ciUIRectangle *labelrect = label->getRect();
     while(labelrect->getWidth() > rect->getWidth())
     {
-        string labelstring = label->getLabel();
-        string::iterator it;
+        std::string labelstring = label->getLabel();
+        std::string::iterator it;
         it=labelstring.end();
         it--;
         labelstring.erase (it);
@@ -265,7 +269,7 @@ void ciUICircleSlider::setParent(ciUIWidget *_parent)
 
 bool ciUICircleSlider::isHit(float x, float y)
 {
-    if(visible && ofDist(x, y, rect->getX()+rect->getHalfWidth(), rect->getY()+rect->getHalfHeight()) < rect->getHalfWidth())
+    if(visible && glm::distance(ci::vec2(x, y), ci::vec2(rect->getX()+rect->getHalfWidth(), rect->getY()+rect->getHalfHeight())) < rect->getHalfWidth())
     {
         return true;
     }

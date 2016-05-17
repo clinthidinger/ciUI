@@ -52,26 +52,26 @@ public:
     void drawString(float x, float y, const std::string &_string);
     void drawStringShadow(float x, float y, const std::string &_string);
 	
-    float getStringWidth(const std::string &s);
-	float getStringHeight(const std::string &s);
+    float getStringWidth(const std::string &s) const;
+	float getStringHeight(const std::string &s) const;
 
-    float getLineHeight();
+    float getLineHeight() const;
     virtual ciUILabel* getLabelWidget();
 
     void setLabel(const std::string &_label);
-    const std::string &getLabel();
+    const std::string &getLabel() const;
     
-    bool getAutoSize();
+    bool getAutoSize() const;
     void setAutoSize(bool _autoSize);
 	
     void setFont(ci::gl::TextureFontRef _font);
-	int getSize();
+	int getSize() const;
 	
     void focus();
 	void unfocus();
     
     void setVisible(bool _visible);
-    bool isVisible();
+    bool isVisible() const;
     void toggleVisible();
     
 protected:    

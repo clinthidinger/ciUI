@@ -76,21 +76,23 @@ void ciUIBaseDraws::setDrawPaddingOutline(bool _draw_padded_rect_outline)
 
 void ciUIBaseDraws::drawFill()
 {
-    ofSetDepthTest(false);
+    glSetDepthTest(false);
     if(draw_fill)
     {
         if(image != nullptr)
         {
-            ofFill();
-            ofSetColor(255);
-            image->draw(rect->getX(), rect->getY(), rect->width, rect->height);
+            //ofFill();
+            //ofSetColor(255);
+            ci::gl::ScopedColor scopedColor(ci::Color::white());
+            ci::gl::draw(tex, rect->getRectf());
         }
     }
 }
 
-void ciUIBaseDraws::set(ofBaseDraws *_image)
+void ciUIBaseDraws::set(const ci::SurfaceRef &_image)
 {
     image = _image;
+    tex = ci::gl::Texture2d::create(*image);
 }
 
 bool ciUIBaseDraws::isDraggable()

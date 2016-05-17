@@ -34,9 +34,9 @@ public:
     ciUIToggleMatrix(float x, float y, float w, float h, int _rows, int _cols, const std::string &_name, int _size = CI_UI_FONT_SMALL);
     ciUIToggleMatrix(float w, float h, int _rows, int _cols, const std::string &_name, int _size = CI_UI_FONT_SMALL);
     void init(float x, float y, float w, float h, int _rows, int _cols, const std::string &_name, int _size = CI_UI_FONT_SMALL);
-    void setVisible(bool _visible);
+    void setVisible(bool _visible) override;
 	void activateToggle(const std::string &_name);
-	void setParent(ciUIWidget *_parent);
+	void setParent(ciUIWidget *_parent) override;
     
     void setAllToggles(bool _value, bool _trigger = true);
     void setToggle(unsigned int row, unsigned int col, bool _value, bool _trigger = true);
@@ -48,14 +48,17 @@ public:
     
     const std::vector<ciUIToggle *> &getToggles() const;
     const std::vector<ciUIToggle *> *getTogglesPtr() const;
-	void triggerEvent(ciUIWidget *child);
+	void triggerEvent(ciUIWidget *child) override;
     void setAllowMultiple(bool _allowMultiple);
-    virtual void mouseDragged(int x, int y, int button);
-    virtual void mousePressed(int x, int y, int button);
-    virtual void mouseReleased(int x, int y, int button);
+    void mouseDragged(int x, int y, int button) override;
+    void mousePressed(int x, int y, int button) override;
+    void mouseReleased(int x, int y, int button) override;
+    void keyPressed(int key) override;
+    void keyReleased(int key) override;
 protected:
     std::vector<ciUIToggle *> toggles;
     int rows, cols;
     float toggleWidth, toggleHeight; 
-    bool allowMultiple;     
+    bool allowMultiple;
+    bool isKeyPressed;
 };

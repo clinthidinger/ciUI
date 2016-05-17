@@ -34,7 +34,7 @@ public:
     ciUI2DGraph(const std::string &_name, const ci::vec2 &_rangeX, const ci::vec2 &_rangeY, int _bufferSize, float * _xValues, float * _yValues, float w, float h, float x = 0, float y = 0);
 
 protected:
-    void init(const std::string _name, const ci::vec2 &_rangeX, const ci::vec2 &_rangeY, float _bufferSize, float * _xValues, float * _yValues, float w, float h, float x = 0, float y = 0);
+    void init(const std::string &_name, const ci::vec2 &_rangeX, const ci::vec2 &_rangeY, float _bufferSize, float * _xValues, float * _yValues, float w, float h, float x = 0, float y = 0);
     void drawBack();
     void drawFill();
 
@@ -43,4 +43,5 @@ protected:
     ci::vec2 rangeX, rangeY;
 	float inc;
 	int bufferSize;
+    ci::PolyLine2 polyLine;
 };

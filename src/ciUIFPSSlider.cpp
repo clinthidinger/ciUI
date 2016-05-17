@@ -42,5 +42,5 @@ ciUIFPSSlider::ciUIFPSSlider(float w, float h, float _min, float _max, float *_v
 
 void ciUIFPSSlider::update()
 {
-    setValue(ofGetFrameRate());
+    setValue(ci::app::getFrameRate());
 }

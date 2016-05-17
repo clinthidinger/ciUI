@@ -38,14 +38,15 @@ public:
     void setBuffer(float *_buffer);
     void setBufferSize(int _bufferSize);
     void setMax(float _max);
-    float getMax();
+    float getMax() const;
     void setMin(float _min);
-    float getMin();
-    ci::vec2 getMaxAndMind();
+    float getMin() const;
+    ci::vec2 getMaxAndMind() const;
     void setMaxAndMin(float _max, float _min);
     
 protected:
 	float *buffer; 
 	float max, min, scale, inc; 
-	int bufferSize; 
-}; 
+	int bufferSize;
+    ci::PolyLine2 polyLine;
+};

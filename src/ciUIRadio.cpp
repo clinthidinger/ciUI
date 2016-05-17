@@ -103,9 +103,9 @@ void ciUIRadio::activateToggle(const std::string &_name)
 
 void ciUIRadio::triggerSelf()
 {
-    if(parent != nullptrptr)
+    if(parent != nullptr)
     {
-        if(active != nullptrptr)
+        if(active != nullptr)
         {
             parent->triggerEvent(active);
         }
@@ -160,7 +160,7 @@ void ciUIRadio::setParent(ciUIWidget *_parent)
     calculatePaddingRect();
 }
 
-vector<ciUIToggle *> ciUIRadio::getToggles()
+const std::vector<ciUIToggle *> &ciUIRadio::getToggles() const
 {
     return toggles;
 }
@@ -192,7 +192,7 @@ int ciUIRadio::getValue()
     return value;
 }
 
-string ciUIRadio::getActiveName()
+std::string ciUIRadio::getActiveName()
 {
     if(active != nullptr)
     {

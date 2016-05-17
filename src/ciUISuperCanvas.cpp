@@ -45,7 +45,7 @@ bTitleLabelHit(other.bTitleLabelHit)
     }
 }
 
-ciUISuperCanvas::ciUISuperCanvas(const std::string &_label, const ci::Rectf &r, int _size) : ciUICanvas(r)
+ciUISuperCanvas::ciUISuperCanvas(const std::string &_label, const ciUIRectangle &r, int _size) : ciUICanvas(r)
 {
     superInit(_label, _size);
 }
@@ -150,9 +150,8 @@ void ciUISuperCanvas::keyPressed(int key)
         bKeyHit = true;
         lastPosition = ciUIVec2f(rect->getX(), rect->getY());
         setMinified(false);
-        ci::vec2 mousePos = ci::app::getMousePos();
-        rect->setX(mousePos.x);
-        rect->setY(mousePos.y);
+        rect->setX(mousePosition.x);
+        rect->setY(mousePosition.y);
         if(getTriggerType() & CI_UI_TRIGGER_BEGIN)
         {
             triggerEvent(this);
@@ -170,8 +169,7 @@ void ciUISuperCanvas::keyReleased(int key)
         if((ci::app::getElapsedSeconds() - lastHitTime) < deltaTime)
         {
             setMinified(false);
-             ci::vec2 mousePos = ci::app::getMousePos();
-            lastPosition = ciUIVec2f(mousePos.x, mousePos.y);
+            lastPosition = ciUIVec2f(mousePosition.x, mousePosition.y);
             if(getTriggerType() & CI_UI_TRIGGER_BEGIN)
             {
                 triggerEvent(this);
@@ -270,18 +268,36 @@ void ciUISuperCanvas::touchCancelled(float x, float y, int id)
 
 #else
 
+int getMouseButton(ci::app::MouseEvent& event)
+{
+    if(event.isLeft())
+    {
+        return 0;
+    }
+    else if(event.isMiddle())
+    {
+        return 1;
+    }
+    else if(event.isRight())
+    {
+        return 2;
+    }
+    
+    return 0;
+}
+
 void ciUISuperCanvas::onMouseReleased(ci::app::MouseEvent& data)
 {
     bTitleLabelHit = false;
-    mouseReleased(data.getX(), data.getY(), data.button);
+    mouseReleased(data.getX(), data.getY(), getMouseButton(data));
 }
 
 void ciUISuperCanvas::onMousePressed(ci::app::MouseEvent& data)
 {
-    if(rect->inside(data.getX(), data.getY()) && didHitHeaderWidgets(data.x, data.y))
+    if(rect->inside(data.getX(), data.getY()) && didHitHeaderWidgets(data.getX(), data.getY()))
     {
         bTitleLabelHit = true;
-        hitPoint.set(data.getX() - rect->getX(), data.getY() - rect->getY());
+        hitPoint = ci::vec2(data.getX() - rect->getX(), data.getY() - rect->getY());
         
         if((ci::app::getElapsedSeconds() - lastHitTime) < deltaTime)
         {
@@ -305,19 +321,26 @@ void ciUISuperCanvas::onMousePressed(ci::app::MouseEvent& data)
         }
         lastHitTime = ci::app::getElapsedSeconds();
     }
-    mousePressed(data.getX(), data.getY(), data.button);
+    mousePressed(data.getX(), data.getY(), getMouseButton(data));
 }
 
 void ciUISuperCanvas::onMouseDragged(ci::app::MouseEvent& data)
 {
+    mousePosition = data.getPos();
     if(bTitleLabelHit)
     {
         rect->setX(data.getX() - hitPoint.x);
         rect->setY(data.getY() - hitPoint.y);
         return;
     }
-    mouseDragged(data.getX(), data.getY(), data.button);
+    mouseDragged(data.getX(), data.getY(), getMouseButton(data));
 }
+
+void ciUISuperCanvas::onMouseMoved(ci::app::MouseEvent& data)
+{
+    mousePosition = data.getPos();
+}
+
 
 #endif
 

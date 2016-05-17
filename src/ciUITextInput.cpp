@@ -71,39 +71,42 @@ void ciUITextInput::drawFill()
 {
     if(draw_fill)
     {
-        ciUIFill();
-        ciUISetColor(color_fill);
-        rect->draw();
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill);
+        rect->draw(true);
     }
     if(clicked)
     {
-        ofNoFill();
-        ciUISetColor(color_outline_highlight);
-        rect->draw();
-        
+        //ofNoFill();
+        {
+            ci::gl::ScopedColor scopedColor(color_outline_highlight);
+            rect->draw(false);
+        }
         float h = label->getRect()->getHeight();
         
         float ph = rect->getHeight();
         label->getRect()->setY(ph/2.0 - h/2.0);
         
-        ciUIFill();
-        ciUISetColor(label->getColorFillHighlight(), 255.0*fabs(cos(theta)));
+        //ciUIFill();
+        {
+        ci::gl::ScopedColor scopedColor(label->getColorFillHighlight(), 255.0f*std::fabs(cos(theta)));
         theta +=0.05;
         
         int displayCursorPosition = cursorPosition - firstVisibleCharacterIndex;
-        string displayStringBeforeCursor = displaystring.substr(0, displayCursorPosition);
+        std::string displayStringBeforeCursor = displaystring.substr(0, displayCursorPosition);
         spaceOffset = label->getStringWidth(displayStringBeforeCursor);
         
         float x = label->getRect()->getX()+spaceOffset;
         float y = label->getRect()->getY()-padding;
         float t = label->getRect()->getHeight()+padding*2.0;
-        ciUIDrawRect(x, y, cursorWidth, t);
+        ciUIDrawCorneredRect(x, y, cursorWidth, t, true);
+        }
     }
     
     if(textstring.size() == 0 && !clicked)
     {
         ciUIFill();
-        ciUISetColor(color_fill);
+        ci::gl::ScopedColor scopedColor(color_fill);
         label->drawString(rect->getX()+defaultX, rect->getY()+defaultY, defaultstring);
     }
 }
@@ -196,7 +199,7 @@ void ciUITextInput::keyPressed(int key)
     {
         switch (key)
         {
-            case OF_KEY_BACKSPACE:
+            case ci::app::KeyEvent::KEY_BACKSPACE:
                 if (textstring.size() > 0 && cursorPosition > 0)
                 {
                     cursorPosition--;
@@ -209,7 +212,7 @@ void ciUITextInput::keyPressed(int key)
                 }
                 break;
                 
-            case OF_KEY_DEL:
+            case ci::app::KeyEvent::KEY_DEL:
                 if (textstring.size() > 0 && cursorPosition < textstring.length())
                 {
                     textstring.erase(cursorPosition, 1);
@@ -217,7 +220,7 @@ void ciUITextInput::keyPressed(int key)
                 }
                 break;
                 
-            case OF_KEY_RETURN:
+            case ci::app::KeyEvent::KEY_RETURN:
                 
                 inputTriggerType = CI_UI_TEXTINPUT_ON_ENTER;
                 if(autoUnfocus)
@@ -234,8 +237,8 @@ void ciUITextInput::keyPressed(int key)
                 }
                 break;
                 
-            case OF_KEY_RIGHT:
-            case OF_KEY_DOWN:
+            case ci::app::KeyEvent::KEY_RIGHT:
+            case ci::app::KeyEvent::KEY_DOWN:
                 if(cursorPosition < textstring.length())
                 {
                     cursorPosition++;
@@ -243,8 +246,8 @@ void ciUITextInput::keyPressed(int key)
                 }
                 break;
                 
-            case OF_KEY_LEFT:
-            case OF_KEY_UP:
+            case ci::app::KeyEvent::KEY_LEFT:
+            case ci::app::KeyEvent::KEY_UP:
                 if(cursorPosition > 0)
                 {
                     cursorPosition--;
@@ -253,37 +256,38 @@ void ciUITextInput::keyPressed(int key)
                 break;
                 
 #if (OF_VERSION_MINOR > 7)
-            case OF_KEY_TAB:
-            case OF_KEY_COMMAND:
-            case OF_KEY_CONTROL:
-            case OF_KEY_LEFT_SHIFT:
-            case OF_KEY_RIGHT_SHIFT:
-            case OF_KEY_LEFT_CONTROL:
-            case OF_KEY_RIGHT_CONTROL:
-            case OF_KEY_LEFT_ALT:
-            case OF_KEY_RIGHT_ALT:
-            case OF_KEY_LEFT_SUPER:
-            case OF_KEY_RIGHT_SUPER:
+            case ci::app::KeyEvent::KEY_TAB:
+            case ci::app::KeyEvent::KEY_COMMAND:
+            case ci::app::KeyEvent::KEY_CONTROL:
+            case ci::app::KeyEvent::KEY_LSHIFT:
+            case ci::app::KeyEvent::KEY_RSHIFT:
+            case ci::app::KeyEvent::KEY_LEFT_CONTROL:
+            case ci::app::KeyEvent::KEY_RIGHT_CONTROL:
+            case ci::app::KeyEvent::KEY_LEFT_ALT:
+            case ci::app::KeyEvent::KEY_RIGHT_ALT:
+            case ci::app::KeyEvent::KEY_LEFT_SUPER:
+            case ci::app::KeyEvent::KEY_RIGHT_SUPER:
 #endif
-            case OF_KEY_F1:
-            case OF_KEY_F2:
-            case OF_KEY_F3:
-            case OF_KEY_F4:
-            case OF_KEY_F5:
-            case OF_KEY_F6:
-            case OF_KEY_F7:
-            case OF_KEY_F8:
-            case OF_KEY_F9:
-            case OF_KEY_F10:
-            case OF_KEY_F11:
-            case OF_KEY_F12:
-            case OF_KEY_PAGE_UP:
-            case OF_KEY_PAGE_DOWN:
-            case OF_KEY_HOME:
-            case OF_KEY_END:
-            case OF_KEY_INSERT:
-            case OF_KEY_ALT:
-            case OF_KEY_SHIFT:
+            case ci::app::KeyEvent::KEY_F1:
+            case ci::app::KeyEvent::KEY_F2:
+            case ci::app::KeyEvent::KEY_F3:
+            case ci::app::KeyEvent::KEY_F4:
+            case ci::app::KeyEvent::KEY_F5:
+            case ci::app::KeyEvent::KEY_F6:
+            case ci::app::KeyEvent::KEY_F7:
+            case ci::app::KeyEvent::KEY_F8:
+            case ci::app::KeyEvent::KEY_F9:
+            case ci::app::KeyEvent::KEY_F10:
+            case ci::app::KeyEvent::KEY_F11:
+            case ci::app::KeyEvent::KEY_F12:
+            case ci::app::KeyEvent::KEY_PAGE_UP:
+            case ci::app::KeyEvent::KEY_PAGE_DOWN:
+            case ci::app::KeyEvent::KEY_HOME:
+            case ci::app::KeyEvent::KEY_END:
+            case ci::app::KeyEvent::KEY_INSERT:
+            case ci::app::KeyEvent::KEY_ALT:
+            case ci::app::KeyEvent::KEY_LSHIFT:
+            case ci::app::KeyEvent::KEY_RSHIFT:
                 break;
                 
             default:
@@ -515,7 +519,7 @@ void ciUITextInput::recalculateDisplayString()
     }
     
     // we now know how long the string before the label should be, so trim it off
-    displaystring = displaystring.substr(MIN(firstVisibleCharacterIndex, displaystring.length()));
+    displaystring = displaystring.substr(std::min(firstVisibleCharacterIndex, displaystring.length()));
     
     // trim off the end of the string until it fits
     while(label->getStringWidth(displaystring) > maxWidth && displaystring.length() > 0)

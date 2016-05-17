@@ -25,7 +25,7 @@
 #pragma once
 
 //#include "ofMain.h"
-//#include "ofPoint.h"
+//#include "ci::vec2.h"
 #include "cinder/Vector.h"
 #include "cinder/Color.h"
 #include "cinder/app/Event.h"
@@ -38,7 +38,7 @@
 typedef ci::vec3 ciUIVec3f;
 typedef ci::vec2 ciUIVec2f;
 //typedef CI_UI_FONT_RENDERER ci::Font;//ciUIFont;
-typedef ci::Color ciUIColor;
+typedef ci::ColorA ciUIColor;
 
 /*
 #if defined( TARGET_OF_IPHONE ) || defined( TARGET_OF_IOS ) || defined( TARGET_ANDROID )
@@ -352,12 +352,12 @@ public:
 #endif
 };
 
-static void ciUISetColor(ciUIColor color, float alpha)
+static void ci::gl::ScopedColor scopedColor(ciUIColor color, float alpha)
 {
     ofSetColor(color, alpha);
 }
 
-static void ciUISetColor(ciUIColor color)
+static void ci::gl::ScopedColor scopedColor(ciUIColor color)
 {
     ofSetColor(color);
 }
@@ -390,7 +390,7 @@ static void ciUIPopStyle()
 
 static void ciUISetLineWidth(float lineWidth)
 {
-    ofSetLineWidth(lineWidth);
+    ci::gl::ScopedLineWidth scopedLineWidth(lineWidth);
 }
 
 static float ciUIGetFrameRate()

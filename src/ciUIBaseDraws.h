@@ -43,4 +43,5 @@ public:
     
 protected:
 	ci::SurfaceRef image;
-}; 
+    ci::gl::Texture2dRef tex;
+};

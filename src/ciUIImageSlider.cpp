@@ -88,7 +88,7 @@ void ciUIImageSlider::init(float x, float y, float w, float h, float _min, float
         value = min;
     }
     
-    value = ciUIMap(value, min, max, 0.0, 1.0, true);
+    value = ciUIMap<float>(value, min, max, 0.0f, 1.0f, true);
     
     if(kind == CI_UI_WIDGET_IMAGESLIDER_H)
     {
@@ -102,35 +102,35 @@ void ciUIImageSlider::init(float x, float y, float w, float h, float _min, float
     addEmbeddedWidget(label);
     increment = fabs(max - min) / 10.0;
     
-    string coreURL = _pathURL;
-    string extension = "";
-    string period (".");
+    std::string coreURL = _pathURL;
+    std::string extension = "";
+    std::string period (".");
     size_t found;
     
     found=_pathURL.find(period);
-    if (found!=string::npos)
+    if (found != std::string::npos)
     {
         coreURL = _pathURL.substr(0,found);
         extension = _pathURL.substr(found);
     }
     
-    track = new ci::Image(coreURL+"track"+extension);         //back
+    track = ci::gl::Texture2d::create(ci::loadImage(coreURL+"track"+extension));         //back
     
-    trackleft = new ci::Image(coreURL+"trackleft"+extension);         //back
+    trackleft = ci::gl::Texture2d::create(ci::loadImage(coreURL+"trackleft"+extension));         //back
     tlaspect = (float)trackleft->getWidth()/(float)trackleft->getHeight();
     
-    trackright = new ci::Image(coreURL+"trackright"+extension);         //back
+    trackright = ci::gl::Texture2d::create(ci::loadImage(coreURL+"trackright"+extension));         //back
     traspect = (float)trackright->getWidth()/(float)trackright->getHeight();
     
-    progress = new ci::Image(coreURL+"progress"+extension);      //fill
+    progress = ci::gl::Texture2d::create(ci::loadImage(coreURL+"progress"+extension));      //fill
     
-    progressright = new ci::Image(coreURL+"progressright"+extension);      //fill
+    progressright = ci::gl::Texture2d::create(ci::loadImage(coreURL+"progressright"+extension));      //fill
     
-    progressleft = new ci::Image(coreURL+"progressleft"+extension);      //fill
+    progressleft = ci::gl::Texture2d::create(ci::loadImage(coreURL+"progressleft"+extension));      //fill
     
-    handle = new ci::Image(coreURL+"handle"+extension);        //handle
+    handle = ci::gl::Texture2d::create(ci::loadImage(coreURL+"handle"+extension));        //handle
     
-    handleDown = new ci::Image(coreURL+"handledown"+extension);    //handleOver State
+    handleDown = ci::gl::Texture2d::create(ci::loadImage(coreURL+"handledown"+extension));    //handleOver State
     
     handleHalfWidth = handle->getWidth()*.5;
     handleHalfHeight = handle->getHeight()*.5;
@@ -151,14 +151,14 @@ void ciUIImageSlider::init(float x, float y, float w, float h, float _min, float
 
 ciUIImageSlider::~ciUIImageSlider()
 {
-    delete track;
-    delete trackleft;
-    delete trackright;
-    delete progress;
-    delete progressright;
-    delete progressleft;
-    delete handle;
-    delete handleDown;
+    //delete track;
+    //delete trackleft;
+    //delete trackright;
+    //delete progress;
+    //delete progressright;
+    //delete progressleft;
+    //delete handle;
+    //delete handleDown;
     delete imageRect;
 }
 
@@ -169,11 +169,12 @@ void ciUIImageSlider::drawBack()
     {
         if(kind == CI_UI_WIDGET_IMAGESLIDER_H)
         {
-            ciUISetColor(255);
+            ci::gl::ScopedColor scopedColor(ci::Color::white());
             
-            trackleft->draw(rect->getX(), rect->getY(), tlaspect*rect->getHeight(), rect->getHeight());
-            trackright->draw(rect->getX()+rect->getWidth()-traspect*rect->getHeight(), rect->getY(), traspect*rect->getHeight(), rect->getHeight());
-            track->draw(rect->getX()+rect->getHeight()*tlaspect-1, rect->getY(), rect->getWidth()-rect->getHeight()*tlaspect - rect->getHeight()*traspect + 1, rect->getHeight());
+            // CHECK rect params!!!
+            ciUIDrawCorneredTex(trackleft, rect->getX(), rect->getY(), tlaspect*rect->getHeight(), rect->getHeight());
+            ciUIDrawCorneredTex(trackright, rect->getX()+rect->getWidth()-traspect*rect->getHeight(), rect->getY(), traspect*rect->getHeight(), rect->getHeight());
+            ciUIDrawCorneredTex(track, rect->getX()+rect->getHeight()*tlaspect-1, rect->getY(), rect->getWidth()-rect->getHeight()*tlaspect - rect->getHeight()*traspect + 1, rect->getHeight());
         }
     }
 }
@@ -182,9 +183,9 @@ void ciUIImageSlider::drawOutline()
 {
     if(draw_outline)
     {
-        ofNoFill();
-        ciUISetColor(color_outline);
-        rect->draw();
+        //ofNoFill();
+        ci::gl::ScopedColor scopedColor(color_outline);
+        rect->draw(true);
     }
 }
 
@@ -197,21 +198,21 @@ void ciUIImageSlider::drawFill()
 {
     if(draw_fill)
     {
-        ciUISetColor(255);
+        ci::gl::ScopedColor scoledColor(ci::Color::white());
         if(kind == CI_UI_WIDGET_IMAGESLIDER_H)
         {
             if(value > 0.00)
-                progressleft->draw(rect->getX(), rect->getY(), tlaspect*rect->getHeight(), rect->getHeight());
-            
-            progress->draw(rect->getX()+rect->getHeight()*tlaspect - 1,rect->getY(),(rect->getWidth() - 2.0*rect->getHeight()*tlaspect)*value + 1, rect->getHeight());
+            {
+                ciUIDrawCorneredTex(progressleft, rect->getX(), rect->getY(), tlaspect*rect->getHeight(), rect->getHeight());
+            }
+            ciUIDrawCorneredTex(progress, rect->getX()+rect->getHeight()*tlaspect - 1,rect->getY(),(rect->getWidth() - 2.0*rect->getHeight()*tlaspect)*value + 1, rect->getHeight());
             
             if(value > .99)
-                progressright->draw(rect->getX()+rect->getWidth() - tlaspect*rect->getHeight(), rect->getY(), tlaspect*rect->getHeight(), rect->getHeight());
-            
-            ciUISetRectMode(CI_UI_RECTMODE_CENTER);
-            ciUISetColor(255);
-            handle->draw(imageRect->getX()+value*imageRect->getWidth(), rect->getY()+rect->getHalfHeight(), ratio*handle->getWidth(), ratio*handle->getHeight());
-            ciUISetRectMode(CI_UI_RECTMODE_CORNER);
+            {
+                ciUIDrawCorneredTex(progressright, rect->getX()+rect->getWidth() - tlaspect*rect->getHeight(), rect->getY(), tlaspect *rect->getHeight(), rect->getHeight());
+            }
+            ci::gl::ScopedColor scoledColor2(ci::Color::white());
+            ciUIDrawCenteredTex(handle, imageRect->getX()+value*imageRect->getWidth(), rect->getY()+rect->getHalfHeight(), ratio*handle->getWidth(), ratio*handle->getHeight());
         }
     }
 }
@@ -220,21 +221,21 @@ void ciUIImageSlider::drawFillHighlight()
 {
     if(draw_fill_highlight)
     {
-        ciUISetColor(255);
+        ci::gl::ScopedColor scoledColor(ci::Color::white());
         if(kind == CI_UI_WIDGET_IMAGESLIDER_H)
         {
             if(value > 0.00)
-                progressleft->draw(rect->getX(), rect->getY(), tlaspect*rect->getHeight(), rect->getHeight());
-            
-            progress->draw(rect->getX()+rect->getHeight()*tlaspect-1,rect->getY(),(rect->getWidth() - 2.0*rect->getHeight()*tlaspect)*value + 1, rect->getHeight());
+            {
+                ciUIDrawCorneredTex(progressleft, rect->getX(), rect->getY(), tlaspect*rect->getHeight(), rect->getHeight());
+            }
+            ciUIDrawCorneredTex(progress, rect->getX()+rect->getHeight()*tlaspect-1,rect->getY(),(rect->getWidth() - 2.0*rect->getHeight()*tlaspect)*value + 1, rect->getHeight());
             
             if(value > .99)
-                progressright->draw(rect->getX()+rect->getWidth() - tlaspect*rect->getHeight(), rect->getY(), tlaspect*rect->getHeight(), rect->getHeight());
-            
-            ciUISetRectMode(CI_UI_RECTMODE_CENTER);
-            ciUISetColor(255);
-            handleDown->draw(imageRect->getX()+value*imageRect->getWidth(), rect->getY()+rect->getHalfHeight(), ratio*handle->getWidth(), ratio*handle->getHeight());
-            ciUISetRectMode(CI_UI_RECTMODE_CORNER);
+            {
+                ciUIDrawCorneredTex(progressright, rect->getX()+rect->getWidth() - tlaspect*rect->getHeight(), rect->getY(), tlaspect*rect->getHeight(), rect->getHeight());
+            }
+            ci::gl::ScopedColor scoledColor2(ci::Color::white());
+            ciUIDrawCenteredTex(handleDown, imageRect->getX()+value*imageRect->getWidth(), rect->getY()+rect->getHalfHeight(), ratio*handle->getWidth(), ratio*handle->getHeight());
         }
         else
         {
@@ -295,11 +296,11 @@ void ciUIImageSlider::input(float x, float y)
 {
     if(kind == CI_UI_WIDGET_IMAGESLIDER_H)
     {
-        value = MIN(1.0, MAX(0.0, imageRect->percentInside(x, y).x));
+        value = std::min(1.0f, std::max(0.0f, imageRect->percentInside(x, y).x));
     }
     else
     {
-        value = MIN(1.0, MAX(0.0, 1.0-imageRect->percentInside(x, y).y));
+        value = std::min(1.0f, std::max(0.0f, 1.0f - imageRect->percentInside(x, y).y));
     }
 
     updateValueRef();

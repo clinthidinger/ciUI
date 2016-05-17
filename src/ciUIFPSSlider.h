@@ -30,7 +30,7 @@
 class ciUIFPSSlider : public ciUISlider
 {
 public:        
-    ciUIFPSSlider(const std::string _name, float w, float h, float _max = 400.0, float x = 0, float y = 0);
+    ciUIFPSSlider(const std::string &_name, float w, float h, float _max = 400.0, float x = 0, float y = 0);
     ciUIFPSSlider(float x, float y, float w, float h, float _min, float _max, float _value, const std::string &_name);
     ciUIFPSSlider(float w, float h, float _min, float _max, float _value, const std::string &_name);
     ciUIFPSSlider(float x, float y, float w, float h, float _min, float _max, float *_value, const std::string &_name);

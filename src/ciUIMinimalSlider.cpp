@@ -78,27 +78,27 @@ void ciUIMinimalSlider::init(const std::string &_name, float _min, float _max, f
         value = min;
     }
     
-    value = ciUIMap(value, min, max, 0.0, 1.0, true);
+    value = ciUIMap<float>(value, min, max, 0.0f, 1.0f, true);
     valueString = ciUIToString(getScaledValue(),labelPrecision);
     
     label = new ciUILabel(padding,h*.5,(name+" LABEL"), name, _size);
     label->setDrawBack(true);
     addEmbeddedWidget(label);
     
-    increment = ABS(max - min) / 10.0;
+    increment = glm::abs(max - min) / 10.0;
     bRoundedToNearestInt = false;
     bClampValue = true;
     bSticky = false;
-    stickyValue = ABS(max - min) / 100.0;
+    stickyValue = glm::abs(max - min) / 100.0;
 }
 
 void ciUIMinimalSlider::drawFill()
 {
     if(draw_fill)
     {
-        ciUIFill();
-        ciUISetColor(color_fill);
-        ciUIDrawRect(rect->getX(), rect->getY(), rect->getWidth()*MIN(MAX(value, 0.0), 1.0), rect->getHeight());
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill);
+        ciUIDrawCorneredRect(rect->getX(), rect->getY(), rect->getWidth()*std::min(std::max(value, 0.0), 1.0), rect->getHeight(), true);
     }
 }
 
@@ -106,13 +106,16 @@ void ciUIMinimalSlider::drawFillHighlight()
 {
     if(draw_fill_highlight && showValue)
     {
-        ciUIFill();
-        ciUISetColor(color_fill_highlight);
-        ciUIDrawRect(rect->getX(), rect->getY(), rect->getWidth()*MIN(MAX(value, 0.0), 1.0), rect->getHeight());
-        ciUISetColor(label->getColorFillHighlight());
+        //ciUIFill();
+        {
+            ci::gl::ScopedColor scopedColor(color_fill_highlight);
+            ciUIDrawCorneredRect(rect->getX(), rect->getY(), rect->getWidth()*std::min(std::max(value, 0.0), 1.0), rect->getHeight(), true);
+        }
+        
         if(drawLabel)
         {
-            label->drawString(rect->getX()+rect->getWidth()+padding, label->getRect()->getHeight()/2.0+rect->getY()+rect->getHeight()-rect->getHeight()*.5, ciUIToString(getScaledValue(),labelPrecision));
+            ci::gl::ScopedColor scopedColor(label->getColorFillHighlight());
+            label->drawString(rect->getX()+rect->getWidth()+padding, label->getRect()->getHeight()/2.0f+rect->getY()+rect->getHeight()-rect->getHeight()*.5, ciUIToString(getScaledValue(),labelPrecision));
         }
     }
 }
@@ -121,20 +124,20 @@ void ciUIMinimalSlider::drawOutlineHighlight()
 {
     if(draw_outline_highlight && showValue)
     {
-        ofNoFill();
-        ciUISetColor(color_outline_highlight);
-        rect->draw();
+        //ofNoFill();
+        ci::gl::ScopedColor scopedColor(color_outline_highlight);
+        rect->draw(false);
         if(!draw_fill_highlight && drawLabel)
         {
-            ciUISetColor(label->getColorFill());
-            label->drawString(rect->getX()+rect->getWidth()+padding, label->getRect()->getHeight()/2.0+rect->getY()+rect->getHeight()-rect->getHeight()*.5, ciUIToString(getScaledValue(),labelPrecision));
+            ci::gl::ScopedColor scopedColor(label->getColorFill());
+            label->drawString(rect->getX()+rect->getWidth()+padding, label->getRect()->getHeight()/2.0f+rect->getY()+rect->getHeight()-rect->getHeight()*.5, ciUIToString(getScaledValue(),labelPrecision));
         }
     }
 }
 
 void ciUIMinimalSlider::input(float x, float y)
 {
-    value = MIN(1.0, MAX(0.0, rect->percentInside(x, y).x));
+    value = std::min(1.0f, std::max(0.0f, rect->percentInside(x, y).x));
     updateValueRef();
     updateLabel();
 }
@@ -151,11 +154,11 @@ void ciUIMinimalSlider::setParent(ciUIWidget *_parent)
     ciUIRectangle *labelrect = label->getRect();
     while(labelrect->getWidth() > rect->getWidth())
     {
-        string labelstring = label->getLabel();
-        string::iterator it;
-        it=labelstring.end();
+        std::string labelstring = label->getLabel();
+        std::string::iterator it;
+        it = labelstring.end();
         it--;
-        labelstring.erase (it);
+        labelstring.erase(it);
         label->setLabel(labelstring);
     }
     

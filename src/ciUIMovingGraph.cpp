@@ -56,26 +56,21 @@ void ciUIMovingGraph::drawFill()
 {
     if(draw_fill)
     {
-        ofNoFill();
-        if(draw_fill_highlight)
-        {
-            ciUISetColor(color_fill_highlight);
-        }
-        else
-        {
-            ciUISetColor(color_fill);
-        }
-        ofPushMatrix();
-        ofTranslate(rect->getX(), rect->getY()+scale, 0);
-        ofSetLineWidth(2.0);
-        ofBeginShape();
+        //ofNoFill();
+        ci::gl::ScopedColor scopedColor(draw_fill_highlight ? color_fill_highlight : color_fill);
+        ci::gl::ScopedMatrices scopedMatrices;
+        ci::gl::ScopedLineWidth scopedLineWidth(2.0);
+        
+        ci::gl::translate(rect->getX(), rect->getY()+scale, 0);
+        
+        polyLine.getPoints().clear();
+        polyLine.getPoints().reserve(bufferSize);
         for (unsigned int i = 0; i < bufferSize; i++)
         {
-            ofVertex(inc*(float)i, ciUIMap(buffer[i], min, max, scale, -scale, true));
+            polyLine.push_back(ci::vec2(inc*(float)i, ciUIMap(buffer[i], min, max, scale, -scale, true)));
         }
-        ofEndShape();
-        ofSetLineWidth(1);
-        ofPopMatrix();
+        polyLine.setClosed();
+        ci::gl::draw(polyLine);
     }
 }
 
@@ -95,12 +90,12 @@ void ciUIMovingGraph::addPoint(float _point)
     }
 }
 
-const std::vector<float> &ciUIMovingGraph::getBuffer()
+const std::vector<float> &ciUIMovingGraph::getBuffer() const
 {
     return buffer;
 }
 
-void ciUIMovingGraph::setBuffer(vector<float> _buffer)
+void ciUIMovingGraph::setBuffer(const std::vector<float> &_buffer)
 {
     buffer = _buffer;
 }
@@ -110,7 +105,7 @@ void ciUIMovingGraph::setMax(float _max)
     max = _max;
 }
 
-float ciUIMovingGraph::getMax()
+float ciUIMovingGraph::getMax() const
 {
     return max;
 }
@@ -120,7 +115,7 @@ void ciUIMovingGraph::setMin(float _min)
     min = _min;
 }
 
-float ciUIMovingGraph::getMin()
+float ciUIMovingGraph::getMin() const
 {
     return min;
 }

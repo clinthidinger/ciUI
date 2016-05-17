@@ -28,24 +28,9 @@
 ciUICanvas::~ciUICanvas()
 {
     disable();
-    if(GUIevent != nullptrptr)
+    if(GUIevent != nullptr)
     {
         delete GUIevent;
-    }
-    if(hasSharedResources == false)
-    {
-        if(font_large != nullptrptr)
-        {
-            delete font_large;
-        }
-        if(font_medium != nullptrptr)
-        {
-            delete font_medium;
-        }
-        if(font_small != nullptrptr)
-        {
-            delete font_small;
-        }
     }
     std::vector<ciUIWidget *>::iterator it = widgets.begin();
     std::vector<ciUIWidget *>::iterator eit = widgets.end();
@@ -352,7 +337,7 @@ enabled(false)
 void ciUICanvas::init(int x, int y, int w, int h, ciUICanvas *sharedResources)
 {
     initRect(x, y, w, h);
-    name = string("CI_UI_WIDGET_CANVAS");
+    name = "CI_UI_WIDGET_CANVAS";
     kind = CI_UI_WIDGET_CANVAS;
     if(hasSharedResources)
     {
@@ -362,9 +347,10 @@ void ciUICanvas::init(int x, int y, int w, int h, ciUICanvas *sharedResources)
     }
     else
     {
-        font_large = new ciUIFont();
-        font_medium = new ciUIFont();
-        font_small = new ciUIFont();
+        //ci::Font font(fontName, fontName);
+        font_large.reset(); //ci::gl::TextureFont::create(font);
+        font_medium.reset(); //ci::gl::TextureFont::create(font);
+        font_small.reset();// = //ci::gl::TextureFont::create(font);
         setFont(fontName,true, true, false, 0.0, CI_UI_FONT_RESOLUTION);
     }
     
@@ -501,34 +487,27 @@ bool ciUICanvas::setFont(const std::string &filename,
 }
 
 void ciUICanvas::setFontSize(ciUIWidgetFontType _kind, int _size, int _resolution) {
+    //ci::gl::TextureFont::Format fmt;
+    //fmt.textureWidth(_resolution);
+    //fmt.textureHeight(_resolution);
+    
     switch(_kind) {
         case CI_UI_FONT_LARGE:
         {
-            if(font_large != nullptr) {
-                delete font_large;
-            }
-            font_large = new ciUIFont();
-            font_large->load(fontName,_size,true, true, false, 0.0,_resolution);
+            
+            font_large = ci::gl::TextureFont::create(ci::Font(fontName, _size));
         }
             break;
             
         case CI_UI_FONT_MEDIUM:
         {
-            if(font_medium != nullptr) {
-                delete font_medium;
-            }
-            font_medium = new ciUIFont();
-            font_medium->load(fontName,_size,true, true, false, 0.0,_resolution);
+            font_medium = ci::gl::TextureFont::create(ci::Font(fontName, _size));
         }
             break;
             
         case CI_UI_FONT_SMALL:
         {
-            if(font_small != nullptr) {
-                delete font_small;
-            }
-            font_small = new ciUIFont();
-            font_small->load(fontName,_size,true, true, false, 0.0,_resolution);
+            font_small = ci::gl::TextureFont::create(ci::Font(fontName, _size));
         }
             break;
     }
@@ -589,8 +568,8 @@ void ciUICanvas::disable() {
 void ciUICanvas::update()
 {
     if (!isVisible()) { return; } // Custom to save framerate
-    vector<ciUIWidget *>::iterator it = widgets.begin();
-    vector<ciUIWidget *>::iterator eit = widgets.end();
+    std::vector<ciUIWidget *>::iterator it = widgets.begin();
+    std::vector<ciUIWidget *>::iterator eit = widgets.end();
     for(; it != eit; ++it)
     {
         (*it)->update();
@@ -598,19 +577,21 @@ void ciUICanvas::update()
 }
 
 void ciUICanvas::draw() {
-    ciUIPushStyle();
+    //ciUIPushStyle();
 
+    // TODO Scoped states!!!
     glDisable(GL_DEPTH_TEST);
-    glDisable(GL_LIGHTING);
+    //glDisable(GL_LIGHTING);
 
+    
     glEnable(GL_BLEND);
 #ifndef CI_UI_TARGET_TOUCH
     glBlendEquation(GL_FUNC_ADD);
 #endif
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    ciUISetRectMode(CI_UI_RECTMODE_CORNER);
-    ciUISetLineWidth(1.0);
+    //ciUISetRectMode(CI_UI_RECTMODE_CORNER);
+    //ciUISetLineWidth(1.0);
 
     drawPadded();
     drawPaddedOutline();
@@ -620,14 +601,14 @@ void ciUICanvas::draw() {
     drawOutline();
     drawOutlineHighlight();
 
-    vector<ciUIWidget *>::reverse_iterator it = widgets.rbegin();
-    vector<ciUIWidget *>::reverse_iterator eit = widgets.rend();
+    std::vector<ciUIWidget *>::reverse_iterator it = widgets.rbegin();
+    std::vector<ciUIWidget *>::reverse_iterator eit = widgets.rend();
     for(; it != eit; ++it) {
         if((*it)->isVisible() && ((*it)->getRect()->rInside(*rect) || (*it)->isModal())) {
             (*it)->draw();
         }
     }
-    ciUIPopStyle();
+    //ciUIPopStyle();
 }
 
 void ciUICanvas::exit() {
@@ -760,8 +741,8 @@ void ciUICanvas::touchCancelled(float x, float y, int id) {
 
 void ciUICanvas::mouseMoved(int x, int y) {
     if(rect->inside(x, y)) {
-        vector<ciUIWidget *>::iterator it = widgets.begin();
-        vector<ciUIWidget *>::iterator eit = widgets.end();
+        std::vector<ciUIWidget *>::iterator it = widgets.begin();
+        std::vector<ciUIWidget *>::iterator eit = widgets.end();
         for(; it != eit; ++it) {
             if((*it)->isVisible()) {
                 (*it)->mouseMoved(x, y);
@@ -771,8 +752,8 @@ void ciUICanvas::mouseMoved(int x, int y) {
     }
     else{
         bInsideCanvas = false;
-        map<string, ciUIWidget*>::iterator it = widgetsAreModal.begin();
-        map<string, ciUIWidget*>::iterator eit = widgetsAreModal.end();
+        std::map<std::string, ciUIWidget*>::iterator it = widgetsAreModal.begin();
+        std::map<std::string, ciUIWidget*>::iterator eit = widgetsAreModal.end();
         for(; it != eit; ++it) {
             if((*it).second->isVisible()) {
                 (*it).second->mouseMoved(x, y);
@@ -782,8 +763,8 @@ void ciUICanvas::mouseMoved(int x, int y) {
 }
 
 void ciUICanvas::mouseDragged(int x, int y, int button) {
-    vector<ciUIWidget *>::iterator it = widgets.begin();
-    vector<ciUIWidget *>::iterator eit = widgets.end();
+    std::vector<ciUIWidget *>::iterator it = widgets.begin();
+    std::vector<ciUIWidget *>::iterator eit = widgets.end();
     for(; it != eit; ++it) {
         if((*it)->isVisible()) {
             (*it)->mouseDragged(x, y, button);
@@ -793,8 +774,8 @@ void ciUICanvas::mouseDragged(int x, int y, int button) {
 
 void ciUICanvas::mousePressed(int x, int y, int button) {
     if(rect->inside(x, y)) {
-        vector<ciUIWidget *>::iterator it = widgets.begin();
-        vector<ciUIWidget *>::iterator eit = widgets.end();
+        std::vector<ciUIWidget *>::iterator it = widgets.begin();
+        std::vector<ciUIWidget *>::iterator eit = widgets.end();
         for(; it != eit; ++it) {
             if((*it)->isVisible()) {
                 (*it)->mousePressed(x, y, button);
@@ -802,8 +783,8 @@ void ciUICanvas::mousePressed(int x, int y, int button) {
         }
     }
     else {
-        map<string, ciUIWidget*>::iterator it = widgetsAreModal.begin();
-        map<string, ciUIWidget*>::iterator eit = widgetsAreModal.end();
+        std::map<std::string, ciUIWidget*>::iterator it = widgetsAreModal.begin();
+        std::map<std::string, ciUIWidget*>::iterator eit = widgetsAreModal.end();
         for(; it != eit; ++it) {
             if((*it).second->isVisible()) {
                 (*it).second->mousePressed(x, y, button);
@@ -814,8 +795,8 @@ void ciUICanvas::mousePressed(int x, int y, int button) {
 
 void ciUICanvas::mouseReleased(int x, int y, int button)
 {
-    vector<ciUIWidget *>::iterator it = widgets.begin();
-    vector<ciUIWidget *>::iterator eit = widgets.end();
+    std::vector<ciUIWidget *>::iterator it = widgets.begin();
+    std::vector<ciUIWidget *>::iterator eit = widgets.end();
     for(; it != eit; ++it)
     {
         if((*it)->isVisible())
@@ -826,8 +807,8 @@ void ciUICanvas::mouseReleased(int x, int y, int button)
 }
 
 void ciUICanvas::windowResized(int w, int h) {
-    vector<ciUIWidget *>::iterator it = widgets.begin();
-    vector<ciUIWidget *>::iterator eit = widgets.end();
+    std::vector<ciUIWidget *>::iterator it = widgets.begin();
+    std::vector<ciUIWidget *>::iterator eit = widgets.end();
     for(; it != eit; ++it)
     {
         (*it)->windowResized(w, h);
@@ -838,8 +819,8 @@ void ciUICanvas::windowResized(int w, int h) {
 
 void ciUICanvas::keyPressed(int key)
 {
-    vector<ciUIWidget *>::iterator it = widgets.begin();
-    vector<ciUIWidget *>::iterator eit = widgets.end();
+    std::vector<ciUIWidget *>::iterator it = widgets.begin();
+    std::vector<ciUIWidget *>::iterator eit = widgets.end();
     for(; it != eit; ++it)
     {
         (*it)->keyPressed(key);
@@ -848,8 +829,8 @@ void ciUICanvas::keyPressed(int key)
 
 void ciUICanvas::keyReleased(int key)
 {
-    vector<ciUIWidget *>::iterator it = widgets.begin();
-    vector<ciUIWidget *>::iterator eit = widgets.end();
+    std::vector<ciUIWidget *>::iterator it = widgets.begin();
+    std::vector<ciUIWidget *>::iterator eit = widgets.end();
     for(; it != eit; ++it)
     {
         (*it)->keyReleased(key);
@@ -862,8 +843,8 @@ bool ciUICanvas::isHit(int x, int y)
         return true;
     }
     else {
-        map<string, ciUIWidget*>::iterator it = widgetsAreModal.begin();
-        map<string, ciUIWidget*>::iterator eit = widgetsAreModal.end();
+        std::map<std::string, ciUIWidget*>::iterator it = widgetsAreModal.begin();
+        std::map<std::string, ciUIWidget*>::iterator eit = widgetsAreModal.end();
         for(; it != eit; ++it) {
             if((*it).second->isVisible() && (*it).second->isHit(x, y)) {
                 return true;
@@ -876,8 +857,8 @@ bool ciUICanvas::isHit(int x, int y)
 ciUIWidget *ciUICanvas::getWidgetHit(float x, float y)
 {
     if(isEnabled() && rect->inside(x, y)) {
-        vector<ciUIWidget *>::iterator it = widgets.begin();
-        vector<ciUIWidget *>::iterator eit = widgets.end();
+        std::vector<ciUIWidget *>::iterator it = widgets.begin();
+        std::vector<ciUIWidget *>::iterator eit = widgets.end();
         for(; it != eit; ++it) {
             if((*it)->isHit(x, y)) {
                 return (*it);
@@ -935,8 +916,8 @@ void ciUICanvas::autoSizeToFitWidgets()
     float maxWidth = 0;
     float maxHeight = 0;
     
-    vector<ciUIWidget *>::iterator it = widgets.begin();
-    vector<ciUIWidget *>::iterator eit = widgets.end();
+    std::vector<ciUIWidget *>::iterator it = widgets.begin();
+    std::vector<ciUIWidget *>::iterator eit = widgets.end();
     for(; it != eit; ++it) {
         if((*it)->isVisible()) {
             ciUIRectangle* wr = (*it)->getRect();
@@ -994,8 +975,8 @@ void ciUICanvas::centerWidgetsOnCanvas(bool centerHorizontally, bool centerVerti
     float w = 0;
     float h = 0;
     
-    vector<ciUIWidget *>::iterator it = widgets.begin();
-    vector<ciUIWidget *>::iterator eit = widgets.end();
+    std::vector<ciUIWidget *>::iterator it = widgets.begin();
+    std::vector<ciUIWidget *>::iterator eit = widgets.end();
     for(; it != eit; ++it) {
         //            if((*it)->isVisible())
         //            {
@@ -1048,16 +1029,16 @@ void ciUICanvas::addModalWidget(ciUIWidget *widget) {
 }
 
 void ciUICanvas::removeModalWidget(ciUIWidget *widget) {
-    map<string, ciUIWidget*>::iterator it;
-    it=widgetsAreModal.find(widget->getName());
+    std::map<std::string, ciUIWidget*>::iterator it;
+    it = widgetsAreModal.find(widget->getName());
     if(it != widgetsAreModal.end()) {
         widgetsAreModal.erase(it);
     }
 }
 
 void ciUICanvas::removeWidgets() {
-    vector<ciUIWidget *>::iterator it = widgets.begin();
-    vector<ciUIWidget *>::iterator eit = widgets.end();
+    std::vector<ciUIWidget *>::iterator it = widgets.begin();
+    std::vector<ciUIWidget *>::iterator eit = widgets.end();
     for(; it != eit; ++it) {
         ciUIWidget *w = (*it);
         delete w;
@@ -1086,8 +1067,8 @@ void ciUICanvas::removeWidget(ciUIWidget *widget)
     {
         if(widget->isModal())
         {
-            map<string, ciUIWidget*>::iterator it = widgetsAreModal.begin();
-            map<string, ciUIWidget*>::iterator eit = widgetsAreModal.end();
+            std::map<std::string, ciUIWidget*>::iterator it = widgetsAreModal.begin();
+            std::map<std::string, ciUIWidget*>::iterator eit = widgetsAreModal.end();
             for(; it != eit; ++it)
             {
                 if(it->second == widget)
@@ -1101,8 +1082,8 @@ void ciUICanvas::removeWidget(ciUIWidget *widget)
 
     //WIDGET MAP
     {
-        multimap<string, ciUIWidget*>::iterator it = widgets_map.begin();
-        multimap<string, ciUIWidget*>::iterator eit = widgets_map.end();
+        std::multimap<std::string, ciUIWidget*>::iterator it = widgets_map.begin();
+        std::multimap<std::string, ciUIWidget*>::iterator eit = widgets_map.end();
         for(; it != eit; ++it)
         {
             if(it->second == widget)
@@ -1255,7 +1236,7 @@ ciUIWidget* ciUICanvas::addWidgetLeft(ciUIWidget *widget, ciUIWidgetAlignment al
     return addWidgetPosition(widget, CI_UI_WIDGET_POSITION_LEFT, align, reAdd);
 }
 
-ciUIWidget* ciUICanvas::addWidgetSouthOf(ciUIWidget *widget, string referenceName, bool reAdd) {
+ciUIWidget* ciUICanvas::addWidgetSouthOf(ciUIWidget *widget, const std::string &referenceName, bool reAdd) {
     if(!reAdd) addWidget(widget);
     ciUIWidget *referenceWidget = getWidget(referenceName);
     if(referenceWidget != nullptr) {
@@ -1274,7 +1255,7 @@ ciUIWidget* ciUICanvas::addWidgetSouthOf(ciUIWidget *widget, string referenceNam
     return widget;
 }
 
-ciUIWidget* ciUICanvas::addWidgetNorthOf(ciUIWidget *widget, string referenceName, bool reAdd) {
+ciUIWidget* ciUICanvas::addWidgetNorthOf(ciUIWidget *widget, const std::string &referenceName, bool reAdd) {
     if(!reAdd) addWidget(widget);
     ciUIWidget *referenceWidget = getWidget(referenceName);
     if(referenceWidget != nullptr) {
@@ -1294,7 +1275,7 @@ ciUIWidget* ciUICanvas::addWidgetNorthOf(ciUIWidget *widget, string referenceNam
     return widget;
 }
 
-ciUIWidget* ciUICanvas::addWidgetWestOf(ciUIWidget *widget, string referenceName, bool reAdd) {
+ciUIWidget* ciUICanvas::addWidgetWestOf(ciUIWidget *widget, const std::string &referenceName, bool reAdd) {
     if(!reAdd) addWidget(widget);
     ciUIWidget *referenceWidget = getWidget(referenceName);
     if(referenceWidget != nullptr) {
@@ -1314,7 +1295,7 @@ ciUIWidget* ciUICanvas::addWidgetWestOf(ciUIWidget *widget, string referenceName
     return widget;
 }
 
-ciUIWidget* ciUICanvas::addWidgetEastOf(ciUIWidget *widget, string referenceName, bool reAdd) {
+ciUIWidget* ciUICanvas::addWidgetEastOf(ciUIWidget *widget, const std::string &referenceName, bool reAdd) {
     if(!reAdd) addWidget(widget);
     ciUIWidget *referenceWidget = getWidget(referenceName);
     if(referenceWidget != nullptr) {
@@ -1356,7 +1337,7 @@ ciUISpacer* ciUICanvas::addSpacer(float w, float h) {
     return widget;
 }
 
-ciUISpacer* ciUICanvas::addSpacer(float w, float h, string name) {
+ciUISpacer* ciUICanvas::addSpacer(float w, float h, const std::string &name) {
     ciUISpacer* widget = new ciUISpacer(w, h, name);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
@@ -1368,7 +1349,7 @@ ciUILabel* ciUICanvas::addLabel(const std::string &name, int size) {
     return widget;
 }
 
-ciUILabel* ciUICanvas::addLabel(const std::string &name, string label, int size) {
+ciUILabel* ciUICanvas::addLabel(const std::string &name, const std::string &label, int size) {
     ciUILabel* widget = new ciUILabel(name, label, size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
@@ -1476,25 +1457,25 @@ ciUIRotarySlider* ciUICanvas::addRotarySlider(const std::string &_name, float _m
     return widget;
 }
 
-ciUIImageSlider* ciUICanvas::addImageSlider(const std::string &_name, string _pathURL, float _min, float _max, float _value) {
+ciUIImageSlider* ciUICanvas::addImageSlider(const std::string &_name, const std::string &_pathURL, float _min, float _max, float _value) {
     ciUIImageSlider* widget = new ciUIImageSlider(rect->getWidth()-widgetSpacing*2, globalSliderHeight, _min, _max, _value, _pathURL, _name);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIImageSlider* ciUICanvas::addImageSlider(const std::string &_name, string _pathURL, float _min, float _max, float _value, float w, float h, float x, float y) {
+ciUIImageSlider* ciUICanvas::addImageSlider(const std::string &_name, const std::string &_pathURL, float _min, float _max, float _value, float w, float h, float x, float y) {
     ciUIImageSlider* widget = new ciUIImageSlider(x, y, w, h, _min, _max, _value, _pathURL, _name);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIImageSlider* ciUICanvas::addImageSlider(const std::string &_name, string _pathURL, float _min, float _max, float *_value) {
+ciUIImageSlider* ciUICanvas::addImageSlider(const std::string &_name, const std::string &_pathURL, float _min, float _max, float *_value) {
     ciUIImageSlider* widget = new ciUIImageSlider(rect->getWidth()-widgetSpacing*2, globalSliderHeight, _min, _max, _value, _pathURL, _name);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIImageSlider* ciUICanvas::addImageSlider(const std::string &_name, string _pathURL, float _min, float _max, float *_value, float w, float h, float x, float y) {
+ciUIImageSlider* ciUICanvas::addImageSlider(const std::string &_name, const std::string &_pathURL, float _min, float _max, float *_value, float w, float h, float x, float y) {
     ciUIImageSlider* widget = new ciUIImageSlider(x, y, w, h, _min, _max, _value, _pathURL, _name);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
@@ -1592,13 +1573,13 @@ ciUIFPSSlider* ciUICanvas::addFPSSlider(const std::string &_name, float w, float
     return widget;
 }
 
-ciUIRadio* ciUICanvas::addRadio(const std::string &_name, vector<string> names, int _orientation, int _size) {
+ciUIRadio* ciUICanvas::addRadio(const std::string &_name, const std::vector<std::string> &names, int _orientation, int _size) {
     ciUIRadio* widget = new ciUIRadio(_name, names, _orientation, globalButtonDimension, globalButtonDimension, 0, 0, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIRadio* ciUICanvas::addRadio(const std::string &_name, vector<string> names, int _orientation, float w, float h, float x, float y, int _size) {
+ciUIRadio* ciUICanvas::addRadio(const std::string &_name, const std::vector<std::string> &names, int _orientation, float w, float h, float x, float y, int _size) {
     ciUIRadio* widget = new ciUIRadio(_name, names, _orientation, w, h, x, y, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
@@ -1697,7 +1678,7 @@ ciUI2DPad* ciUICanvas::add2DPad(const std::string &_name, ciUIVec3f _rangeX, ciU
     return widget;
 }
 
-ciUITextInput* ciUICanvas::addTextInput(const std::string &_name, string _textstring, int _size) {
+ciUITextInput* ciUICanvas::addTextInput(const std::string &_name, const std::string &_textstring, int _size) {
     float h = 0;
     float x = 0;
     float y = 0;
@@ -1709,7 +1690,7 @@ ciUITextInput* ciUICanvas::addTextInput(const std::string &_name, string _textst
     return widget;
 }
 
-ciUITextInput* ciUICanvas::addTextInput(const std::string &_name, string _textstring, float w, float h, float x, float y, int _size) {
+ciUITextInput* ciUICanvas::addTextInput(const std::string &_name, const std::string &_textstring, float w, float h, float x, float y, int _size) {
     if(_size == -1) {
         _size = widgetFontSize;
     }
@@ -1775,13 +1756,13 @@ ciUILabelButton* ciUICanvas::addLabelButton(const std::string &_name, bool *_val
     return widget;
 }
 
-ciUIDropDownList* ciUICanvas::addDropDownList(const std::string &_name, vector<string> items) {
+ciUIDropDownList* ciUICanvas::addDropDownList(const std::string &_name, const std::vector<std::string> &items) {
     ciUIDropDownList* widget = new ciUIDropDownList(_name, items, rect->getWidth()-widgetSpacing*2, 0, 0, widgetFontSize);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIDropDownList* ciUICanvas::addDropDownList(const std::string &_name, vector<string> items, float w, float x, float y) {
+ciUIDropDownList* ciUICanvas::addDropDownList(const std::string &_name, const std::vector<std::string> &items, float w, float x, float y) {
     ciUIDropDownList* widget = new ciUIDropDownList(_name, items, w, x, y, widgetFontSize);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
@@ -1818,7 +1799,7 @@ ciUISpectrum* ciUICanvas::addSpectrum(const std::string &_name, float *_buffer, 
     return widget;
 }
 
-ciUIMovingGraph* ciUICanvas::addMovingGraph(const std::string &_name, vector<float> _buffer, int _bufferSize, float _min, float _max, float _h) {
+ciUIMovingGraph* ciUICanvas::addMovingGraph(const std::string &_name, const std::vector<float> &_buffer, int _bufferSize, float _min, float _max, float _h) {
     if(_h != globalGraphHeight)
     {
         _h = globalGraphHeight;
@@ -1828,19 +1809,19 @@ ciUIMovingGraph* ciUICanvas::addMovingGraph(const std::string &_name, vector<flo
     return widget;
 }
 
-ciUIMovingGraph* ciUICanvas::addMovingGraph(const std::string &_name, vector<float> _buffer, int _bufferSize, float _min, float _max, float _w, float _h) {
+ciUIMovingGraph* ciUICanvas::addMovingGraph(const std::string &_name, const std::vector<float> &_buffer, int _bufferSize, float _min, float _max, float _w, float _h) {
     ciUIMovingGraph* widget = new ciUIMovingGraph(_w, _h, _buffer, _bufferSize, _min, _max, _name);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIImage* ciUICanvas::addImage(const std::string &_name, ofImage *_image, float _w, float _h, bool _showLabel) {
+ciUIImage* ciUICanvas::addImage(const std::string &_name, const ci::SurfaceRef &_image, float _w, float _h, bool _showLabel) {
     ciUIImage* widget = new ciUIImage(_w, _h, _image, _name, _showLabel);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIImage* ciUICanvas::addImage(const std::string &_name, ofImage *_image, bool _showLabel) {
+ciUIImage* ciUICanvas::addImage(const std::string &_name, const ci::SurfaceRef &_image, bool _showLabel) {
     float _w = rect->getWidth()-widgetSpacing*2;
     float _h = _w*(float)_image->getHeight()/(float)_image->getWidth();
     ciUIImage* widget = new ciUIImage(_w, _h, _image, _name, _showLabel);
@@ -1848,26 +1829,26 @@ ciUIImage* ciUICanvas::addImage(const std::string &_name, ofImage *_image, bool 
     return widget;
 }
 
-ciUIBaseDraws* ciUICanvas::addBaseDraws(const std::string &_name, ofBaseDraws *_base, float _w, float _h, bool _showLabel) {
+ciUIBaseDraws* ciUICanvas::addBaseDraws(const std::string &_name, const ci::SurfaceRef &_base, float _w, float _h, bool _showLabel) {
     ciUIBaseDraws* widget = new ciUIBaseDraws(_w, _h, _base, _name, _showLabel);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIBaseDraws* ciUICanvas::addBaseDraws(const std::string &_name, ofBaseDraws *_base, bool _showLabel) {
+ciUIBaseDraws* ciUICanvas::addBaseDraws(const std::string &_name, const ci::SurfaceRef &_base, bool _showLabel) {
     float _w = rect->getWidth()-widgetSpacing*2;
     float _h = _w*(float)_base->getHeight()/(float)_base->getWidth();
     ciUIBaseDraws* widget = new ciUIBaseDraws(_w, _h, _base, _name, _showLabel);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
-ciUIImageSampler* ciUICanvas::addImageSampler(const std::string &_name, ofImage *_image, float _w, float _h) {
+ciUIImageSampler* ciUICanvas::addImageSampler(const std::string &_name, const ci::SurfaceRef &_image, float _w, float _h) {
     ciUIImageSampler* widget = new ciUIImageSampler(_w, _h, _image, _name);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIImageSampler* ciUICanvas::addImageSampler(const std::string &_name, ofImage *_image) {
+ciUIImageSampler* ciUICanvas::addImageSampler(const std::string &_name, const ci::SurfaceRef &_image) {
     float _w = rect->getWidth()-widgetSpacing*2;
     float _h = _w*(float)_image->getHeight()/(float)_image->getWidth();
     ciUIImageSampler* widget = new ciUIImageSampler(_w, _h, _image, _name);
@@ -1875,25 +1856,25 @@ ciUIImageSampler* ciUICanvas::addImageSampler(const std::string &_name, ofImage 
     return widget;
 }
 
-ciUIBiLabelSlider* ciUICanvas::addBiLabelSlider(const std::string &_name, string _leftLabel, string _rightLabel, float _min, float _max, float _value, int _size) {
+ciUIBiLabelSlider* ciUICanvas::addBiLabelSlider(const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, float _min, float _max, float _value, int _size) {
     ciUIBiLabelSlider* widget = new ciUIBiLabelSlider(rect->getWidth()-widgetSpacing*2, globalSliderHeight, _min, _max, _value, _name, _leftLabel, _rightLabel, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIBiLabelSlider* ciUICanvas::addBiLabelSlider(const std::string &_name, string _leftLabel, string _rightLabel, float _min, float _max, float *_value, int _size) {
+ciUIBiLabelSlider* ciUICanvas::addBiLabelSlider(const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, float _min, float _max, float *_value, int _size) {
     ciUIBiLabelSlider* widget = new ciUIBiLabelSlider(rect->getWidth()-widgetSpacing*2, globalSliderHeight, _min, _max, _value, _name, _leftLabel, _rightLabel, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIBiLabelSlider* ciUICanvas::addBiLabelSlider(const std::string &_name, string _leftLabel, string _rightLabel, float _min, float _max, float _value, float _w, float _h, int _size) {
+ciUIBiLabelSlider* ciUICanvas::addBiLabelSlider(const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, float _min, float _max, float _value, float _w, float _h, int _size) {
     ciUIBiLabelSlider* widget = new ciUIBiLabelSlider(_w, _h, _min, _max, _value, _name, _leftLabel, _rightLabel, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIBiLabelSlider* ciUICanvas::addBiLabelSlider(const std::string &_name, string _leftLabel, string _rightLabel, float _min, float _max, float *_value, float _w, float _h, int _size) {
+ciUIBiLabelSlider* ciUICanvas::addBiLabelSlider(const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, float _min, float _max, float *_value, float _w, float _h, int _size) {
     ciUIBiLabelSlider* widget = new ciUIBiLabelSlider(_w, _h, _min, _max, _value, _name, _leftLabel, _rightLabel, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
@@ -1952,111 +1933,111 @@ ciUI2DGraph* ciUICanvas::add2DGraph(const std::string &_name, ciUIVec2f _rangeX,
     return widget;
 }
 
-ciUIImageToggle* ciUICanvas::addImageToggle(const std::string &_name, string _path, bool *_value, float w, float h, float x, float y, int _size) {
+ciUIImageToggle* ciUICanvas::addImageToggle(const std::string &_name, const std::string &_path, bool *_value, float w, float h, float x, float y, int _size) {
     ciUIImageToggle *widget = new ciUIImageToggle(x, y, w, h, _value, _path, _name);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIImageToggle* ciUICanvas::addImageToggle(const std::string &_name, string _path, bool _value, float w, float h, float x, float y, int _size) {
+ciUIImageToggle* ciUICanvas::addImageToggle(const std::string &_name, const std::string &_path, bool _value, float w, float h, float x, float y, int _size) {
     ciUIImageToggle *widget = new ciUIImageToggle(x, y, w, h, _value, _path, _name);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIImageToggle* ciUICanvas::addImageToggle(const std::string &_name, string _path, bool *_value, int _size) {
+ciUIImageToggle* ciUICanvas::addImageToggle(const std::string &_name, const std::string &_path, bool *_value, int _size) {
     ciUIImageToggle *widget = new ciUIImageToggle(globalButtonDimension, globalButtonDimension, _value, _path, _name);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIImageToggle* ciUICanvas::addImageToggle(const std::string &_name, string _path, bool _value, int _size) {
+ciUIImageToggle* ciUICanvas::addImageToggle(const std::string &_name, const std::string &_path, bool _value, int _size) {
     ciUIImageToggle *widget = new ciUIImageToggle(globalButtonDimension, globalButtonDimension, _value, _path, _name);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIImageButton* ciUICanvas::addImageButton(const std::string &_name, string _path, bool *_value, float w, float h, float x, float y, int _size) {
+ciUIImageButton* ciUICanvas::addImageButton(const std::string &_name, const std::string &_path, bool *_value, float w, float h, float x, float y, int _size) {
     ciUIImageButton *widget = new ciUIImageButton(x, y, w, h, _value, _path, _name, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIImageButton* ciUICanvas::addImageButton(const std::string &_name, string _path, bool _value, float w, float h, float x, float y, int _size) {
+ciUIImageButton* ciUICanvas::addImageButton(const std::string &_name, const std::string &_path, bool _value, float w, float h, float x, float y, int _size) {
     ciUIImageButton *widget = new ciUIImageButton(x, y, w, h, _value, _path, _name, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIImageButton* ciUICanvas::addImageButton(const std::string &_name, string _path, bool *_value, int _size) {
+ciUIImageButton* ciUICanvas::addImageButton(const std::string &_name, const std::string &_path, bool *_value, int _size) {
     ciUIImageButton *widget = new ciUIImageButton(globalButtonDimension, globalButtonDimension, _value, _path, _name, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIImageButton* ciUICanvas::addImageButton(const std::string &_name, string _path, bool _value, int _size) {
+ciUIImageButton* ciUICanvas::addImageButton(const std::string &_name, const std::string &_path, bool _value, int _size) {
     ciUIImageButton *widget = new ciUIImageButton(globalButtonDimension, globalButtonDimension, _value, _path, _name, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIMultiImageButton* ciUICanvas::addMultiImageButton(const std::string &_name, string _path, bool *_value, float w, float h, float x, float y, int _size) {
+ciUIMultiImageButton* ciUICanvas::addMultiImageButton(const std::string &_name, const std::string &_path, bool *_value, float w, float h, float x, float y, int _size) {
     ciUIMultiImageButton *widget = new ciUIMultiImageButton(x, y, w, h, _value, _path, _name, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIMultiImageButton* ciUICanvas::addMultiImageButton(const std::string &_name, string _path, bool _value, float w, float h, float x, float y, int _size) {
+ciUIMultiImageButton* ciUICanvas::addMultiImageButton(const std::string &_name, const std::string &_path, bool _value, float w, float h, float x, float y, int _size) {
     ciUIMultiImageButton *widget = new ciUIMultiImageButton(x, y, w, h, _value, _path, _name, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIMultiImageButton* ciUICanvas::addMultiImageButton(const std::string &_name, string _path, bool *_value, int _size) {
+ciUIMultiImageButton* ciUICanvas::addMultiImageButton(const std::string &_name, const std::string &_path, bool *_value, int _size) {
     ciUIMultiImageButton *widget = new ciUIMultiImageButton(globalButtonDimension, globalButtonDimension, _value, _path, _name, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIMultiImageButton* ciUICanvas::addMultiImageButton(const std::string &_name, string _path, bool _value, int _size) {
+ciUIMultiImageButton* ciUICanvas::addMultiImageButton(const std::string &_name, const std::string &_path, bool _value, int _size) {
     ciUIMultiImageButton *widget = new ciUIMultiImageButton(globalButtonDimension, globalButtonDimension, _value, _path, _name, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
 //
-ciUIMultiImageToggle* ciUICanvas::addMultiImageToggle(const std::string &_name, string _path, bool *_value, float w, float h, float x, float y, int _size) {
+ciUIMultiImageToggle* ciUICanvas::addMultiImageToggle(const std::string &_name, const std::string &_path, bool *_value, float w, float h, float x, float y, int _size) {
     ciUIMultiImageToggle *widget = new ciUIMultiImageToggle(x, y, w, h, _value, _path, _name, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIMultiImageToggle* ciUICanvas::addMultiImageToggle(const std::string &_name, string _path, bool _value, float w, float h, float x, float y, int _size) {
+ciUIMultiImageToggle* ciUICanvas::addMultiImageToggle(const std::string &_name, const std::string &_path, bool _value, float w, float h, float x, float y, int _size) {
     ciUIMultiImageToggle *widget = new ciUIMultiImageToggle(x, y, w, h, _value, _path, _name, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIMultiImageToggle* ciUICanvas::addMultiImageToggle(const std::string &_name, string _path, bool *_value, int _size) {
+ciUIMultiImageToggle* ciUICanvas::addMultiImageToggle(const std::string &_name, const std::string &_path, bool *_value, int _size) {
     ciUIMultiImageToggle *widget = new ciUIMultiImageToggle(globalButtonDimension, globalButtonDimension, _value, _path, _name, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUIMultiImageToggle* ciUICanvas::addMultiImageToggle(const std::string &_name, string _path, bool _value, int _size) {
+ciUIMultiImageToggle* ciUICanvas::addMultiImageToggle(const std::string &_name, const std::string &_path, bool _value, int _size) {
     ciUIMultiImageToggle *widget = new ciUIMultiImageToggle(globalButtonDimension, globalButtonDimension, _value, _path, _name, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 //
 
-ciUITextArea* ciUICanvas::addTextArea(const std::string &_name, string _textstring, int _size) {
+ciUITextArea* ciUICanvas::addTextArea(const std::string &_name, const std::string &_textstring, int _size) {
     ciUITextArea *widget = new ciUITextArea(_name, _textstring, rect->getWidth()-widgetSpacing*2, 0, 0, 0, _size);
     addWidgetPosition(widget, widgetPosition, widgetAlign);
     return widget;
 }
 
-ciUISortableList* ciUICanvas::addSortableList(const std::string &_name, vector<std::string> _items, int _size, int _itemHeight) {
+ciUISortableList* ciUICanvas::addSortableList(const std::string &_name, const std::vector<std::string> &_items, int _size, int _itemHeight) {
     if(_size == -1) {
         _size = widgetFontSize;
     }    
@@ -2850,7 +2831,7 @@ void ciUICanvas::setWidgetColor(int _target, ciUIColor _color) {
         case CI_UI_WIDGET_COLOR_BACK:
         {
             widget_color_back = _color;
-            for(vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
+            for(std::vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
                 (*it)->setColorBack(_color);
             }
         }
@@ -2859,7 +2840,7 @@ void ciUICanvas::setWidgetColor(int _target, ciUIColor _color) {
         case CI_UI_WIDGET_COLOR_OUTLINE:
         {
             widget_color_outline = _color;
-            for(vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
+            for(std::vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
                 (*it)->setColorOutline(_color);
             }
         }
@@ -2868,7 +2849,7 @@ void ciUICanvas::setWidgetColor(int _target, ciUIColor _color) {
         case CI_UI_WIDGET_COLOR_OUTLINE_HIGHLIGHT:
         {
             widget_color_outline_highlight = _color;
-            for(vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
+            for(std::vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
                 (*it)->setColorOutlineHighlight(_color);
             }
         }
@@ -2877,7 +2858,7 @@ void ciUICanvas::setWidgetColor(int _target, ciUIColor _color) {
         case CI_UI_WIDGET_COLOR_FILL:
         {
             widget_color_fill = _color;
-            for(vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
+            for(std::vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
                 (*it)->setColorFill(_color);
             }
         }
@@ -2886,7 +2867,7 @@ void ciUICanvas::setWidgetColor(int _target, ciUIColor _color) {
         case CI_UI_WIDGET_COLOR_FILL_HIGHLIGHT:
         {
             widget_color_fill_highlight = _color;
-            for(vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
+            for(std::vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
                 (*it)->setColorFillHighlight(_color);
             }
         }
@@ -2895,7 +2876,7 @@ void ciUICanvas::setWidgetColor(int _target, ciUIColor _color) {
         case CI_UI_WIDGET_COLOR_PADDED:
         {
             widget_color_padded_rect = _color;
-            for(vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
+            for(std::vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
                 (*it)->setColorPadded(_color);
             }
         }
@@ -2904,7 +2885,7 @@ void ciUICanvas::setWidgetColor(int _target, ciUIColor _color) {
         case CI_UI_WIDGET_COLOR_PADDED_OUTLINE:
         {
             widget_color_padded_rect_outline = _color;
-            for(vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
+            for(std::vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
                 (*it)->setColorPaddedOutline(_color);
             }
         }
@@ -2917,18 +2898,18 @@ void ciUICanvas::setWidgetColor(int _target, ciUIColor _color) {
 
 ciUIWidget *ciUICanvas::getWidget(const std::string &_name, int widgetID) {
     if(widgetID == -1) {
-        multimap<string, ciUIWidget *>::iterator wit = widgets_map.find(_name);
+        std::multimap<std::string, ciUIWidget *>::iterator wit = widgets_map.find(_name);
         if(wit != widgets_map.end()) {
             return wit->second;
         }
     }
     else {
-        for(multimap<string, ciUIWidget*>::iterator wit = widgets_map.equal_range(_name).first; wit != widgets_map.equal_range(_name).second; ++wit) {
+        for(std::multimap<std::string, ciUIWidget*>::iterator wit = widgets_map.equal_range(_name).first; wit != widgets_map.equal_range(_name).second; ++wit) {
             if(wit->second->getID() == widgetID) {
                 return wit->second;
             }
         }
-        multimap<string, ciUIWidget *>::iterator wit = widgets_map.find(_name);
+        std::multimaptimap<std::string, ciUIWidget *>::iterator wit = widgets_map.find(_name);
         if(wit != widgets_map.end()) {
             return wit->second;
         }
@@ -2968,7 +2949,7 @@ void ciUICanvas::setDrawPadding(bool _draw_padded_rect) {
 }
 
 void ciUICanvas::setDrawWidgetPadding(bool _draw_padded_rect) {
-    for(vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
+    for(std::vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
         (*it)->setDrawPadding(_draw_padded_rect);
     }
     bDrawWidgetPadding = _draw_padded_rect;
@@ -2983,7 +2964,7 @@ void ciUICanvas::setDrawPaddingOutline(bool _draw_padded_rect_outline) {
 }
 
 void ciUICanvas::setDrawWidgetPaddingOutline(bool _draw_padded_rect_outline) {
-    for(vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
+    for(std::vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
         (*it)->setDrawPaddingOutline(_draw_padded_rect_outline);
     }
     bDrawWidgetPaddingOutline = _draw_padded_rect_outline;
@@ -2993,13 +2974,13 @@ bool ciUICanvas::getDrawWidgetPaddingOutline() {
     return bDrawWidgetPaddingOutline;
 }
 
-vector<ciUIWidget*> ciUICanvas::getWidgets() {
+std::vector<ciUIWidget*> ciUICanvas::getWidgets() {
     return widgets;
 }
 
-vector<ciUIWidget*> ciUICanvas::getWidgetsOfType(ciUIWidgetType type) {
-    vector<ciUIWidget*> widgetToReturn;
-    for(vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
+std::vector<ciUIWidget*> ciUICanvas::getWidgetsOfType(ciUIWidgetType type) {
+    std::vector<ciUIWidget*> widgetToReturn;
+    for(std::vector<ciUIWidget *>::iterator it = widgets.begin(); it != widgets.end(); ++it) {
         if((*it)->getKind() == type) {
             widgetToReturn.push_back((*it));
         }
@@ -3012,7 +2993,7 @@ void ciUICanvas::pushbackWidget(ciUIWidget *widget, bool addWidgetToFront) {
     uniqueIDs++;
     
     if(addWidgetToFront) {
-        vector<ciUIWidget*>::iterator it;
+        std::vector<ciUIWidget*>::iterator it;
         it = widgets.begin();
         it = widgets.insert (it,widget);
     }
@@ -3035,31 +3016,26 @@ bool ciUICanvas::updateFont(ciUIWidgetFontType _kind,
     switch(_kind) {
         case CI_UI_FONT_LARGE:
         {
-            if(font_large != nullptr) {
-                delete font_large;
-            }
-            font_large = new ciUIFont();
-            success = font_large->load(filename,fontsize,_bAntiAliased, _bFullCharacterSet, makeContours, simplifyAmt,dpi);
+            
+            font_large = ci::gl::TextureFont(ci::Font(filename, fontsize));
+            success = font_large != nullptr;
+            //success = font_large->load(filename,fontsize,_bAntiAliased, _bFullCharacterSet, makeContours, simplifyAmt,dpi);
         }
             break;
             
         case CI_UI_FONT_MEDIUM:
         {
-            if(font_medium != nullptr) {
-                delete font_medium;
-            }
-            font_medium = new ciUIFont();
-            success = font_medium->load(filename,fontsize,_bAntiAliased, _bFullCharacterSet, makeContours, simplifyAmt,dpi);
+            font_medium = ci::gl::TextureFont(ci::Font(filename, fontsize));
+            success = font_medium != nullptr;
+            //success = font_medium->load(filename,fontsize,_bAntiAliased, _bFullCharacterSet, makeContours, simplifyAmt,dpi);
         }
             break;
             
         case CI_UI_FONT_SMALL:
         {
-            if(font_small != nullptr) {
-                delete font_small;
-            }
-            font_small = new ciUIFont();
-            success = font_small->load(filename,fontsize,_bAntiAliased, _bFullCharacterSet, makeContours, simplifyAmt,dpi);
+            font_small = ci::gl::TextureFont(ci::Font(filename, fontsize));
+            success = font_small != nullptr;
+            //success = font_small->load(filename,fontsize,_bAntiAliased, _bFullCharacterSet, makeContours, simplifyAmt,dpi);
         }
             break;
     }

@@ -88,7 +88,7 @@ void ciUISlider_<T>::init(const std::string &_name, T _min, T _max, T *_value, f
         value = min;
     }
     
-    value = ciUIMap(value, min, max, 0.0, 1.0, true);    
+    value = ciUIMap<float>(value, min, max, 0.0f, 1.0f, true);
     valueString = ciUIToString(getScaledValue(),labelPrecision);
     
     if(orientation == CI_UI_ORIENTATION_HORIZONTAL)
@@ -102,11 +102,11 @@ void ciUISlider_<T>::init(const std::string &_name, T _min, T _max, T *_value, f
     addEmbeddedWidget(label);
     label->setVisible(drawLabel);
 
-    increment = ABS(max - min) / 10.0;
+    increment = glm::abs(max - min) / 10.0;
     bRoundedToNearestInt = false;
     bClampValue = true;
     bSticky = false;
-    stickyValue = ABS(max - min) / 100.0;
+    stickyValue = glm::abs(max - min) / 100.0;
 }
 
 template<typename T>
@@ -189,7 +189,7 @@ ciUISlider_<T>* ciUISlider_<T>::setStickyValue(double _stickyValue)
 }
 
 template<typename T>
-double ciUISlider_<T>::getStickyValue()
+double ciUISlider_<T>::getStickyValue() const
 {
     return stickyValue;
 }
@@ -199,7 +199,7 @@ void ciUISlider_<T>::update()
 {
     if(useReference)
     {
-        value = ciUIMap(*valueRef, min, max, 0.0, 1.0, bClampValue);
+        value = ciUIMap<float>(*valueRef, min, max, 0.0f, 1.0f, bClampValue);
         updateLabel();
     }
 }
@@ -223,9 +223,9 @@ void ciUISlider_<T>::drawBack()
 {
     if(draw_back)
     {
-        ciUIFill();
-        ciUISetColor(color_back);
-        rect->draw();
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_back);
+        rect->draw(true);
     }
 }
 
@@ -234,9 +234,9 @@ void ciUISlider_<T>::drawOutline()
 {
     if(draw_outline)
     {
-        ofNoFill();
-        ciUISetColor(color_outline);
-        rect->draw();
+        //ofNoFill();
+        ci::gl::ScopedColor scopedColor(color_outline);
+        rect->draw(false);
     }
 }
 
@@ -245,9 +245,9 @@ void ciUISlider_<T>::drawOutlineHighlight()
 {
     if(draw_outline_highlight)
     {
-        ofNoFill();
-        ciUISetColor(color_outline_highlight);
-        rect->draw();
+        //ofNoFill();
+        ci::gl::ScopedColor scopedColor(color_outline_highlight);
+        rect->draw(false);
     }
 }
 
@@ -256,15 +256,15 @@ void ciUISlider_<T>::drawFill()
 {
     if(draw_fill && value > 0.0)
     {
-        ciUIFill();
-        ciUISetColor(color_fill);
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill);
         if(orientation == CI_UI_ORIENTATION_HORIZONTAL)
         {
-            ciUIDrawRect(rect->getX(), rect->getY(), rect->getWidth()*MIN(MAX(value, 0.0), 1.0), rect->getHeight());
+            ciUIDrawCorneredRect(rect->getX(), rect->getY(), rect->getWidth()*std::min(std::max(value, 0.0), 1.0), rect->getHeight(), true);
         }
         else
         {
-            ciUIDrawRect(rect->getX(), rect->getY()+rect->getHeight(), rect->getWidth(), -rect->getHeight()*MIN(MAX(value, 0.0), 1.0));
+            ciUIDrawCorneredRect(rect->getX(), rect->getY()+rect->getHeight(), rect->getWidth(), -rect->getHeight()*std::min(std::max(value, 0.0), 1.0), true);
         }
     }
 }
@@ -274,19 +274,19 @@ void ciUISlider_<T>::drawFillHighlight()
 {
     if(draw_fill_highlight)
     {
-        ciUIFill();
-        ciUISetColor(color_fill_highlight);
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill_highlight);
         if(orientation == CI_UI_ORIENTATION_HORIZONTAL)
         {
-            ciUIDrawRect(rect->getX(), rect->getY(), rect->getWidth()*MIN(MAX(value, 0.0), 1.0), rect->getHeight());
+            ciUIDrawCorneredRect(rect->getX(), rect->getY(), rect->getWidth()*std::min(std::max(value, 0.0), 1.0), rect->getHeight(), true);
         }
         else
         {
-            ciUIDrawRect(rect->getX(), rect->getY()+rect->getHeight(), rect->getWidth(), -rect->getHeight()*MIN(MAX(value, 0.0), 1.0));
+            ciUIDrawCorneredRect(rect->getX(), rect->getY()+rect->getHeight(), rect->getWidth(), -rect->getHeight()*std::min(std::max(value, 0.0), 1.0), true);
         }
         if(kind == CI_UI_WIDGET_SLIDER_V)
         {
-            label->drawString(rect->getX()+rect->getWidth()+padding, label->getRect()->getHeight()/2.0+rect->getY()+rect->getHeight()-rect->getHeight()*MIN(MAX(value, 0.0), 1.0), valueString);
+            label->drawString(rect->getX()+rect->getWidth()+padding, label->getRect()->getHeight()/2.0+rect->getY()+rect->getHeight()-rect->getHeight()*std::min(std::max(value, 0.0), 1.0), valueString);
         }
     }
 }
@@ -375,35 +375,33 @@ void ciUISlider_<T>::keyPressed(int key)
     {
         switch (key)
         {
-            case OF_KEY_RIGHT:
+            case ci::app::KeyEvent::KEY_RIGHT:
                 setValue(getScaledValue()+increment);
                 triggerEvent(this);
                 break;
                 
-            case OF_KEY_UP:
+            case ci::app::KeyEvent::KEY_UP:
                 setValue(getScaledValue()+increment);
                 triggerEvent(this);
                 break;
                 
-            case OF_KEY_LEFT:
+            case ci::app::KeyEvent::KEY_LEFT:
                 setValue(getScaledValue()-increment);
                 triggerEvent(this);
                 break;
                 
-            case OF_KEY_DOWN:
+            case ci::app::KeyEvent::KEY_DOWN:
                 setValue(getScaledValue()-increment);
                 triggerEvent(this);
                 break;
                 
-            case OF_KEY_SHIFT:
-#if OF_VERSION_MINOR > 7
-            case OF_KEY_LEFT_SHIFT:
-            case OF_KEY_RIGHT_SHIFT:
-#endif
+            case ci::app::KeyEvent::KEY_LSHIFT:
+            case ci::app::KeyEvent::KEY_RSHIFT:
                 bRoundedToNearestInt = true;
                 break;
 
-            case OF_KEY_COMMAND:
+            case ci::app::KeyEvent::KEY_LMETA: // Command
+            case ci::app::KeyEvent::KEY_RMETA:
                 bSticky = true;
                 break;
                 
@@ -451,7 +449,7 @@ void ciUISlider_<T>::input(float x, float y)
         value = 1.0-rect->percentInside(x, y).y;
     }
     
-    value = MIN(1.0, MAX(0.0, value));
+    value = std::min(1.0, std::max(0.0, value));
     updateValueRef();
     updateLabel();
 }
@@ -513,33 +511,33 @@ void ciUISlider_<T>::stateChange()
 template<typename T>
 void ciUISlider_<T>::setValue(T _value)
 {
-    value = ciUIMap(_value, min, max, 0.0, 1.0, bClampValue);
+    value = ciUIMap<float>(_value, min, max, 0.0f, 1.0f, bClampValue);
     updateValueRef();
     updateLabel();
 }
 
 template<typename T>
-T ciUISlider_<T>::getValue()
+const T ciUISlider_<T>::getValue() const
 {
     return (*valueRef);
 }
 
 template<typename T>
-T ciUISlider_<T>::getNormalizedValue()
+T ciUISlider_<T>::getNormalizedValue() const
 {
     return value;
 }
 
 template<typename T>
-float ciUISlider_<T>::getPercentValue()
+float ciUISlider_<T>::getPercentValue() const
 {
     return value;
 }
 
 template<typename T>
-T ciUISlider_<T>::getScaledValue()
+const T ciUISlider_<T>::getScaledValue() const
 {
-    T val = ciUIMap(value, 0.0, 1.0, min, max, bClampValue);
+    T val = ciUIMap<float>(value, 0.0f, 1.0f, min, max, bClampValue);
     if(!bRoundedToNearestInt && bSticky)
     {
         val = ceil((double)val/(double)stickyValue)*(double)stickyValue;
@@ -590,7 +588,7 @@ T ciUISlider_<T>::getMin()
 }
 
 template<typename T>
-ciUIVec2f ciUISlider_<T>::getMaxAndMin()
+ciUIVec2f ciUISlider_<T>::getMaxAndMin() const
 {
     return ciUIVec2f(max, min);
 }
@@ -603,8 +601,8 @@ void ciUISlider_<T>::setMaxAndMin(T _max, T _min, bool bKeepValueTheSame)
     
     if(!bKeepValueTheSame)
     {
-        value = ciUIMap(value, 0, 1.0, min, max, bClampValue);
-        value = ciUIMap(value, min, max, 0.0, 1.0, bClampValue);
+        value = ciUIMap<float>(value, 0.0f, 1.0f, min, max, bClampValue);
+        value = ciUIMap<float>(value, min, max, 0.0f, 1.0f, bClampValue);
         updateValueRef();
         updateLabel();
     }

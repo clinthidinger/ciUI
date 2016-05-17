@@ -38,17 +38,19 @@ public:
     virtual void drawFill();
 	void setParent(ciUIWidget *_parent);
     void addPoint(float _point);
-    std::vector<float> &getBuffer();
+    const std::vector<float> &getBuffer() const;
     void setBuffer(const std::vector<float> &_buffer);
     void setMax(float _max);
-    float getMax();
+    float getMax() const;
     void setMin(float _min);
-    float getMin();
+    float getMin() const;
     ci::vec2 getMaxAndMind();
     void setMaxAndMin(float _max, float _min);
 
 protected:    //inherited: ciUIRectangle *rect; ciUIWidget *parent; 
     std::vector<float> buffer;
     float max, min, scale, inc;
-    unsigned int bufferSize; 
-}; 
+    unsigned int bufferSize;
+    ci::PolyLine2 polyLine;
+    
+};

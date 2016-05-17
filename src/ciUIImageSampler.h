@@ -30,8 +30,8 @@
 class ciUIImageSampler : public ciUIImage
 {
 public:
-    ciUIImageSampler(float x, float y, float w, float h, ci::SurfaceRef _image, const std::string &_name);
-    ciUIImageSampler(float w, float h, ci::SurfaceRef _image, const std::string &_name);
+    ciUIImageSampler(float x, float y, float w, float h, const ci::SurfaceRef &_image, const std::string &_name);
+    ciUIImageSampler(float w, float h, const ci::SurfaceRef &_image, const std::string &_name);
     void initSampler();
     void setSquareSize(float _squareSize);
     void drawFill();
@@ -41,8 +41,8 @@ public:
     void mouseReleased(int x, int y, int button);
     void stateChange();
     void input(int x, int y);
-    const ci::Color &getColor() const;
-    void setColor(const ci::Color &_sampledColor);
+    const ci::ColorA &getColor() const;
+    void setColor(const ci::ColorA &_sampledColor);
     const ci::vec2 &getValue() const;
     void setValue(const ci::vec2 &_value);
     bool isDraggable();
@@ -53,7 +53,7 @@ public:
 //#endif    
     
 protected: 
-    ci::Color sampledColor;
+    ci::ColorA sampledColor;
     ci::vec2 value;
     float squareSize; 
 }; 

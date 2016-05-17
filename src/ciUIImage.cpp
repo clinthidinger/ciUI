@@ -25,29 +25,29 @@
 #include "ciUIImage.h"
 #include "ciUI.h"
 
-ciUIImage::ciUIImage(float x, float y, float w, float h, ci::SurfaceRef _image, const std::string &_name) : ciUIWidgetWithLabel()
+ciUIImage::ciUIImage(float x, float y, float w, float h, const ci::SurfaceRef &_image, const std::string &_name) : ciUIWidgetWithLabel()
 {
     init(x, y, w, h, _image, _name);
 }
 
-ciUIImage::ciUIImage(float x, float y, float w, float h, ci::SurfaceRef _image, const std::string &_name, bool _showLabel) : ciUIWidgetWithLabel()
+ciUIImage::ciUIImage(float x, float y, float w, float h, const ci::SurfaceRef &_image, const std::string &_name, bool _showLabel) : ciUIWidgetWithLabel()
 {
     init(x, y, w, h, _image, _name);
     setLabelVisible(_showLabel);
 }
 
-ciUIImage::ciUIImage(float w, float h, ci::SurfaceRef _image, const std::string &_name) : ciUIWidgetWithLabel()
+ciUIImage::ciUIImage(float w, float h, const ci::SurfaceRef &_image, const std::string &_name) : ciUIWidgetWithLabel()
 {
     init(0, 0, w, h, _image, _name);
 }
 
-ciUIImage::ciUIImage(float w, float h, ci::SurfaceRef _image, const std::string &_name, bool _showLabel) : ciUIWidgetWithLabel()
+ciUIImage::ciUIImage(float w, float h, const ci::SurfaceRef &_image, const std::string &_name, bool _showLabel) : ciUIWidgetWithLabel()
 {
     init(0, 0, w, h, _image, _name);
     setLabelVisible(_showLabel);
 }
 
-void ciUIImage::init(float x, float y, float w, float h, ci::SurfaceRef _image, const std::string &_name)
+void ciUIImage::init(float x, float y, float w, float h, const ci::SurfaceRef &_image, const std::string &_name)
 {
     initRect(x,y,w,h);
     name = _name;
@@ -57,6 +57,7 @@ void ciUIImage::init(float x, float y, float w, float h, ci::SurfaceRef _image, 
     draw_fill = true;
     
     image = _image;
+    tex = ci::gl::Texture2d::create(*image);
     
     label = new ciUILabel(0,h+padding*2.0,(name+" LABEL"),name, CI_UI_FONT_SMALL);
     addEmbeddedWidget(label);
@@ -81,15 +82,15 @@ void ciUIImage::drawFill()
     {
         if(image != nullptr)
         {
-            ciUIFill();
-            ciUISetColor(255);
+            //ciUIFill();
+            ci::gl::ScopedColor scopedColor(ci::Color::white());
             if(cropImageToFitRect)
             {
-                image->drawSubsection(rect->getX(), rect->getY(), rect->width, rect->height, 0, 0, rect->width, rect->height);
+                ci::gl::draw(tex, ci::Area(rect->getX(), rect->getY(), rect->getX()+ rect->width, rect->getY() + rect->getHeight()), ci::Rectf(0, 0, rect->width, rect->height));
             }
             else
             {
-                image->draw(rect->getX(), rect->getY(), rect->width, rect->height);
+                ciUIDrawCorneredTex(tex, rect->getX(), rect->getY(), rect->width, rect->height);
             }
         }
     }
@@ -100,9 +101,10 @@ void ciUIImage::setCropImageToFitRect(bool _cropImageToFitRect)
     cropImageToFitRect = _cropImageToFitRect;
 }
 
-void ciUIImage::setImage(ci:SurfaceRef _image)
+void ciUIImage::setImage(const ci::SurfaceRef &_image)
 {
     image = _image;
+    tex = ci::gl::Texture2d::create(*image);
 }
 
 bool ciUIImage::isDraggable()

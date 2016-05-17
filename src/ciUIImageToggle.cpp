@@ -72,7 +72,8 @@ void ciUIImageToggle::init(float x, float y, float w, float h, bool *_value, con
     
     setValue(*_value);
     
-    img = new ci::Image(_pathURL);
+    img = ci::Surface::create(ci::loadImage(_pathURL));
+    tex = ci::gl::Texture2d::create(*img);
     bChangedImage = false;
 }
 
@@ -80,7 +81,7 @@ ciUIImageToggle::~ciUIImageToggle()
 {
     if(!bChangedImage)
     {
-        delete img;
+        //delete img;
     }
 }
 
@@ -88,9 +89,11 @@ void ciUIImageToggle::drawBack()
 {
     if(draw_back && !draw_fill)
     {
-        ciUIFill();
-        ciUISetColor(color_back);
-        img->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
+        //ciUIFill();
+        //ci::gl::ScopedColor scopedColor(color_back);
+        //img->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
+        ci::gl::ScopedColor scopedColor(color_back);
+        ci::gl::draw(tex, rect->getRectf());
     }
 }
 
@@ -98,9 +101,9 @@ void ciUIImageToggle::drawFill()
 {
     if(draw_fill)
     {
-        ciUIFill();
-        ciUISetColor(color_fill);
-        img->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill);
+        ci::gl::draw(tex, rect->getRectf());
     }
 }
 
@@ -108,9 +111,9 @@ void ciUIImageToggle::drawFillHighlight()
 {
     if(draw_fill_highlight)
     {
-        ciUIFill();
-        ciUISetColor(color_fill_highlight);
-        img->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill_highlight);
+        ci::gl::draw(tex, rect->getRectf());
     }
 }
 
@@ -118,24 +121,27 @@ void ciUIImageToggle::drawOutlineHighlight()
 {
     if(draw_outline_highlight)
     {
-        ofNoFill();
-        ciUISetColor(color_outline_highlight);
-        img->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
+        //ofNoFill();
+        ci::gl::ScopedColor scopedColor(color_outline_highlight);
+        ci::gl::draw(tex, rect->getRectf());
     }
 }
 
-ofImage *ciUIImageToggle::getImage()
+const ci::SurfaceRef &ciUIImageToggle::getImage() const
 {
     return img;
 }
 
-void ciUIImageToggle::setImage(ofImage *_img)
+void ciUIImageToggle::setImage(const ci::SurfaceRef &_img)
 {
     if(img != nullptr && !bChangedImage)
     {
-        delete img;
-        img = nullptr;
+        //delete img;
+        //img = nullptr;
+        img.reset();
+        tex.reset();
     }
     img = _img;
+    tex = ci::gl::Texture2d::create(*img);
     bChangedImage = true;
 }

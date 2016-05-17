@@ -44,7 +44,7 @@ public:
     ciUIToggle *getToggle();
     ciUISlider *getSlider();
 
-    bool isName(const std::string &_name);
+    bool isName(const std::string &_name) const;
     bool getBool();
     float getFloat();
     double getDouble();
@@ -53,9 +53,9 @@ public:
     ciUICanvas *getCanvasParent();
     ciUIWidget *getParent();
 
-    const std::string &getName();
-    const std::string &getParentName();
-    const std::string &getCanvasParentName();
+    const std::string &getName() const;
+    std::string getParentName() const;
+    std::string getCanvasParentName() const;
     
     int getKind();
     

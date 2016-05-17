@@ -87,8 +87,8 @@ void ciUINumberDialer::init(float x, float y, float w, float h, float _min, floa
     precision = _precision;
     currentPrecisionZone = 1;
     
-    string minString = ciUIToString(min, precision);
-    string maxString = ciUIToString(max, precision);
+    std::string minString = ciUIToString(min, precision);
+    std::string maxString = ciUIToString(max, precision);
     if(minString.length() > maxString.length())
     {
         textstring = minString;
@@ -98,7 +98,7 @@ void ciUINumberDialer::init(float x, float y, float w, float h, float _min, floa
         textstring = "+"+maxString;
     }
     
-    string temp = "";
+    std::string temp = "";
     if(precision > 0)
     {
         temp+="..";
@@ -129,7 +129,7 @@ void ciUINumberDialer::update()
 {
     if(useReference)
     {
-        setTextString(numToString(abs(*value), precision, numOfPrecisionZones, '0'));
+        setTextString(numToString(std::abs(*value), precision, numOfPrecisionZones, '0'));
     }
 }
 
@@ -138,8 +138,8 @@ void ciUINumberDialer::drawFill()
 {
     if(draw_fill)
     {
-        ciUIFill();
-        ciUISetColor(color_fill);
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill);
         float x = rect->getX()+padding;
         float y = label->getRect()->getY()+label->getRect()->getHeight();
         float w = label->getStringWidth("_");
@@ -157,12 +157,12 @@ void ciUINumberDialer::drawFillHighlight()
 {
     if(draw_fill_highlight)
     {
-        ciUIFill();
-        ciUISetColor(color_fill_highlight);
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill_highlight);
         float x = rect->getX()+padding;
         float y = label->getRect()->getY()+label->getRect()->getHeight();
         float w = label->getStringWidth("_");
-        ciUIDrawRect(x+currentPrecisionZone*w,y+padding*.5,w, padding*.5);
+        ciUIDrawCorneredRect(x+currentPrecisionZone*w,y+padding*.5,w, padding*.5, true);
         
         for(unsigned int i = 0; i < displaystring.size(); i++)
         {
@@ -175,7 +175,7 @@ void ciUINumberDialer::drawFillHighlight()
 
 void ciUINumberDialer::calculatePrecisionZone()
 {
-    currentPrecisionZone = ceil(ciUIMap(hitPoint.x,rect->getX(),rect->getX()+rect->getWidth(),-1, displaystring.size()-1, true));
+    currentPrecisionZone = ceil(ciUIMap<float>(hitPoint.x,rect->getX(),rect->getX()+rect->getWidth(),-1, displaystring.size()-1, true));
     if(currentPrecisionZone == 0)
     {
         zoneMultiplier = powf(10.0, numOfPrecisionZones-precision-hasPeriod);
@@ -215,7 +215,7 @@ void ciUINumberDialer::setValue(float _value)
         _value = min;
     }
     *value = _value;
-    setTextString(numToString(abs(*value), precision, numOfPrecisionZones, '0'));
+    setTextString(numToString(std::abs(*value), precision, numOfPrecisionZones, '0'));
 }
 
 void ciUINumberDialer::mouseMoved(int x, int y )
@@ -223,7 +223,7 @@ void ciUINumberDialer::mouseMoved(int x, int y )
     if(rect->inside(x, y))
     {
         state = CI_UI_STATE_OVER;
-        hitPoint = ofPoint(x,y);
+        hitPoint = ci::vec2(x, y);
         calculatePrecisionZone();
         
     }
@@ -247,8 +247,8 @@ void ciUINumberDialer::mouseDragged(int x, int y, int button)
         {
             *value = min;
         }
-        hitPoint = ofPoint(x,y);
-        setTextString(numToString(abs(*value), precision, numOfPrecisionZones, '0'));
+        hitPoint = ci::vec2(x, y);
+        setTextString(numToString(std::abs(*value), precision, numOfPrecisionZones, '0'));
         triggerEvent(this);
         state = CI_UI_STATE_DOWN;
     }
@@ -264,7 +264,7 @@ void ciUINumberDialer::mousePressed(int x, int y, int button)
     if(rect->inside(x, y))
     {
         hit = true;
-        hitPoint = ofPoint(x,y);
+        hitPoint = ci::vec2(x,y);
         calculatePrecisionZone();
         state = CI_UI_STATE_DOWN;
         triggerEvent(this);
@@ -301,7 +301,7 @@ void ciUINumberDialer::keyPressed(int key)
     {
         switch (key)
         {
-            case OF_KEY_RIGHT:
+            case ci::app::KeyEvent::KEY_RIGHT:
                 *value += zoneMultiplier;
                 if(*value > max)
                 {
@@ -312,11 +312,11 @@ void ciUINumberDialer::keyPressed(int key)
                     *value = min;
                 }
                 
-                setTextString(numToString(abs(*value), precision, numOfPrecisionZones, '0'));
+                setTextString(numToString(std::abs(*value), precision, numOfPrecisionZones, '0'));
                 triggerEvent(this);
                 break;
                 
-            case OF_KEY_UP:
+            case ci::app::KeyEvent::KEY_UP:
                 *value += zoneMultiplier;
                 if(*value > max)
                 {
@@ -327,11 +327,11 @@ void ciUINumberDialer::keyPressed(int key)
                     *value = min;
                 }
                 
-                setTextString(numToString(abs(*value), precision, numOfPrecisionZones, '0'));
+                setTextString(numToString(std::abs(*value), precision, numOfPrecisionZones, '0'));
                 triggerEvent(this);
                 break;
                 
-            case OF_KEY_LEFT:
+            case ci::app::KeyEvent::KEY_LEFT:
                 *value -= zoneMultiplier;
                 if(*value > max)
                 {
@@ -342,11 +342,11 @@ void ciUINumberDialer::keyPressed(int key)
                     *value = min;
                 }
                 
-                setTextString(numToString(abs(*value), precision, numOfPrecisionZones, '0'));
+                setTextString(numToString(std::abs(*value), precision, numOfPrecisionZones, '0'));
                 triggerEvent(this);
                 break;
                 
-            case OF_KEY_DOWN:
+            case ci::app::KeyEvent::KEY_DOWN:
                 *value -= zoneMultiplier;
                 if(*value > max)
                 {
@@ -357,7 +357,7 @@ void ciUINumberDialer::keyPressed(int key)
                     *value = min;
                 }
                 
-                setTextString(numToString(abs(*value), precision, numOfPrecisionZones, '0'));
+                setTextString(numToString(std::abs(*value), precision, numOfPrecisionZones, '0'));
                 triggerEvent(this);
                 break;
                 
@@ -418,23 +418,23 @@ void ciUINumberDialer::stateChange()
     }
 }
 
-string ciUINumberDialer::getTextString()
+const std::string &ciUINumberDialer::getTextString() const
 {
     return textstring;
 }
 
-void ciUINumberDialer::setTextString(const std::string & s)
+void ciUINumberDialer::setTextString(const std::string &s)
 {
     if(*value > 0)
     {
-        s = "+" + s;
+        textstring = "+" + s;
     }
     else
     {
-        s = "-" + s;
+        textstring = "-" + s;
     }
-    textstring = s;
-    displaystring = s;
+    
+    displaystring = textstring;
 }
 
 void ciUINumberDialer::setParent(ciUIWidget *_parent)
@@ -449,7 +449,7 @@ void ciUINumberDialer::setParent(ciUIWidget *_parent)
     labelrect->setY(ph/2.0 - h/2.0);
     labelrect->setX(rect->getWidth()+padding);
     label->setLabel(name); 
-    setTextString(numToString(abs(*value), precision, numOfPrecisionZones, '0'));
+    setTextString(numToString(std::abs(*value), precision, numOfPrecisionZones, '0'));
     calculatePaddingRect();    
 }
 
@@ -458,10 +458,10 @@ bool ciUINumberDialer::isDraggable()
     return true;
 }
 
-string ciUINumberDialer::numToString(float value, int precision, int width, char fill )
+std::string ciUINumberDialer::numToString(float value, int precision, int width, char fill )
 {
-    ostringstream out;
-    out << fixed << setfill(fill) << setw(width) << setprecision(precision) << value;
+    std::ostringstream out;
+    out << std::fixed << std::setfill(fill) << std::setw(width) << std::setprecision(precision) << value;
     return out.str();
 }
 

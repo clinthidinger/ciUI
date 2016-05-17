@@ -26,6 +26,7 @@
 
 #include <string>
 #include <sstream>
+#include "cinder/gl/gl.h"
 
 template <class T>
 std::string ciUIToString(const T& value){
@@ -41,7 +42,8 @@ std::string ciUIToString(const T& value, int precision){
 	return out.str();
 }
 
-static float ciUIMap(double value, double inputMin, double inputMax, double outputMin, double outputMax, bool clamp)
+template<typename t>
+inline t ciUIMap(t value, t inputMin, t inputMax, t outputMin, t outputMax, bool clamp)
 {    
 	if (fabs(inputMin - inputMax) < FLT_EPSILON)
     {
@@ -62,4 +64,66 @@ static float ciUIMap(double value, double inputMin, double inputMax, double outp
 		}
 		return outVal;
 	}    
+}
+
+inline ci::Rectf ciUICenteredRect(float centerX, float centerY, float width, float height)
+{
+    float halfWidth = width * 0.5f;
+    float halfHeight = height * 0.5f;
+    return ci::Rectf(centerX - halfWidth, centerY - halfHeight, centerX + halfWidth, centerY + halfHeight);
+}
+
+inline void ciUIDrawCenteredRect(float centerX, float centerY, float width, float height, bool doFill)
+{
+    ci::Rectf rect(ciUICenteredRect(centerX, centerY, width, height));
+    
+    if(doFill)
+    {
+        ci::gl::drawSolidRect(rect);
+    }
+    else
+    {
+        ci::gl::drawStrokedRect(rect);
+    }
+}
+
+inline void ciUIDrawCorneredRect(float centerX, float centerY, float width, float height, bool doFill)
+{
+    ci::Rectf rect(centerX, centerY, centerX + width, centerY + height);
+    
+    if(doFill)
+    {
+        ci::gl::drawSolidRect(rect);
+    }
+    else
+    {
+        ci::gl::drawStrokedRect(rect);
+    }
+}
+
+inline void ciUIDrawCenteredTex(const ci::gl::Texture2dRef &tex, float centerX, float centerY, float width, float height)
+{
+    ci::gl::draw(tex, ciUICenteredRect(centerX, centerY, width, height));
+}
+
+inline void ciUIDrawCorneredTex(const ci::gl::Texture2dRef &tex, float cornerX, float cornerY, float width, float height)
+{
+    ci::gl::draw(tex, ci::Rectf(cornerX, cornerY, cornerX + width, cornerY + height));
+}
+
+inline void ciUIDrawLine(float x1, float y1, float x2, float y2)
+{
+    ci::gl::drawLine(ci::vec2(x1, y1), ci::vec2(x2, y2));
+}
+
+inline void ciUICircle(float x, float y, float radius,  bool doFill)
+{
+    if(doFill)
+    {
+        ci::gl::drawSolidCircle(ci::vec2(x, y), radius);
+    }
+    else
+    {
+        ci::gl::drawStrokedCircle(ci::vec2(x, y), radius);
+    }
 }

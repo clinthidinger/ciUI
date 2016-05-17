@@ -28,7 +28,8 @@
 ciUI2DPad::ciUI2DPad(const std::string &_name, const ciUIVec3f &_rangeX, const ciUIVec3f &_rangeY, const ciUIVec3f &_value, float w, float h, float x, float y) : ciUIWidgetWithLabel()
 {
     useReference = false;
-    init(_name, _rangeX, _rangeY, &_value, w, h, x, y);
+    ciUIVec3f v(_value);
+    init(_name, _rangeX, _rangeY, &v, w, h, x, y);
 }
 
 ciUI2DPad::ciUI2DPad(const std::string &_name, const ciUIVec3f &_rangeX, const ciUIVec3f &_rangeY, ciUIVec3f *_value, float w, float h, float x, float y) : ciUIWidgetWithLabel()
@@ -45,7 +46,7 @@ ciUI2DPad::~ciUI2DPad()
     }
 }
 
-void ciUI2DPad::init(const std::string _name, const ciUIVec3f &_rangeX, const ciUIVec3f &_rangeY, ciUIVec3f *_value, float w, float h, float x, float y)
+void ciUI2DPad::init(const std::string &_name, const ciUIVec3f &_rangeX, const ciUIVec3f &_rangeY, ciUIVec3f *_value, float w, float h, float x, float y)
 {
     initRect(x, y, w, h);
     name = _name;
@@ -59,16 +60,15 @@ void ciUI2DPad::init(const std::string _name, const ciUIVec3f &_rangeX, const ci
     }
     else
     {
-        valueRef = new ciUIVec3f();
-        *valueRef = value;
+        valueRef = new ciUIVec3f(*_value); // unique_ptr???
     }
     
     rangeX = _rangeX;
     rangeY = _rangeY;
     labelPrecision = 2;
     
-    value.x = ciUIMap(value.x, rangeX.x, rangeX.y, 0.0, 1.0, true);
-    value.y = ciUIMap(value.y, rangeY.x, rangeY.y, 0.0, 1.0, true);
+    value.x = ciUIMap<float>(value.x, rangeX.x, rangeX.y, 0.0f, 1.0f, true);
+    value.y = ciUIMap<float>(value.y, rangeY.x, rangeY.y, 0.0f, 1.0f, true);
     
     if(value.x > 1)
     {
@@ -91,17 +91,17 @@ void ciUI2DPad::init(const std::string _name, const ciUIVec3f &_rangeX, const ci
     label = new ciUILabel(0,h+padding*2.0,(name+" LABEL"), (name + ": " + ciUIToString(getScaledValue().x,labelPrecision) + ", " + ciUIToString(getScaledValue().y,labelPrecision)), CI_UI_FONT_SMALL);
     addEmbeddedWidget(label);
     
-    float horizontalRange = abs(rangeX.x - rangeX.y);
-    float verticalRange = abs(rangeY.x - rangeY.y);
-    increment = MIN(horizontalRange, verticalRange) / 10.0;
+    float horizontalRange = std::abs(rangeX.x - rangeX.y);
+    float verticalRange = std::abs(rangeY.x - rangeY.y);
+    increment = std::min(horizontalRange, verticalRange) / 10.0;
 }
 
 void ciUI2DPad::update()
 {
     if(useReference)
     {
-        value.x = ciUIMap(valueRef->x, rangeX.x, rangeX.y, 0.0, 1.0, true);
-        value.y = ciUIMap(valueRef->y, rangeY.x, rangeY.y, 0.0, 1.0, true);
+        value.x = ciUIMap<float>(valueRef->x, rangeX.x, rangeX.y, 0.0f, 1.0f, true);
+        value.y = ciUIMap<float>(valueRef->y, rangeY.x, rangeY.y, 0.0f, 1.0f, true);
     }
 }
 
@@ -121,11 +121,11 @@ void ciUI2DPad::drawFill()
 {
     if(draw_fill)
     {
-        ciUIFill();
-        ciUISetColor(color_fill);
-        ciUISetRectMode(CI_UI_RECTMODE_CENTER);
-        ciUIDrawRect(rect->getX()+value.x*rect->getWidth(), rect->getY()+value.y*rect->getHeight(), CI_UI_GLOBAL_WIDGET_SPACING, CI_UI_GLOBAL_WIDGET_SPACING);
-        ciUISetRectMode(CI_UI_RECTMODE_CORNER);
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill);
+        //ciUISetRectMode(CI_UI_RECTMODE_CENTER);
+        ciUIDrawCenteredRect(rect->getX()+value.x*rect->getWidth(), rect->getY()+value.y*rect->getHeight(), CI_UI_GLOBAL_WIDGET_SPACING, CI_UI_GLOBAL_WIDGET_SPACING, true);
+        //ciUISetRectMode(CI_UI_RECTMODE_CORNER);
         
         ciUIDrawLine(rect->getX()+value.x*rect->getWidth(),  rect->getY(), rect->getX()+value.x*rect->getWidth(),  rect->getY()+rect->getHeight());
         ciUIDrawLine(rect->getX(),  rect->getY()+value.y*rect->getHeight(), rect->getX()+rect->getWidth(),  rect->getY()+value.y*rect->getHeight());
@@ -136,11 +136,11 @@ void ciUI2DPad::drawFillHighlight()
 {
     if(draw_fill_highlight)
     {
-        ciUIFill();
-        ciUISetColor(color_fill_highlight);
-        ciUISetRectMode(CI_UI_RECTMODE_CENTER);
-        ciUIDrawRect(rect->getX()+value.x*rect->getWidth(), rect->getY()+value.y*rect->getHeight(), CI_UI_GLOBAL_WIDGET_SPACING, CI_UI_GLOBAL_WIDGET_SPACING);
-        ciUISetRectMode(CI_UI_RECTMODE_CORNER);
+        //ciUIFill();
+        ci::gl::ScopedColor scopedColor(color_fill_highlight);
+        //ciUISetRectMode(CI_UI_RECTMODE_CENTER);
+        ciUIDrawCenteredRect(rect->getX()+value.x*rect->getWidth(), rect->getY()+value.y*rect->getHeight(), CI_UI_GLOBAL_WIDGET_SPACING, CI_UI_GLOBAL_WIDGET_SPACING, true);
+        //ciUISetRectMode(CI_UI_RECTMODE_CORNER);
         
         ciUIDrawLine(rect->getX()+value.x*rect->getWidth(),  rect->getY(), rect->getX()+value.x*rect->getWidth(),  rect->getY()+rect->getHeight());
         ciUIDrawLine(rect->getX(),  rect->getY()+value.y*rect->getHeight(), rect->getX()+rect->getWidth(),  rect->getY()+value.y*rect->getHeight());
@@ -238,44 +238,44 @@ void ciUI2DPad::keyPressed(int key)
     {
         switch (key)
         {
-            case OF_KEY_RIGHT:
+            case ci::app::KeyEvent::KEY_RIGHT:
             {
                 ciUIVec3f p = getScaledValue();
                 p.x+=increment;
-                value.x = ciUIMap(p.x, rangeX.x, rangeX.y, 0.0, 1.0, true);
+                value.x = ciUIMap<float>(p.x, rangeX.x, rangeX.y, 0.0f, 1.0f, true);
                 updateValueRef();
                 updateLabel();
                 triggerEvent(this);
             }
                 break;
                 
-            case OF_KEY_UP:
+            case ci::app::KeyEvent::KEY_UP:
             {
                 ciUIVec3f p = getScaledValue();
                 p.y +=increment;
-                value.y = ciUIMap(p.y, rangeY.x, rangeY.y, 0.0, 1.0, true);
+                value.y = ciUIMap<float>(p.y, rangeY.x, rangeY.y, 0.0f, 1.0f, true);
                 updateValueRef();
                 updateLabel();
                 triggerEvent(this);
             }
                 break;
                 
-            case OF_KEY_LEFT:
+            case ci::app::KeyEvent::KEY_LEFT:
             {
                 ciUIVec3f p = getScaledValue();
                 p.x-=increment;
-                value.x = ciUIMap(p.x, rangeX.x, rangeX.y, 0.0, 1.0, true);
+                value.x = ciUIMap<float>(p.x, rangeX.x, rangeX.y, 0.0f, 1.0f, true);
                 updateValueRef();
                 updateLabel();
                 triggerEvent(this);
             }
                 break;
                 
-            case OF_KEY_DOWN:
+            case ci::app::KeyEvent::KEY_DOWN:
             {
                 ciUIVec3f p = getScaledValue();
                 p.y -=increment;
-                value.y = ciUIMap(p.y, rangeY.x, rangeY.y, 0.0, 1.0, true);
+                value.y = ciUIMap<float>(p.y, rangeY.x, rangeY.y, 0.0f, 1.0f, true);
                 updateValueRef();
                 updateLabel();
                 triggerEvent(this);
@@ -290,8 +290,8 @@ void ciUI2DPad::keyPressed(int key)
 
 void ciUI2DPad::input(float x, float y)
 {
-    value.x = MIN(1.0, MAX(0.0, rect->percentInside(x, y).x));
-    value.y = MIN(1.0, MAX(0.0, rect->percentInside(x, y).y));
+    value.x = std::min(1.0f, std::max(0.0f, rect->percentInside(x, y).x));
+    value.y = std::min(1.0f, std::max(0.0f, rect->percentInside(x, y).y));
 
     updateValueRef();
     updateLabel();
@@ -344,47 +344,48 @@ void ciUI2DPad::stateChange()
     }
 }
 
-void ciUI2DPad::setValue(ciUIVec3f _value)
+void ciUI2DPad::setValue(const ciUIVec3f &_value)
 {
-    if(_value.x > rangeX.y)
+    ciUIVec3f v(_value);
+    if(v.x > rangeX.y)
     {
-        _value.x = rangeX.y;
+        v.x = rangeX.y;
     }
-    else if(_value.x < rangeX.x)
+    else if(v.x < rangeX.x)
     {
-        _value.x = rangeX.x;
-    }
-    
-    if(_value.y > rangeY.y)
-    {
-        _value.y = rangeY.y;
-    }
-    else if(_value.y < rangeY.x)
-    {
-        _value.y = rangeY.x;
+        v.x = rangeX.x;
     }
     
-    value.x = ciUIMap(_value.x, rangeX.x, rangeX.y, 0.0, 1.0, true);
-    value.y = ciUIMap(_value.y, rangeY.x, rangeY.y, 0.0, 1.0, true);
+    if(v.y > rangeY.y)
+    {
+        v.y = rangeY.y;
+    }
+    else if(v.y < rangeY.x)
+    {
+        v.y = rangeY.x;
+    }
+    
+    value.x = ciUIMap<float>(_value.x, rangeX.x, rangeX.y, 0.0f, 1.0f, true);
+    value.y = ciUIMap<float>(_value.y, rangeY.x, rangeY.y, 0.0f, 1.0f, true);
     updateValueRef();
     updateLabel();
 }
 
-ciUIVec3f ciUI2DPad::getValue()
+const ciUIVec3f &ciUI2DPad::getValue() const
 {
     return value;
 }
 
-ciUIVec3f ciUI2DPad::getPercentValue()
+const ciUIVec3f &ciUI2DPad::getPercentValue() const
 {
     return value;
 }
 
-ciUIVec3f ciUI2DPad::getScaledValue()
+ciUIVec3f ciUI2DPad::getScaledValue() const
 {
     ciUIVec3f p = value;
-    p.x = ciUIMap(p.x, 0, 1, rangeX.x, rangeX.y, true);
-    p.y = ciUIMap(p.y, 0, 1, rangeY.x, rangeY.y, true);
+    p.x = ciUIMap<float>(p.x, 0.0f, 1.0f, rangeX.x, rangeX.y, true);
+    p.y = ciUIMap<float>(p.y, 0.0f, 1.0f, rangeY.x, rangeY.y, true);
     return p;
 }
 

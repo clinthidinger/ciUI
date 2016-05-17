@@ -101,7 +101,7 @@ void ciUIMultiImageButton::drawBack()                     //NORMAL
 {
     if(draw_back)
     {
-        ciUISetColor(255);
+        ci::gl::ScopedColor scopedColor(ci::Color::white());
         back->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
     }
 }
@@ -110,7 +110,7 @@ void ciUIMultiImageButton::drawOutlineHighlight()         //OVER
 {
     if(draw_outline_highlight)
     {
-        ciUISetColor(255);
+        ci::gl::ScopedColor scopedColor(ci::Color::white());
         over->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
     }
 }
@@ -124,7 +124,7 @@ void ciUIMultiImageButton::drawFillHighlight()            //DOWN/ON
 {
     if(draw_fill_highlight)
     {
-        ciUISetColor(255);
+        ci::gl::ScopedColor scopedColor(ci::Color::white());
         on->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
     }
 }

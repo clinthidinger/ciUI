@@ -223,14 +223,14 @@ public:
     ciUIMovingGraph* addMovingGraph(const std::string &_name, const std::vector<float> &_buffer, int _bufferSize, float _min, float _max, float _h = CI_UI_GLOBAL_GRAPH_HEIGHT);
     ciUIMovingGraph* addMovingGraph(const std::string &_name, const std::vector<float> &_buffer, int _bufferSize, float _min, float _max, float _w, float _h);
 
-    ciUIImage *addImage(const std::string &_name, ci::SurfaceRef _image, float _w, float _h, bool _showLabel = false);
-    ciUIImage *addImage(const std::string &_name, ci::SurfaceRef _image, bool _showLabel = false);
+    ciUIImage *addImage(const std::string &_name, const ci::SurfaceRef &_image, float _w, float _h, bool _showLabel = false);
+    ciUIImage *addImage(const std::string &_name, const ci::SurfaceRef &_image, bool _showLabel = false);
 
     ciUIBaseDraws *addBaseDraws(const std::string &_name, const ci::SurfaceRef &_base, float _w, float _h, bool _showLabel = false);
     ciUIBaseDraws *addBaseDraws(const std::string &_name, const ci::SurfaceRef &_base, bool _showLabel = false);
 
-    ciUIImageSampler *addImageSampler(const std::string &_name, ci::SurfaceRef _image, float _w, float _h);
-    ciUIImageSampler *addImageSampler(const std::string &_name, ci::SurfaceRef _image);
+    ciUIImageSampler *addImageSampler(const std::string &_name, const ci::SurfaceRef &_image, float _w, float _h);
+    ciUIImageSampler *addImageSampler(const std::string &_name, const ci::SurfaceRef &_image);
     
     ciUIBiLabelSlider *addBiLabelSlider(const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, float _min, float _max, float _value, int _size = CI_UI_FONT_SMALL);
     ciUIBiLabelSlider *addBiLabelSlider(const std::string &_name, const std::string &_leftLabel, const std::string &_rightLabel, float _min, float _max, float *_value, int _size = CI_UI_FONT_SMALL);
@@ -319,7 +319,7 @@ public:
     const std::vector<ciUIWidget*> &getWidgets() const;
     const std::vector<ciUIWidget*> &getWidgetsOfType(ciUIWidgetType type) const;
     
-    typedef ci::signals::Signal<void ( const ciUIEventArgs & )> NewGuiEventSignal_t;
+    typedef ci::signals::Signal<void (ciUIEventArgs &)> NewGuiEventSignal_t;
 	NewGuiEventSignal_t newGUIEvent;
 
 protected:

@@ -36,16 +36,17 @@ public:
     ciUIImageToggle(float w, float h, bool _value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_MEDIUM);
     ciUIImageToggle(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_MEDIUM);
     ciUIImageToggle(float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_MEDIUM);
-    void init(float x, float y, float w, float h, bool *_value, const std::string _pathURL, const std::string &_name, int _size = CI_UI_FONT_SMALL);
+    void init(float x, float y, float w, float h, bool *_value, const std::string &_pathURL, const std::string &_name, int _size = CI_UI_FONT_SMALL);
     virtual ~ciUIImageToggle();
-    virtual void drawBack();
-    virtual void drawFill();
-    virtual void drawFillHighlight();
-    virtual void drawOutlineHighlight();
-    virtual ci::SurfaceRef getImage();
-    virtual void setImage(ci::SurfaceRef _img);
+    virtual void drawBack() override;
+    virtual void drawFill() override;
+    virtual void drawFillHighlight() override;
+    virtual void drawOutlineHighlight() override;
+    virtual const ci::SurfaceRef &getImage() const;
+    virtual void setImage(const ci::SurfaceRef &_img);
                      
 protected:
     ci::SurfaceRef img;
+    ci::gl::Texture2dRef tex;
     bool bChangedImage;
 }; 

@@ -104,8 +104,8 @@ void ciUIMultiImageToggle::drawBack()                     //NORMAL
 {
     if(draw_back && !draw_fill)
     {
-        ci::gl::color(ci::Color::white());
-        ci::gl::draw(back, ci::Rectf(rect->getX(), rect->getY(), rect->getX() + rect->getWidth(), rect->getY() + rect->getHeight()));
+        ci::gl::ScopedColor scopedColor(ci::Color::white());
+        ci::gl::draw(back, rect->getRectf());
         //back->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
     }
 }
@@ -114,8 +114,8 @@ void ciUIMultiImageToggle::drawOutlineHighlight()         //OVER
 {
     if(draw_outline_highlight)
     {
-        ci::gl::color(ci::Color::white());
-        ci::gl::draw(over, ci::Rectf(rect->getX(), rect->getY(), rect->getX() + rect->getWidth(), rect->getY() + rect->getHeight()));
+        ci::gl::ScopedColor scopedColor(ci::Color::white());
+        ci::gl::draw(over, rect->getRectf());
         //over->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
     }
 }
@@ -124,8 +124,8 @@ void ciUIMultiImageToggle::drawFill()
 {
     if(draw_fill)
     {
-        ci::gl::color(ci::Color::white());
-        ci::gl::draw(on, ci::Rectf(rect->getX(), rect->getY(), rect->getX() + rect->getWidth(), rect->getY() + rect->getHeight()));
+        ci::gl::ScopedColor scopedColor(ci::Color::white());
+        ci::gl::draw(on, rect->getRectf());
         //on->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
     }
 }
@@ -134,8 +134,8 @@ void ciUIMultiImageToggle::drawFillHighlight()            //DOWN/ON
 {
     if(draw_fill_highlight)
     {
-        ci::gl::color(ci::Color::white());
-        ci::gl::draw(down, ci::Rectf(rect->getX(), rect->getY(), rect->getX() + rect->getWidth(), rect->getY() + rect->getHeight()));
+        ci::gl::ScopedColor scopedColor(ci::Color::white());
+        ci::gl::draw(down, rect->getRectf());
         //down->draw(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight());
     }
 }

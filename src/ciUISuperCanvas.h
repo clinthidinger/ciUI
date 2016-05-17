@@ -31,7 +31,7 @@ class ciUISuperCanvas : public ciUICanvas
 {
 public:
     ciUISuperCanvas(const ciUISuperCanvas &other);
-    ciUISuperCanvas(const std::string &_label, const ci::Rectf &r, int _size = CI_UI_FONT_MEDIUM);
+    ciUISuperCanvas(const std::string &_label, const ciUIRectangle &r, int _size = CI_UI_FONT_MEDIUM);
     ciUISuperCanvas(const std::string &_label, float x, float y, float w, float h, int _size = CI_UI_FONT_MEDIUM);
     ciUISuperCanvas(const std::string &_label, float x, float y, float w, float h, ciUICanvas *sharedResources, int _size = CI_UI_FONT_MEDIUM);
     ciUISuperCanvas(const std::string &_label, int _size = CI_UI_FONT_MEDIUM);
@@ -43,27 +43,28 @@ public:
     void toggleMinified();
     ciUILabel *getCanvasTitle();
     bool didHitHeaderWidgets(float x, float y); 
-    void autoSizeToFitWidgets(); 
+    void autoSizeToFitWidgets() override;
 
-    virtual void keyPressed(int key);
-    virtual void keyReleased(int key);
+    virtual void keyPressed(int key) override;
+    virtual void keyReleased(int key) override;
 
 #ifdef CI_UI_TARGET_TOUCH
-    virtual void touchDown(float x, float y, int id);
-    virtual void touchMoved(float x, float y, int id);
-    virtual void touchUp(float x, float y, int id);
-    virtual void touchDoubleTap(float x, float y, int id);
-    virtual void touchCancelled(float x, float y, int id);
+    virtual void touchDown(float x, float y, int id) override;
+    virtual void touchMoved(float x, float y, int id) override;
+    virtual void touchUp(float x, float y, int id) override;
+    virtual void touchDoubleTap(float x, float y, int id) override;
+    virtual void touchCancelled(float x, float y, int id) override;
 #else
     virtual void onMouseReleased(ci::app::MouseEvent& data);
     virtual void onMousePressed(ci::app::MouseEvent& data);
     virtual void onMouseDragged(ci::app::MouseEvent& data);
+    virtual void onMouseMoved(ci::app::MouseEvent& data);
 #endif
     
     virtual void saveSettings(const std::string &fileName);
     virtual void loadSettings(const std::string &fileName);
     void addWidgetToHeader(ciUIWidget *widget);
-    void removeWidgets();
+    void removeWidgets() override;
     
 protected:
     void minify();
@@ -76,6 +77,7 @@ protected:
     
     ciUIVec2f hitPoint;
     ciUIVec2f lastPosition;
+    ci::ivec2 mousePosition;
     float deltaTime;
     float lastHitTime;
     bool bIsMinified;

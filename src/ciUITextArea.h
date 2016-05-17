@@ -35,7 +35,7 @@ public:
     void init(const std::string &_name, const std::string &_textstring, float w, float h = 0, float x = 0, float y = 0, int _size = CI_UI_FONT_MEDIUM);
     virtual void drawBack();
     virtual void drawFill();
-    const std::string &getTextString();
+    const std::string &getTextString() const;
     void setTextString(const std::string &s);
     void formatTextString();
 	void setParent(ciUIWidget *_parent);
